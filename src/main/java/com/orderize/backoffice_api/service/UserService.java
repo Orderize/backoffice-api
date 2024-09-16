@@ -13,6 +13,7 @@ import com.orderize.backoffice_api.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -67,7 +68,10 @@ public class UserService implements UserDetailsService {
             enterprise = enterpriseRepository.findById(userRequest.enterprise())
                     .orElseThrow(() -> new RuntimeException("Enterprise not found"));
         }
-        Optional<User> user = Optional.of(repository.save(mapperUserRequestToUser.map(userRequest, address, enterprise)));
+        String encryptedPassword = new BCryptPasswordEncoder().encode(userRequest.password());
+        User userToSave = mapperUserRequestToUser.map(userRequest, address, enterprise);
+        userToSave.setPassword(encryptedPassword);
+        Optional<User> user = Optional.of(repository.save(userToSave));
 
         if (user.isPresent()) {
             return mapperUserToUserResponse.map(user.get());
@@ -93,6 +97,8 @@ public class UserService implements UserDetailsService {
         if (user.isPresent()) {
             User savingUser = mapperUserRequestToUser.map(userToUpdate, address, enterprise);
             savingUser.setId(user.get().getId());
+            String encryptedPassword = new BCryptPasswordEncoder().encode(savingUser.getPassword());
+            savingUser.setPassword(encryptedPassword);
             return mapperUserToUserResponse.map(repository.save(savingUser));
         } else {
             return null;

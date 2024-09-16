@@ -6,6 +6,7 @@ import com.orderize.backoffice_api.model.User;
 import com.orderize.backoffice_api.repository.UserRepository;
 import com.orderize.backoffice_api.security.TokenService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
-public class AuthService implements UserDetailsService {
+public class AuthService {
 
     private final ApplicationContext applicationContext;
     private final UserRepository userRepository;
@@ -29,12 +30,7 @@ public class AuthService implements UserDetailsService {
         this.tokenService = tokenService;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email);
-    }
-
-    public LoginResponseDto login(@RequestBody @Valid AuthenticationDto data){
+    public LoginResponseDto login( AuthenticationDto data){
         authenticationManager = applicationContext.getBean(AuthenticationManager.class);
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var auth = authenticationManager.authenticate(usernamePassword);

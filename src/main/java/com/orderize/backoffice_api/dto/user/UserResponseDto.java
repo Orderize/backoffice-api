@@ -1,6 +1,6 @@
 package com.orderize.backoffice_api.dto.user;
 
-import com.orderize.backoffice_api.dto.RoleResponseDto;
+import com.orderize.backoffice_api.dto.role.RoleResponseDto;
 import com.orderize.backoffice_api.dto.address.AddressResponseDto;
 import com.orderize.backoffice_api.dto.enterprise.EnterpriseResponseDto;
 

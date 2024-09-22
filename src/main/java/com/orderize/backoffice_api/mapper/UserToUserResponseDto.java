@@ -1,6 +1,6 @@
 package com.orderize.backoffice_api.mapper;
 
-import com.orderize.backoffice_api.dto.RoleResponseDto;
+import com.orderize.backoffice_api.dto.role.RoleResponseDto;
 import com.orderize.backoffice_api.dto.address.AddressResponseDto;
 import com.orderize.backoffice_api.dto.enterprise.EnterpriseResponseDto;
 import com.orderize.backoffice_api.dto.user.UserResponseDto;
@@ -35,7 +35,7 @@ public class UserToUserResponseDto implements Mapper<User, UserResponseDto> {
                 user.getRoles() != null ?
                         user.getRoles().stream().map(it -> new RoleResponseDto(
                         it.getId(),
-                        it.getNome()
+                        it.getName()
                 )).toList()
         : Collections.emptyList()
         );

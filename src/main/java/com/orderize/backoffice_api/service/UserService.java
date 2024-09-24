@@ -17,7 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -120,5 +120,33 @@ public class UserService implements UserDetailsService {
         } else {
             return false;
         }
+    }
+
+    public List<UserResponseDto> getAllUsers(String phone, String email, Long enterprise, Long role) {
+        List<User> allUsers = repository.findAll();
+
+        if (phone != null && !phone.isBlank()) {
+            allUsers = allUsers.stream().filter(it -> it.getPhone().equals(phone)).toList();
+        }
+
+        if (email != null && !email.isBlank()) {
+            allUsers = allUsers.stream().filter(it -> it.getEmail().equals(email)).toList();
+        }
+
+        if (enterprise != null) {
+            allUsers = allUsers.stream().filter(it -> it.getEnterprise().getId() == enterprise).toList();
+        }
+
+        if (role != null) {
+            List<User> filteredUsers = new ArrayList();
+            allUsers.forEach(it -> {
+                if (it.getRoles().stream().filter(at -> Objects.equals(at.getId(), role)).count() > 0) {
+                    filteredUsers.add(it);
+                }
+            });
+            allUsers = filteredUsers;
+        }
+
+        return allUsers.stream().map(it -> mapperUserToUserResponse.map(it)).toList();
     }
 }

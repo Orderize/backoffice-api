@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/users", produces = {"application/json"})
 @Tag(name = "/users")
@@ -18,6 +20,29 @@ public class UserController {
 
     public UserController(UserService service) {
         this.service = service;
+    }
+
+    @GetMapping
+    @Operation(
+            summary = "Busca todos os usuários",
+            method = "GET",
+            description = "Pode receber os request param opcionais: [phone, email, idEnterprise, idRole]" +
+                    " e filtra o resultado com base nos request param " +
+                    "passados, caso nenhum seja passado retorna uma list com todos os usuários."
+    )
+    public ResponseEntity<List<UserResponseDto>> getAllUsers(
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "idEnterprise", required = false) Long idEnterprise,
+            @RequestParam(value = "idRole", required = false) Long idRole
+    ) {
+        List<UserResponseDto> users = service.getAllUsers(phone, email, idEnterprise, idRole);
+
+        if (users.isEmpty()) {
+            return ResponseEntity.status(204).build();
+        } else {
+            return ResponseEntity.status(200).body(users);
+        }
     }
 
     @GetMapping("/{id}")

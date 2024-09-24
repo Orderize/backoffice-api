@@ -3,12 +3,15 @@ package com.orderize.backoffice_api.controller;
 import com.orderize.backoffice_api.dto.user.UserRequestDto;
 import com.orderize.backoffice_api.dto.user.UserResponseDto;
 import com.orderize.backoffice_api.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping(value = "/users", produces = {"application/json"})
+@Tag(name = "/users")
 public class UserController {
 
     private final UserService service;
@@ -18,6 +21,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Busca um usuário por id", method = "GET")
     public ResponseEntity<UserResponseDto> getUserById(
             @PathVariable("id") Long id
     ) {
@@ -31,6 +35,7 @@ public class UserController {
     }
 
     @PostMapping
+    @Operation(summary = "Salva um novo usuário", method = "POST")
     public ResponseEntity<UserResponseDto> saveUser(
             @RequestBody @Valid UserRequestDto userRequest
     ) {
@@ -39,6 +44,7 @@ public class UserController {
     }
 
     @PutMapping
+    @Operation(summary = "Atualiza um usuário", method = "PUT")
     public ResponseEntity<UserResponseDto> updateUser(
             @RequestBody UserRequestDto userToUpdate
     ) {
@@ -51,6 +57,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta um endereço", method = "DELETE")
     public ResponseEntity<Object> deleteUser(
             @PathVariable("id") Long id
     ) {

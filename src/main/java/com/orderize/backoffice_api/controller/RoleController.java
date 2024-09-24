@@ -4,6 +4,8 @@ import com.orderize.backoffice_api.dto.role.RoleRequestDto;
 import com.orderize.backoffice_api.dto.role.RoleResponseDto;
 import com.orderize.backoffice_api.model.Role;
 import com.orderize.backoffice_api.service.RoleService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("roles")
+@RequestMapping(value = "roles", produces = {"application/json"})
+@Tag(name = "/roles")
 public class RoleController {
 
     private final RoleService service;
@@ -21,6 +24,7 @@ public class RoleController {
     }
 
     @PostMapping
+    @Operation(summary = "Salva uma nova role", method = "POST")
     public ResponseEntity<RoleResponseDto> postRole(
             @RequestBody @Valid RoleRequestDto roleRequest
     ) {
@@ -29,6 +33,7 @@ public class RoleController {
     }
 
     @GetMapping
+    @Operation(summary = "Lista todas as roles", method = "GET")
     public ResponseEntity<List<RoleResponseDto>> getAllRoles() {
         List<RoleResponseDto> roles = service.getAllRoles();
         if (roles.isEmpty()) {
@@ -39,6 +44,7 @@ public class RoleController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualiza uma role", method = "PUT")
     public ResponseEntity<RoleResponseDto> putRole(
             @PathVariable Long id,
             @RequestBody @Valid RoleRequestDto role
@@ -48,6 +54,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta uma role", method = "DELETE")
     public ResponseEntity<Void> deleteRole(
             @PathVariable Long id
     ) {

@@ -2,6 +2,7 @@ package com.orderize.backoffice_api.service;
 
 import com.orderize.backoffice_api.dto.user.UserRequestDto;
 import com.orderize.backoffice_api.dto.user.UserResponseDto;
+import com.orderize.backoffice_api.exception.AlreadyExistsException;
 import com.orderize.backoffice_api.mapper.UserRequestToUser;
 import com.orderize.backoffice_api.mapper.UserToUserResponseDto;
 import com.orderize.backoffice_api.model.Address;
@@ -68,6 +69,11 @@ public class UserService implements UserDetailsService {
             enterprise = enterpriseRepository.findById(userRequest.enterprise())
                     .orElseThrow(() -> new RuntimeException("Enterprise not found"));
         }
+
+        if (repository.existsByEmail(userRequest.email())) {
+            throw new AlreadyExistsException("Já existe um usuário utilizando este email");
+        }
+
         String encryptedPassword = new BCryptPasswordEncoder().encode(userRequest.password());
         User userToSave = mapperUserRequestToUser.map(userRequest, address, enterprise);
         userToSave.setPassword(encryptedPassword);

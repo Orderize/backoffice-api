@@ -74,6 +74,10 @@ public class UserService implements UserDetailsService {
             throw new AlreadyExistsException("Já existe um usuário utilizando este email");
         }
 
+        if (repository.existsByPhone(userRequest.phone())) {
+            throw new AlreadyExistsException("Já existe um usuário utilizando este telefone");
+        }
+
         String encryptedPassword = new BCryptPasswordEncoder().encode(userRequest.password());
         User userToSave = mapperUserRequestToUser.map(userRequest, address, enterprise);
         userToSave.setPassword(encryptedPassword);

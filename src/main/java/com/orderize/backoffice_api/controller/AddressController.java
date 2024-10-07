@@ -2,6 +2,7 @@ package com.orderize.backoffice_api.controller;
 
 import com.orderize.backoffice_api.dto.address.AddressRequestDto;
 import com.orderize.backoffice_api.dto.address.AddressResponseDto;
+import com.orderize.backoffice_api.dto.viaCep.ViaCepRequestDto;
 import com.orderize.backoffice_api.service.AddressService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,8 +23,8 @@ public class AddressController {
         this.service = service;
     }
 
-    @Operation(summary = "Lista todos os endereços", method = "GET")
     @GetMapping
+    @Operation(summary = "Lista todos os endereços", method = "GET")
     public ResponseEntity<List<AddressResponseDto>> getAllAddresses() {
         List<AddressResponseDto> addresses = service.getAllAddresses();
 
@@ -32,6 +33,21 @@ public class AddressController {
         } else {
             return ResponseEntity.status(204).build();
         }
+    }
+
+    @GetMapping("/cep")
+    @Operation(
+            summary = "Busca um endereço utilizando a API ViaCep",
+            method = "GET",
+            description = "Recebe um body com o cep e o número do endereço, retorna o endereço completo buscando " +
+                    "dados na API ViaCep, retorna um id null porque o Endereço buscado não é inserido no banco"
+    )
+    public ResponseEntity<AddressResponseDto>  getAddressByViaCep(
+            @RequestBody @Valid ViaCepRequestDto request
+    ) {
+        AddressResponseDto response = service.getAddressByViaCep(request);
+
+        return ResponseEntity.status(200).body(response);
     }
 
     @PostMapping

@@ -5,27 +5,26 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.math.BigDecimal;
+
 @Entity
-public class Flavor {
+public class Drink {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private String description;
-    private String registered;
+    Long id;
+    String name;
+    String description;
+    BigDecimal price;
+    Integer milimeters;
 
-    public Flavor() {
-    }
+    public Drink() {}
 
-    public Flavor(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
-
-    public Flavor(Long id, String name, String description, String registered) {
+    public Drink(Long id, String name, String description, BigDecimal price, Integer milimeters) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.registered = registered;
+        this.price = price;
+        this.milimeters = milimeters;
     }
 
     public Long getId() {
@@ -52,12 +51,19 @@ public class Flavor {
         this.description = description;
     }
 
-    public String getRegistered() {
-        return registered;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setRegistered(String registered) {
-        this.registered = registered;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
-    
+
+    public Integer getMilimeters() {
+        return milimeters;
+    }
+
+    public void setMilimeters(Integer milimeters) {
+        this.milimeters = milimeters;
+    }
 }

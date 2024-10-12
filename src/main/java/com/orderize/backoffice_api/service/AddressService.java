@@ -1,15 +1,16 @@
 package com.orderize.backoffice_api.service;
 
-import com.orderize.backoffice_api.dto.address.AddressRequestDto;
-import com.orderize.backoffice_api.dto.address.AddressResponseDto;
-import com.orderize.backoffice_api.mapper.AddressRequestToAddress;
-import com.orderize.backoffice_api.mapper.AddressToAddressResponse;
-import com.orderize.backoffice_api.model.Address;
-import com.orderize.backoffice_api.repository.AddressRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.orderize.backoffice_api.dto.address.AddressRequestDto;
+import com.orderize.backoffice_api.dto.address.AddressResponseDto;
+import com.orderize.backoffice_api.mapper.address.AddressRequestToAddress;
+import com.orderize.backoffice_api.mapper.address.AddressToAddressResponse;
+import com.orderize.backoffice_api.model.Address;
+import com.orderize.backoffice_api.repository.AddressRepository;
 
 @Service
 public class AddressService {

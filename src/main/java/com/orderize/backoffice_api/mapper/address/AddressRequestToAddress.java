@@ -1,8 +1,10 @@
-package com.orderize.backoffice_api.mapper;
+package com.orderize.backoffice_api.mapper.address;
+
+import org.springframework.stereotype.Component;
 
 import com.orderize.backoffice_api.dto.address.AddressRequestDto;
+import com.orderize.backoffice_api.mapper.Mapper;
 import com.orderize.backoffice_api.model.Address;
-import org.springframework.stereotype.Component;
 
 @Component
 public class AddressRequestToAddress implements Mapper<AddressRequestDto, Address> {

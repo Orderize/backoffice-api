@@ -1,8 +1,10 @@
-package com.orderize.backoffice_api.mapper;
+package com.orderize.backoffice_api.mapper.role;
+
+import org.springframework.stereotype.Component;
 
 import com.orderize.backoffice_api.dto.role.RoleRequestDto;
+import com.orderize.backoffice_api.mapper.Mapper;
 import com.orderize.backoffice_api.model.Role;
-import org.springframework.stereotype.Component;
 
 @Component
 public class RoleRequestToRole implements Mapper<RoleRequestDto, Role> {

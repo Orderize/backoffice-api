@@ -1,17 +1,18 @@
 package com.orderize.backoffice_api.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.orderize.backoffice_api.dto.enterprise.EnterpriseRequestDto;
 import com.orderize.backoffice_api.dto.enterprise.EnterpriseResponseDto;
 import com.orderize.backoffice_api.exception.AlreadyExistsException;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
-import com.orderize.backoffice_api.mapper.EnterpriseRequestToEnterprise;
-import com.orderize.backoffice_api.mapper.EnterpriseToEnterpriseResponse;
+import com.orderize.backoffice_api.mapper.enterprise.EnterpriseRequestToEnterprise;
+import com.orderize.backoffice_api.mapper.enterprise.EnterpriseToEnterpriseResponse;
 import com.orderize.backoffice_api.model.Enterprise;
 import com.orderize.backoffice_api.repository.EnterpriseRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EnterpriseService {

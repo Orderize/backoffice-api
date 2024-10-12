@@ -4,7 +4,7 @@ import com.orderize.backoffice_api.dto.pizza.PizzaRequestDto;
 import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
 import com.orderize.backoffice_api.dto.pizza.FlavorResponseDto;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
-import com.orderize.backoffice_api.mapper.PizzaRequestToPizza;
+import com.orderize.backoffice_api.mapper.pizza.PizzaRequestToPizza;
 import com.orderize.backoffice_api.model.Pizza;
 import com.orderize.backoffice_api.repository.PizzaRepository;
 import org.junit.jupiter.api.BeforeEach;

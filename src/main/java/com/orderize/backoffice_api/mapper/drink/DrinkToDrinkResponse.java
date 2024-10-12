@@ -1,6 +1,7 @@
-package com.orderize.backoffice_api.mapper;
+package com.orderize.backoffice_api.mapper.drink;
 
 import com.orderize.backoffice_api.dto.drink.DrinkResponseDto;
+import com.orderize.backoffice_api.mapper.Mapper;
 import com.orderize.backoffice_api.model.Drink;
 import org.springframework.stereotype.Component;
 

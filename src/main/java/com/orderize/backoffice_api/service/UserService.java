@@ -1,23 +1,27 @@
 package com.orderize.backoffice_api.service;
 
-import com.orderize.backoffice_api.dto.user.UserRequestDto;
-import com.orderize.backoffice_api.dto.user.UserResponseDto;
-import com.orderize.backoffice_api.exception.AlreadyExistsException;
-import com.orderize.backoffice_api.mapper.UserRequestToUser;
-import com.orderize.backoffice_api.mapper.UserToUserResponseDto;
-import com.orderize.backoffice_api.model.Address;
-import com.orderize.backoffice_api.model.Enterprise;
-import com.orderize.backoffice_api.model.User;
-import com.orderize.backoffice_api.repository.AddressRepository;
-import com.orderize.backoffice_api.repository.EnterpriseRepository;
-import com.orderize.backoffice_api.repository.UserRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import com.orderize.backoffice_api.dto.user.UserRequestDto;
+import com.orderize.backoffice_api.dto.user.UserResponseDto;
+import com.orderize.backoffice_api.exception.AlreadyExistsException;
+import com.orderize.backoffice_api.mapper.user.UserRequestToUser;
+import com.orderize.backoffice_api.mapper.user.UserToUserResponseDto;
+import com.orderize.backoffice_api.model.Address;
+import com.orderize.backoffice_api.model.Enterprise;
+import com.orderize.backoffice_api.model.User;
+import com.orderize.backoffice_api.repository.AddressRepository;
+import com.orderize.backoffice_api.repository.EnterpriseRepository;
+import com.orderize.backoffice_api.repository.UserRepository;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -54,7 +58,7 @@ public class UserService implements UserDetailsService {
         if (user.isPresent()) {
             return mapperUserToUserResponse.map(user.get());
         } else {
-            return null;
+            return null; 
         }
     }
 

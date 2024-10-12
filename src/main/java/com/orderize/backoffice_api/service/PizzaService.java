@@ -1,15 +1,16 @@
 package com.orderize.backoffice_api.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.orderize.backoffice_api.dto.pizza.PizzaRequestDto;
 import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
-import com.orderize.backoffice_api.mapper.PizzaRequestToPizza;
+import com.orderize.backoffice_api.mapper.pizza.PizzaRequestToPizza;
 import com.orderize.backoffice_api.model.Pizza;
 import com.orderize.backoffice_api.repository.PizzaRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PizzaService {

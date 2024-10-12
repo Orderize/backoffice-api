@@ -1,14 +1,14 @@
-package com.orderize.backoffice_api.mapper;
+package com.orderize.backoffice_api.mapper.pizza;
 
-import com.orderize.backoffice_api.dto.pizza.FlavorResponseDto; // Importar FlavorResponseDto
-import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
-import com.orderize.backoffice_api.model.Flavor; // Importar Flavor
-import com.orderize.backoffice_api.model.Pizza;
-import org.springframework.stereotype.Component;
-
-import java.util.Collections;
-import java.util.List;
+import java.util.List; // Importar FlavorResponseDto
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component; // Importar Flavor
+
+import com.orderize.backoffice_api.dto.pizza.FlavorResponseDto;
+import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
+import com.orderize.backoffice_api.model.Flavor;
+import com.orderize.backoffice_api.model.Pizza;
 
 @Component
 public class PizzaToPizzaResponse {

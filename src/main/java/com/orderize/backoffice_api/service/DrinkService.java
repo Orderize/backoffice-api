@@ -1,17 +1,18 @@
 package com.orderize.backoffice_api.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.orderize.backoffice_api.dto.drink.DrinkRequestDto;
 import com.orderize.backoffice_api.dto.drink.DrinkResponseDto;
 import com.orderize.backoffice_api.exception.AlreadyExistsException;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
-import com.orderize.backoffice_api.mapper.DrinkRequestToDrink;
-import com.orderize.backoffice_api.mapper.DrinkToDrinkResponse;
+import com.orderize.backoffice_api.mapper.drink.DrinkRequestToDrink;
+import com.orderize.backoffice_api.mapper.drink.DrinkToDrinkResponse;
 import com.orderize.backoffice_api.model.Drink;
 import com.orderize.backoffice_api.repository.DrinkRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DrinkService {

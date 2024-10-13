@@ -1,22 +1,13 @@
 package com.orderize.backoffice_api.model;
 
-import java.util.Collection;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 public class User implements UserDetails {
@@ -42,6 +33,9 @@ public class User implements UserDetails {
             inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
     private List<Role> roles;
+
+    @OneToMany(mappedBy = "order")
+    private List<Order> orders;
 
     public User() {}
 
@@ -95,6 +89,13 @@ public class User implements UserDetails {
         this.address = address;
         this.enterprise = enterprise;
         this.roles = roles;
+    }
+
+    //construtor para controle de pedido
+    public User(Long id, String name, List<Order> orders){
+        this.id = id;
+        this.name = name;
+        this.orders = orders;
     }
 
     public Long getId() {

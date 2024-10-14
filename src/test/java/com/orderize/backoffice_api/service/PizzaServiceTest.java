@@ -1,25 +1,32 @@
 package com.orderize.backoffice_api.service;
 
-import com.orderize.backoffice_api.dto.pizza.PizzaRequestDto;
-import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
-import com.orderize.backoffice_api.dto.pizza.FlavorResponseDto;
-import com.orderize.backoffice_api.exception.ResourceNotFoundException;
-import com.orderize.backoffice_api.mapper.pizza.PizzaRequestToPizza;
-import com.orderize.backoffice_api.model.Pizza;
-import com.orderize.backoffice_api.repository.PizzaRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
+
+import com.orderize.backoffice_api.dto.flavor.FlavorResponseDto;
+import com.orderize.backoffice_api.dto.pizza.PizzaRequestDto;
+import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
+import com.orderize.backoffice_api.exception.ResourceNotFoundException;
+import com.orderize.backoffice_api.mapper.pizza.PizzaRequestDtoToPizza;
+import com.orderize.backoffice_api.mapper.pizza.PizzaToPizzaResponseDto;
+import com.orderize.backoffice_api.model.Flavor;
+import com.orderize.backoffice_api.model.Pizza;
+import com.orderize.backoffice_api.repository.FlavorRepository;
+import com.orderize.backoffice_api.repository.PizzaRepository;
 
 public class PizzaServiceTest {
 
@@ -27,10 +34,16 @@ public class PizzaServiceTest {
     private PizzaRepository pizzaRepository;
 
     @Mock
-    private PizzaRequestToPizza pizzaRequestToPizza;
+    private FlavorRepository flavorRepository;
 
     @Mock
-    private Pizza pizzaToPizzaResponse;
+    private PizzaRequestDtoToPizza pizzaRequestToPizza;
+
+    @Mock
+    private PizzaToPizzaResponseDto pizzaToPizzaResponseDto;
+
+    @Mock
+    private Flavor flavor;
 
     @InjectMocks
     private PizzaService pizzaService;
@@ -45,21 +58,24 @@ public class PizzaServiceTest {
     void testSavePizza_Success() {
         PizzaRequestDto requestDto = new PizzaRequestDto("Pepperoni", new BigDecimal("25.99"), "Delicious pizza", 1L);
         Pizza pizza = new Pizza(1L, "Pepperoni", new BigDecimal("25.99"), "Delicious pizza");
-        List<FlavorResponseDto> flavors = List.of();
+        List<FlavorResponseDto>  flavors = List.of();
         PizzaResponseDto responseDto = new PizzaResponseDto(1L, "Pepperoni", new BigDecimal("25.99"), "Delicious pizza", flavors);
 
-        when(pizzaRequestToPizza.map(requestDto)).thenReturn(pizza);
+        when(flavorRepository.findById(requestDto.flavor())).thenReturn(Optional.of(flavor));
+        when(pizzaRequestToPizza.map(requestDto, flavor)).thenReturn(pizza);
         when(pizzaRepository.save(pizza)).thenReturn(pizza);
-        when(pizzaToPizzaResponse.map(pizza)).thenReturn(responseDto);
+        when(pizzaToPizzaResponseDto.map(pizza)).thenReturn(responseDto);
 
         PizzaResponseDto result = pizzaService.savePizza(requestDto);
 
         assertEquals(1L, result.getIdPizza());
         assertEquals("Pepperoni", result.getName());
         assertEquals(flavors, result.getFlavors());
-        verify(pizzaRequestToPizza).map(requestDto);
+
+        verify(flavorRepository).findById(requestDto.flavor());
+        verify(pizzaRequestToPizza).map(requestDto, flavor);
         verify(pizzaRepository).save(pizza);
-        verify(pizzaToPizzaResponse).map(pizza);
+        verify(pizzaToPizzaResponseDto).map(pizza);
     }
 
     @Test
@@ -72,10 +88,10 @@ public class PizzaServiceTest {
         PizzaResponseDto responseDto2 = new PizzaResponseDto(2L, "Margherita", new BigDecimal("30.00"), "Classic pizza", flavors);
 
         when(pizzaRepository.findAll()).thenReturn(List.of(pizza1, pizza2));
-        when(pizzaToPizzaResponse.map(pizza1)).thenReturn(responseDto1);
-        when(pizzaToPizzaResponse.map(pizza2)).thenReturn(responseDto2);
+        when(pizzaToPizzaResponseDto.map(pizza1)).thenReturn(responseDto1);
+        when(pizzaToPizzaResponseDto.map(pizza2)).thenReturn(responseDto2);
 
-        List<PizzaResponseDto> pizzas = pizzaService.getAllPizzas(null);
+        List<PizzaResponseDto> pizzas = pizzaService.getAllPizzas();
 
         assertEquals(2, pizzas.size());
         assertEquals("Pepperoni", pizzas.get(0).getName());
@@ -92,7 +108,7 @@ public class PizzaServiceTest {
         PizzaResponseDto responseDto = new PizzaResponseDto(1L, "Pepperoni", new BigDecimal("25.99"), "Delicious pizza", flavors);
 
         when(pizzaRepository.findById(1L)).thenReturn(Optional.of(pizza));
-        when(pizzaToPizzaResponse.map(pizza)).thenReturn(responseDto);
+        when(pizzaToPizzaResponseDto.map(pizza)).thenReturn(responseDto);
 
         PizzaResponseDto result = pizzaService.getPizzaById(1L);
 
@@ -148,7 +164,7 @@ public class PizzaServiceTest {
     void testGetAllPizzas_Failure() {
         when(pizzaRepository.findAll()).thenThrow(new RuntimeException("Erro ao acessar o banco de dados"));
 
-        assertThrows(RuntimeException.class, () -> pizzaService.getAllPizzas(null));
+        assertThrows(RuntimeException.class, () -> pizzaService.getAllPizzas());
         verify(pizzaRepository).findAll();
     }
 }

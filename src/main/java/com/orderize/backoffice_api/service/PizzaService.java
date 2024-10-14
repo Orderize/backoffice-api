@@ -8,36 +8,36 @@ import org.springframework.stereotype.Service;
 import com.orderize.backoffice_api.dto.pizza.PizzaRequestDto;
 import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
-import com.orderize.backoffice_api.mapper.pizza.PizzaRequestToPizza;
+import com.orderize.backoffice_api.mapper.pizza.PizzaRequestDtoToPizza;
+import com.orderize.backoffice_api.mapper.pizza.PizzaToPizzaResponseDto;
+import com.orderize.backoffice_api.model.Flavor;
 import com.orderize.backoffice_api.model.Pizza;
+import com.orderize.backoffice_api.repository.FlavorRepository;
 import com.orderize.backoffice_api.repository.PizzaRepository;
 
 @Service
 public class PizzaService {
 
     private final PizzaRepository pizzaRepository;
-    private final PizzaRequestToPizza pizzaRequestToPizza;
-    private final Pizza pizzaToPizzaResponse;
+    private final PizzaRequestDtoToPizza pizzaRequestToPizza;
+    private final PizzaToPizzaResponseDto pizzaToPizzaResponseDto;
+    private final FlavorRepository flavorRepository;
 
-    public PizzaService(PizzaRepository pizzaRepository,
-                        PizzaRequestToPizza pizzaRequestToPizza,
-                        Pizza pizzaToPizzaResponse) {
+    public PizzaService(
+        PizzaRepository pizzaRepository, PizzaRequestDtoToPizza pizzaRequestToPizza, PizzaToPizzaResponseDto pizzaToPizzaResponseDto, FlavorRepository flavorRepository
+    ) {
         this.pizzaRepository = pizzaRepository;
         this.pizzaRequestToPizza = pizzaRequestToPizza;
-        this.pizzaToPizzaResponse = pizzaToPizzaResponse;
+        this.pizzaToPizzaResponseDto = pizzaToPizzaResponseDto;
+        this.flavorRepository = flavorRepository;
     }
 
-    public List<PizzaResponseDto> getAllPizzas(String name) {
-        List<Pizza> pizzas;
-        if (name != null && !name.isEmpty()) {
-            pizzas = pizzaRepository.findAll().stream()
-                    .filter(pizza -> pizza.getName().equalsIgnoreCase(name))
-                    .collect(Collectors.toList());
-        } else {
-            pizzas = pizzaRepository.findAll();
-        }
+    public List<PizzaResponseDto> getAllPizzas() {
+        List<Pizza> pizzas = pizzaRepository.findAll();
+        if (pizzas.isEmpty()) throw new ResourceNotFoundException("Pizza não encontrada"); 
+
         return pizzas.stream()
-                .map(pizzaToPizzaResponse::map)
+                .map(it -> pizzaToPizzaResponseDto.map(it))
                 .collect(Collectors.toList());
     }
 
@@ -45,28 +45,35 @@ public class PizzaService {
         Pizza pizza = pizzaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pizza não encontrada com ID: " + id));
 
-        return pizzaToPizzaResponse.map(pizza);
+        return pizzaToPizzaResponseDto.map(pizza);
     }
 
     public PizzaResponseDto savePizza(PizzaRequestDto requestDto) {
-        if (requestDto.getName() == null || requestDto.getPrice() == null || requestDto.getDescription() == null) {
-            throw new IllegalArgumentException("Os campos nome, preço e descrição são obrigatórios.");
+        if (requestDto.name() == null || requestDto.price() == null || requestDto.observations() == null || requestDto.flavor() == null) {
+            throw new IllegalArgumentException("Os campos nome, preço, descrição e sabor são obrigatórios.");
         }
 
-        Pizza pizza = pizzaRequestToPizza.map(requestDto);
+        Flavor flavor = flavorRepository.findById(requestDto.flavor()).get();
+
+        Pizza pizza = pizzaRequestToPizza.map(requestDto, flavor);
+
         Pizza savedPizza = pizzaRepository.save(pizza);
 
-        return pizzaToPizzaResponse.map(savedPizza);
+        return pizzaToPizzaResponseDto.map(savedPizza);
     }
 
-
-    public PizzaResponseDto updatePizza(Long id, PizzaRequestDto request) {
+    // precisa conseguir inserir sabor e tirar sabor
+    // deve permitir uma lista de sabores para adicionar ou excluir
+    public PizzaResponseDto updatePizza(Long id, PizzaRequestDto requestDto) {
         Pizza existingPizza = pizzaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pizza not found with id: " + id));
-        Pizza updatedPizza = pizzaRequestToPizza.map(request);
-        updatedPizza.setIdPizza(existingPizza.getIdPizza());
+        
+        Flavor flavor = flavorRepository.findById(requestDto.flavor()).get();
+        
+        Pizza updatedPizza = pizzaRequestToPizza.map(requestDto, existingPizza, flavor);
         pizzaRepository.save(updatedPizza);
-        return pizzaToPizzaResponse.map(updatedPizza);
+
+        return pizzaToPizzaResponseDto.map(updatedPizza);
     }
 
     public void deletePizza(Long id) {

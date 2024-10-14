@@ -3,6 +3,8 @@ package com.orderize.backoffice_api.dto.pizza;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.orderize.backoffice_api.dto.flavor.FlavorResponseDto;
+
 public class PizzaResponseDto {
     private Long idPizza;
     private String name;

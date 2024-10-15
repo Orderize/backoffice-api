@@ -67,12 +67,7 @@ public class OrderController {
             @RequestBody OrderRequestDto orderToUpdate
     ){
         OrderResponseDto order = service.updateOrder(orderToUpdate);
-        if (order != null){
-            return ResponseEntity.status(201).body(order);
-        }
-        else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.status(200).body(order);
     }
 
     @DeleteMapping

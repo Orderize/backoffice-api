@@ -23,15 +23,6 @@ public class Order {
     public Order() {
     }
 
-    public Order(User client, User responsible, String type, Double freight, Double estimativeTime) {
-        this.id = id;
-        this.client = client;
-        this.responsible = responsible;
-        this.type = type;
-        this.freight = freight;
-        this.estimativeTime = estimativeTime;
-    }
-
     public Order(Long id, User client, User responsible, String type, Double freight, Double estimativeTime) {
         this.id = id;
         this.client = client;
@@ -39,16 +30,6 @@ public class Order {
         this.type = type;
         this.freight = freight;
         this.estimativeTime = estimativeTime;
-    }
-
-    public Order(Long id, String type, Double freight, Double estimativeTime){
-        this.id = id;
-        this.type = type;
-        this.freight = freight;
-        this.estimativeTime = estimativeTime;
-    }
-
-    public Order(Long id, Long client, Long responsible, String type, Double freight, Double estimativeTime) {
     }
 
     public Long getId() {

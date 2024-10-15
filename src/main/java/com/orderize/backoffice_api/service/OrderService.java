@@ -2,6 +2,7 @@ package com.orderize.backoffice_api.service;
 
 import com.orderize.backoffice_api.dto.order.OrderRequestDto;
 import com.orderize.backoffice_api.dto.order.OrderResponseDto;
+import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.order.OrderRequestToOrder;
 import com.orderize.backoffice_api.mapper.order.OrderToOrderResponse;
 import com.orderize.backoffice_api.model.Order;
@@ -9,9 +10,7 @@ import com.orderize.backoffice_api.model.User;
 import com.orderize.backoffice_api.repository.OrderRepository;
 import com.orderize.backoffice_api.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
@@ -35,7 +34,7 @@ public class OrderService {
 
     public OrderResponseDto getOrderById(Long id){
         Order order = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
 
         return mapperOrderToOrderResponse.map(order);
     }
@@ -55,12 +54,12 @@ public class OrderService {
 
         if (orderResquest.client() != null){
             client = userRepository.findById(orderResquest.client())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                    .orElseThrow(() -> new ResourceNotFoundException("Cliente (user) não encontrado"));
         }
 
         if (orderResquest.responsible() != null){
             responsible = userRepository.findById(orderResquest.responsible())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                    .orElseThrow(() -> new ResourceNotFoundException("Responsável (user) não encontrado"));
         }
 
         Order orderToSave = mapperOrderRequestToOrder.map(orderResquest, client, responsible);
@@ -69,21 +68,20 @@ public class OrderService {
         return mapperOrderToOrderResponse.map(orderToSave);
     }
 
-    @Transactional
     public OrderResponseDto updateOrder(OrderRequestDto orderToUpdate){
         Order order = repository.findById(orderToUpdate.id())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
 
         User client = null;
         User responsible = null;
 
         if (orderToUpdate.client() != null){
             client = userRepository.findById(orderToUpdate.client())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                    .orElseThrow(() -> new ResourceNotFoundException("Cliente (user) não encontrado"));
         }
         if (orderToUpdate.responsible() != null){
             responsible = userRepository.findById(orderToUpdate.responsible())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                    .orElseThrow(() -> new ResourceNotFoundException("Responsável (user) não encontrado"));
         }
 
         Order savingOrder = mapperOrderRequestToOrder.map(orderToUpdate, client, responsible);
@@ -91,10 +89,9 @@ public class OrderService {
         return mapperOrderToOrderResponse.map(repository.save(savingOrder));
     }
 
-    @Transactional
     public void deleteOrder(Long id){
         Order order = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
 
         repository.deleteById(order.getId());
     }

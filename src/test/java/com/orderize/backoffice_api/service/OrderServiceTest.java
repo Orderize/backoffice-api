@@ -2,6 +2,7 @@ package com.orderize.backoffice_api.service;
 
 import com.orderize.backoffice_api.dto.order.OrderRequestDto;
 import com.orderize.backoffice_api.dto.order.OrderResponseDto;
+import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.order.OrderRequestToOrder;
 import com.orderize.backoffice_api.mapper.order.OrderToOrderResponse;
 import com.orderize.backoffice_api.model.Order;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,12 +46,12 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao salvar um pedido válido")
     void testSaveOrder(){
-        OrderRequestDto requestDto = new OrderRequestDto(2L, 1L, "delivery",10.5, 40.0);
-        Order order = new Order(1L, "delivery",10.5, 40.0);
-        OrderResponseDto responseDto = new OrderResponseDto(1L, 2L, 1L, "delivery",10.5, 40.0);
-
         User client = new User(2L, "Maria", new ArrayList<>());
         User responsible = new User(1L, "João", new ArrayList<>());
+
+        OrderRequestDto requestDto = new OrderRequestDto(2L, 1L, "delivery",10.5, 40.0);
+        Order order = new Order(1L, client, responsible, "delivery",10.5, 40.0);
+        OrderResponseDto responseDto = new OrderResponseDto(1L, 2L, 1L, "delivery",10.5, 40.0);
 
         when(userRepository.findById(2L)).thenReturn(Optional.of(client));
         when(userRepository.findById(1L)).thenReturn(Optional.of(responsible));
@@ -78,22 +78,23 @@ public class OrderServiceTest {
     @DisplayName("Ao salvar um pedido inválido")
     void testSaveOrder_Invalid(){
         OrderRequestDto invalidRequestDto = new OrderRequestDto(999L, 999L, null, null, null);
-        assertThrows(ResponseStatusException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             orderService.saveOrder(invalidRequestDto);
         });
+
         verify(repository, never()).save(any());
     }
 
     @Test
     @DisplayName("Ao atualizar um pedido válido")
     void testUpdateOrder_Sucess(){
-        OrderRequestDto requestDto = new OrderRequestDto(1L, 2L, 1L, "delivery",10.5, 40.0);
-        Order existingOrder = new Order(1L, "delivery",10.5, 40.0);
-        Order updatedOrder = new Order(1L, "delivery",10.5, 40.0);
-        OrderResponseDto responseDto = new OrderResponseDto(1L, 1L, 2L, "delivery",10.5, 40.0);
-
         User client = new User(2L, "Maria", new ArrayList<>());
         User responsible = new User(1L, "João", new ArrayList<>());
+
+        OrderRequestDto requestDto = new OrderRequestDto(1L, 2L, 1L, "delivery",10.5, 40.0);
+        Order existingOrder = new Order(1L, client, responsible,"delivery",10.5, 40.0);
+        Order updatedOrder = new Order(1L, client, responsible, "delivery",10.5, 40.0);
+        OrderResponseDto responseDto = new OrderResponseDto(1L, 1L, 2L, "delivery",10.5, 40.0);
 
         when(repository.findById(1L)).thenReturn(Optional.of(existingOrder));
         when(userRepository.findById(2L)).thenReturn(Optional.of(client)); // Mock do cliente
@@ -118,10 +119,11 @@ public class OrderServiceTest {
         OrderRequestDto requestDto = new OrderRequestDto(1L, 2L, 1L, "delivery",10.5, 40.0);
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResponseStatusException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             orderService.updateOrder(requestDto);
         });
 
+        assertEquals("Pedido não encontrado", exception.getMessage());
         verify(repository).findById(1L);
         verify(repository, never()).save(any());
     }
@@ -129,7 +131,10 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao deletar um pedido válido")
     void testDeleteOrder_Sucess(){
-        Order existingOrder = new Order(1L, "delivery", 10.5, 40.0);
+        User client = new User(2L, "Maria", new ArrayList<>());
+        User responsible = new User(1L, "João", new ArrayList<>());
+        Order existingOrder = new Order(1L, client, responsible,"delivery", 10.5, 40.0);
+
         when(repository.findById(1L)).thenReturn(Optional.of(existingOrder));
         orderService.deleteOrder(1L);
 
@@ -142,10 +147,11 @@ public class OrderServiceTest {
     void testDeleteOrder_NotFound(){
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResponseStatusException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             orderService.deleteOrder(1L);
         });
 
+        assertEquals("Pedido não encontrado", exception.getMessage());
         verify(repository).findById(1L);
         verify(repository, never()).save(any());
     }
@@ -153,7 +159,9 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao buscar um pedido pelo ID com sucesso")
     void testGetOrderById_Sucess(){
-        Order order = new Order(1L, "delivery",10.5, 40.0);
+        User client = new User(2L, "Maria", new ArrayList<>());
+        User responsible = new User(1L, "João", new ArrayList<>());
+        Order order = new Order(1L, client, responsible, "delivery",10.5, 40.0);
         OrderResponseDto responseDto = new OrderResponseDto(1L, 2L, 1L, "delivery",10.5, 40.0);
 
         when(repository.findById(1L)).thenReturn(Optional.of(order));
@@ -171,18 +179,22 @@ public class OrderServiceTest {
     void testGetOrderById_NotFound(){
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResponseStatusException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             orderService.getOrderById(1L);
         });
 
+        assertEquals("Pedido não encontrado", exception.getMessage());
         verify(repository).findById(1L);
     }
 
     @Test
     @DisplayName("Ao buscar todos os pedidos")
     void testGetAllOrders_Sucess() {
-        Order order1 = new Order(1L, "delivery", 10.5, 40.0);
-        Order order2 = new Order(2L, "saloon", 12.0, 45.0);
+        User client = new User(2L, "Maria", new ArrayList<>());
+        User responsible = new User(1L, "João", new ArrayList<>());
+
+        Order order1 = new Order(1L, client, responsible, "delivery", 10.5, 40.0);
+        Order order2 = new Order(2L, client, responsible,"saloon", 12.0, 45.0);
         OrderResponseDto responseDto1 = new OrderResponseDto(1L, 2L, 1L, "delivery", 10.5, 40.0);
         OrderResponseDto responseDto2 = new OrderResponseDto(1L, 3L, 1L, "saloon", 12.0, 45.0);
 

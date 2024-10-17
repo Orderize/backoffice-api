@@ -15,4 +15,14 @@ public class FlavorRequestToFlavor implements Mapper<FlavorRequestDto, Flavor> {
                 flavorRequestDto.description()
         );
     }
+
+    public Flavor map(Flavor flavor, FlavorRequestDto flavorRequestDto) {
+        return new Flavor(
+            flavorRequestDto.name(),
+            flavorRequestDto.description() != null ? flavorRequestDto.description() : flavor.getDescription(),
+            flavor.getRegistered(),
+            flavor.getIngredients(),
+            flavor.getPizzas()
+        );
+    }
 }

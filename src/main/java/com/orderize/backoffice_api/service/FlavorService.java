@@ -10,7 +10,7 @@ import com.orderize.backoffice_api.dto.flavor.FlavorResponseDto;
 import com.orderize.backoffice_api.exception.AlreadyExistsException;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.flavor.FlavorRequestToFlavor;
-import com.orderize.backoffice_api.mapper.flavor.FlavorToFlavorResponse;
+import com.orderize.backoffice_api.mapper.flavor.FlavorToFlavorResponseDto;
 import com.orderize.backoffice_api.model.Flavor;
 import com.orderize.backoffice_api.repository.FlavorRepository;
 
@@ -19,9 +19,9 @@ public class FlavorService {
 
     private final FlavorRepository repository;
     private final FlavorRequestToFlavor mapperRequestToEntity;
-    private final FlavorToFlavorResponse mapperEntityToResponse;
+    private final FlavorToFlavorResponseDto mapperEntityToResponse;
 
-    public FlavorService(FlavorRepository repository, FlavorRequestToFlavor mapperRequestToEntity, FlavorToFlavorResponse mapperEntityToResponse) {
+    public FlavorService(FlavorRepository repository, FlavorRequestToFlavor mapperRequestToEntity, FlavorToFlavorResponseDto mapperEntityToResponse) {
         this.repository = repository;
         this.mapperRequestToEntity = mapperRequestToEntity;
         this.mapperEntityToResponse = mapperEntityToResponse;
@@ -40,7 +40,7 @@ public class FlavorService {
         if (possibleFlavor.isPresent()) {
             return mapperEntityToResponse.map(possibleFlavor.get());
         } else {
-            throw new ResourceNotFoundException("Sabor não encontrada");
+            throw new ResourceNotFoundException("Sabor não encontrado");
         }
     }
 
@@ -49,7 +49,7 @@ public class FlavorService {
         Flavor flavorToSave = mapperRequestToEntity.map(request);
 
         if (repository.existsByName(flavorToSave.getName())) {
-            throw new AlreadyExistsException("Já existe uma sabor com este nome");
+            throw new AlreadyExistsException("Já existe um sabor com este nome");
         }
 
         Flavor savedFlavor = repository.save(flavorToSave);
@@ -57,11 +57,12 @@ public class FlavorService {
     }
 
     public FlavorResponseDto updateFlavor(Long id, FlavorRequestDto request) {
-        if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Sabor não encontrada");
+        Optional<Flavor> optionalFlavor = repository.findById(id);
+        if (optionalFlavor.isEmpty()) {
+            throw new ResourceNotFoundException("Sabor não encontrado");
         }
 
-        Flavor flavorToSave = mapperRequestToEntity.map(request);
+        Flavor flavorToSave = mapperRequestToEntity.map(optionalFlavor.get(), request);
         flavorToSave.setId(id);
 
         Flavor updatedFlavor = repository.save(flavorToSave);
@@ -70,7 +71,7 @@ public class FlavorService {
 
     public void deleteFlavor(Long id) {
         if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Sabor não encontrada");
+            throw new ResourceNotFoundException("Sabor não encontrado");
         }
 
         repository.deleteById(id);

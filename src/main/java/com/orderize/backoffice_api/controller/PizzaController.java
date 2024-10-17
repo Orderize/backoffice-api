@@ -26,14 +26,10 @@ public class PizzaController {
     @Operation(
             summary = "Busca todas as pizzas",
             method = "GET",
-            description = "Pode receber os request param opcionais: [name]" +
-                    " e filtra o resultado com base nos request param " +
-                    "passados, caso nenhum seja passado retorna uma lista com todas as pizzas."
+            description = "Retorna uma lista com todas as pizzas."
     )
-    public ResponseEntity<List<PizzaResponseDto>> getAllPizzas(
-            @RequestParam(value = "name", required = false) String name
-    ) {
-        List<PizzaResponseDto> pizzas = service.getAllPizzas(name);
+    public ResponseEntity<List<PizzaResponseDto>> getAllPizzas() {
+        List<PizzaResponseDto> pizzas = service.getAllPizzas();
 
         if (pizzas.isEmpty()) {
             return ResponseEntity.status(204).build();

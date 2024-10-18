@@ -9,9 +9,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record PromotionRequestDto(
-        @NotNull @NotBlank
+        @NotBlank
         String name,
-        @NotNull @NotBlank
+        @NotBlank
         String description,
         @NotNull
         BigDecimal discountValue,

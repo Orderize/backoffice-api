@@ -1,7 +1,5 @@
 package com.orderize.backoffice_api.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -13,13 +11,13 @@ public class PromotionCondition {
     @EmbeddedId
     private PromotionConditionId id;
 
-    @ManyToOne // Adicione esta anotação
-    @MapsId("fkPromotion") // Isso liga o id fkPromotion ao campo da classe
+    @ManyToOne
+    @MapsId("fkPromotion")
     @JoinColumn(name = "fk_promotion")
-    private Promotion promotion; // Propriedade de referência
+    private Promotion promotion;
 
-    @ManyToOne // Adicione esta anotação
-    @MapsId("fkConditionType") // Isso liga o id fkPromotion ao campo da classe
+    @ManyToOne
+    @MapsId("fkConditionType")
     @JoinColumn(name = "fk_condition_type")
     private ConditionType conditionType;
 

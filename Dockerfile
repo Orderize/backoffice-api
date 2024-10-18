@@ -20,7 +20,7 @@ COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-ENV SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/SEU_DATABASE
+ENV SPRING_DATASOURCE_URL=jdbc:mariadb://container-mariadb:3306/orderize
 ENV SPRING_DATASOURCE_USERNAME=root
 ENV SPRING_DATASOURCE_PASSWORD=1234
 

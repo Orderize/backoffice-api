@@ -1,4 +1,4 @@
-package com.orderize.backoffice_api.web;
+package com.orderize.backoffice_api.config.web;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

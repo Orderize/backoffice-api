@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.orderize.backoffice_api.dto.flavor.FlavorRequestDto;
@@ -43,6 +44,18 @@ public class FlavorController {
         if (flavors.isEmpty()) {
             return ResponseEntity.status(204).build();
         }
+        return ResponseEntity.status(200).body(flavors);
+    }
+
+    @GetMapping("/pop")
+    @Operation(summary = "Busca todos os sabores por popularidade", method = "GET")
+    public ResponseEntity<List<FlavorResponseDto>> getAllFlavorsByPop(@RequestParam String value) {
+        List<FlavorResponseDto> flavors = service.getAllFlavorsByPop(value);
+        
+        if (flavors.isEmpty()) {
+            return ResponseEntity.status(204).build();
+        } 
+        
         return ResponseEntity.status(200).body(flavors);
     }
 

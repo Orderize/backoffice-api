@@ -33,6 +33,15 @@ public class FlavorService {
         return allFlavors.stream().map(it -> mapperEntityToResponse.map(it)).toList();
     }
 
+    public List<FlavorResponseDto> getAllFlavorsByPop(String value) {
+        List<Flavor> flavors = repository.findByPopularity();
+
+        if (!value.isBlank()) {
+            flavors = flavors.stream().filter(it -> it.getId().toString().contains(value) || it.getName().toLowerCase().contains(value.toLowerCase())).toList();
+        };
+
+        return flavors.stream().map(it -> mapperEntityToResponse.map(it)).toList();
+    }
 
     public FlavorResponseDto getFlavorById(Long id) {
         Optional<Flavor> possibleFlavor = repository.findById(id);
@@ -63,7 +72,6 @@ public class FlavorService {
         }
 
         Flavor flavorToSave = mapperRequestToEntity.map(optionalFlavor.get(), request);
-        flavorToSave.setId(id);
 
         Flavor updatedFlavor = repository.save(flavorToSave);
         return mapperEntityToResponse.map(updatedFlavor);

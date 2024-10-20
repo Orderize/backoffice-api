@@ -1,16 +1,17 @@
 package com.orderize.backoffice_api.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.orderize.backoffice_api.dto.role.RoleRequestDto;
 import com.orderize.backoffice_api.dto.role.RoleResponseDto;
 import com.orderize.backoffice_api.exception.AlreadyExistsException;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
-import com.orderize.backoffice_api.mapper.RoleRequestToRole;
-import com.orderize.backoffice_api.mapper.RoleToRoleResponse;
+import com.orderize.backoffice_api.mapper.role.RoleRequestToRole;
+import com.orderize.backoffice_api.mapper.role.RoleToRoleResponse;
 import com.orderize.backoffice_api.model.Role;
 import com.orderize.backoffice_api.repository.RoleRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class RoleService {

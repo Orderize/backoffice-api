@@ -75,7 +75,7 @@ public class UserController {
     ) {
         UserResponseDto user = service.updateUser(userToUpdate);
         if (user != null) {
-            return ResponseEntity.status(201).body(user);
+            return ResponseEntity.status(200).body(user);
         } else {
             return ResponseEntity.notFound().build();
         }

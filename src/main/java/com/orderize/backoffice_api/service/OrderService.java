@@ -6,30 +6,65 @@ import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.order.OrderRequestToOrder;
 import com.orderize.backoffice_api.mapper.order.OrderToOrderResponse;
 import com.orderize.backoffice_api.model.Order;
+import com.orderize.backoffice_api.model.OrderDrink;
+import com.orderize.backoffice_api.model.OrderPizza;
 import com.orderize.backoffice_api.model.User;
+import com.orderize.backoffice_api.repository.OrderDrinkRepository;
+import com.orderize.backoffice_api.repository.OrderPizzaRepository;
 import com.orderize.backoffice_api.repository.OrderRepository;
 import com.orderize.backoffice_api.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public class OrderService {
     private final OrderRepository repository;
+    private final OrderPizzaRepository orderPizzaRepository;
+    private final OrderDrinkRepository orderDrinkRepository;
     private final UserRepository userRepository;
     private final OrderToOrderResponse mapperOrderToOrderResponse;
     private final OrderRequestToOrder mapperOrderRequestToOrder;
 
     public OrderService(
             OrderRepository repository,
+            OrderPizzaRepository orderPizzaRepository,
+            OrderDrinkRepository orderDrinkRepository,
             UserRepository userRepository,
             OrderToOrderResponse mapperOrderToOrderResponse,
             OrderRequestToOrder mapperOrderRequestToOrder
     ){
         this.repository = repository;
+        this.orderPizzaRepository = orderPizzaRepository;
+        this.orderDrinkRepository = orderDrinkRepository;
         this.userRepository = userRepository;
         this.mapperOrderToOrderResponse = mapperOrderToOrderResponse;
         this.mapperOrderRequestToOrder = mapperOrderRequestToOrder;
+    }
+
+    public OrderResponseDto calculateOrderPrices(Long id){
+        Order order = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
+
+        Double grossTotal = 0;
+        Double netTotal = 0;
+
+        List<OrderPizza> pizzas = orderPizzaRepository.findByOrderId(id);
+        for (OrderPizza pizza : pizzas){
+            grossTotal += pizza.getGrossPrice() * pizza.getQuantity();
+            netTotal += pizza.getNetPrice() * pizza.getQuantity();
+        }
+
+        List<OrderDrink> drinks = orderDrinkRepository.findByOrderId(id);
+        for (OrderDrink drink : drinks){
+            grossTotal += drink.getGrossPrice() * drink.getQuantity();
+            netTotal += drink.getNetPrice() * drink.getQuantity();
+        }
+
+        netTotal += order.getFreight();
+        order.setGrossPrice(grossTotal);
+        order.setNetPrice(netTotal);
+
+        return mapperOrderToOrderResponse.map(repository.save(order));
     }
 
     public OrderResponseDto getOrderById(Long id){
@@ -47,7 +82,6 @@ public class OrderService {
         return orders.stream().map(it -> mapperOrderToOrderResponse.map(it)).toList();
     }
 
-    @Transactional
     public OrderResponseDto saveOrder(OrderRequestDto orderResquest){
         User client = null;
         User responsible = null;
@@ -63,7 +97,9 @@ public class OrderService {
         }
 
         Order orderToSave = mapperOrderRequestToOrder.map(orderResquest, client, responsible);
-        repository.save(orderToSave);
+        Order savedOrder = repository.save(orderToSave);
+
+        calculateOrderPrices(savedOrder.getId());
 
         return mapperOrderToOrderResponse.map(orderToSave);
     }

@@ -42,7 +42,7 @@ public class OrderController {
             "filtrando o resultado com base no request param passado,"+
             "e caso nenhum seja passado retorna uma list com todos os pedidos.")
     public ResponseEntity<List<OrderResponseDto>> getAllOrders(
-            @RequestParam String type
+            @RequestParam(required = false) String type
     ){
         List<OrderResponseDto> orders = service.getAllOrders(type);
         if (orders.isEmpty()){
@@ -52,8 +52,8 @@ public class OrderController {
         }
     }
 
-    @PostMapping("/{id}")
-    @Operation(summary = "Salva um novo usuário", method = "POST")
+    @PostMapping
+    @Operation(summary = "Salva um novo pedido", method = "POST")
     public ResponseEntity<OrderResponseDto> saveOrder(
             @RequestBody @Valid OrderRequestDto orderResquest
     ){
@@ -70,7 +70,7 @@ public class OrderController {
         return ResponseEntity.status(200).body(order);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @Operation(summary = "Deleta um pedido", method = "DELETE")
     public ResponseEntity<Void> deleteOrder(
             @PathVariable("id") Long id

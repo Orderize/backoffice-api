@@ -16,8 +16,11 @@ public class OrderToOrderResponse implements Mapper<Order, OrderResponseDto> {
                 order.getId(),
                 order.getClient().getId(),
                 order.getResponsible().getId(),
+                order.getDatetime_order(),
                 order.getType(),
                 order.getFreight(),
-                order.getEstimativeTime());
+                order.getEstimativeTime(),
+                order.getGrossPrice(),
+                order.getNetPrice());
     }
 }

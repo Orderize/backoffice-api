@@ -15,9 +15,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -49,9 +53,9 @@ public class OrderServiceTest {
         User client = new User(2L, "Maria", new ArrayList<>());
         User responsible = new User(1L, "João", new ArrayList<>());
 
-        OrderRequestDto requestDto = new OrderRequestDto(2L, 1L, "delivery",10.5, 40.0);
-        Order order = new Order(1L, client, responsible, "delivery",10.5, 40.0);
-        OrderResponseDto responseDto = new OrderResponseDto(1L, 2L, 1L, "delivery",10.5, 40.0);
+        OrderRequestDto requestDto = new OrderRequestDto(2L, 1L, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
+        Order order = new Order(1L, client, responsible, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
+        OrderResponseDto responseDto = new OrderResponseDto(1L, 2L, 1L, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
 
         when(userRepository.findById(2L)).thenReturn(Optional.of(client));
         when(userRepository.findById(1L)).thenReturn(Optional.of(responsible));
@@ -66,8 +70,8 @@ public class OrderServiceTest {
         assertEquals(2L, result.client());
         assertEquals(1L, result.responsible());
         assertEquals("delivery", result.type());
-        assertEquals(10.5, result.freight());
-        assertEquals(40.0, result.estimativeTime());
+        assertEquals(5.5, result.freight());
+        assertEquals(45.0, result.estimativeTime());
 
         verify(mapperRequestToEntity).map(requestDto, client, responsible);
         verify(repository).save(order);
@@ -77,7 +81,7 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao salvar um pedido inválido")
     void testSaveOrder_Invalid(){
-        OrderRequestDto invalidRequestDto = new OrderRequestDto(999L, 999L, null, null, null);
+        OrderRequestDto invalidRequestDto = new OrderRequestDto(999L, 999L, null, null, null, null, null, null);
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             orderService.saveOrder(invalidRequestDto);
         });
@@ -91,13 +95,13 @@ public class OrderServiceTest {
         User client = new User(2L, "Maria", new ArrayList<>());
         User responsible = new User(1L, "João", new ArrayList<>());
 
-        OrderRequestDto requestDto = new OrderRequestDto(1L, 2L, 1L, "delivery",10.5, 40.0);
-        Order existingOrder = new Order(1L, client, responsible,"delivery",10.5, 40.0);
-        Order updatedOrder = new Order(1L, client, responsible, "delivery",10.5, 40.0);
-        OrderResponseDto responseDto = new OrderResponseDto(1L, 1L, 2L, "delivery",10.5, 40.0);
+        OrderRequestDto requestDto = new OrderRequestDto(1L, 2L, 1L, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
+        Order existingOrder = new Order(1L, client, responsible, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
+        Order updatedOrder = new Order(1L, client, responsible, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
+        OrderResponseDto responseDto = new OrderResponseDto(1L, 1L, 2L, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
 
         when(repository.findById(1L)).thenReturn(Optional.of(existingOrder));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(client)); // Mock do cliente
+        when(userRepository.findById(2L)).thenReturn(Optional.of(client));
         when(userRepository.findById(1L)).thenReturn(Optional.of(responsible));
 
         when(mapperRequestToEntity.map(requestDto, client, responsible)).thenReturn(updatedOrder);
@@ -116,7 +120,7 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao atualizar um pedido que não existe")
     void testUpdateOrder_NotFound(){
-        OrderRequestDto requestDto = new OrderRequestDto(1L, 2L, 1L, "delivery",10.5, 40.0);
+        OrderRequestDto requestDto = new OrderRequestDto(1L, 2L, 1L, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
@@ -133,7 +137,7 @@ public class OrderServiceTest {
     void testDeleteOrder_Sucess(){
         User client = new User(2L, "Maria", new ArrayList<>());
         User responsible = new User(1L, "João", new ArrayList<>());
-        Order existingOrder = new Order(1L, client, responsible,"delivery", 10.5, 40.0);
+        Order existingOrder = new Order(1L, client, responsible, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
 
         when(repository.findById(1L)).thenReturn(Optional.of(existingOrder));
         orderService.deleteOrder(1L);
@@ -161,8 +165,8 @@ public class OrderServiceTest {
     void testGetOrderById_Sucess(){
         User client = new User(2L, "Maria", new ArrayList<>());
         User responsible = new User(1L, "João", new ArrayList<>());
-        Order order = new Order(1L, client, responsible, "delivery",10.5, 40.0);
-        OrderResponseDto responseDto = new OrderResponseDto(1L, 2L, 1L, "delivery",10.5, 40.0);
+        Order order = new Order(1L, client, responsible, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
+        OrderResponseDto responseDto = new OrderResponseDto(1L, 2L, 1L, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
 
         when(repository.findById(1L)).thenReturn(Optional.of(order));
         when(mapperEntityToResponse.map(order)).thenReturn(responseDto);
@@ -193,10 +197,10 @@ public class OrderServiceTest {
         User client = new User(2L, "Maria", new ArrayList<>());
         User responsible = new User(1L, "João", new ArrayList<>());
 
-        Order order1 = new Order(1L, client, responsible, "delivery", 10.5, 40.0);
-        Order order2 = new Order(2L, client, responsible,"saloon", 12.0, 45.0);
-        OrderResponseDto responseDto1 = new OrderResponseDto(1L, 2L, 1L, "delivery", 10.5, 40.0);
-        OrderResponseDto responseDto2 = new OrderResponseDto(1L, 3L, 1L, "saloon", 12.0, 45.0);
+        Order order1 = new Order(1L, client, responsible, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
+        Order order2 = new Order(2L, client, responsible, Timestamp.valueOf(LocalDateTime.of(2024, 10, 26, 19, 00)), "saloon",10.0, 60.0, 60.00, 55.0);
+        OrderResponseDto responseDto1 = new OrderResponseDto(1L, 2L, 1L, Timestamp.valueOf(LocalDateTime.of(2024, 10, 18, 20, 30)), "delivery",5.50, 45.0, 50.00, 45.0);
+        OrderResponseDto responseDto2 = new OrderResponseDto(1L, 3L, 1L, Timestamp.valueOf(LocalDateTime.of(2024, 10, 26, 19, 00)), "saloon",10.0, 60.0, 60.00, 55.0);
 
         when(repository.findAll()).thenReturn(List.of(order1, order2));
         when(mapperEntityToResponse.map(order1)).thenReturn(responseDto1);

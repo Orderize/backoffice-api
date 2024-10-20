@@ -13,9 +13,12 @@ public class OrderRequestToOrder {
                 null,
                 client,
                 responsible,
+                orderRequestDto.datetime_order(),
                 orderRequestDto.type(),
                 orderRequestDto.freight(),
-                orderRequestDto.estimativeTime()
+                orderRequestDto.estimativeTime(),
+                orderRequestDto.grossPrice(),
+                orderRequestDto.netPrice()
         );
     }
 }

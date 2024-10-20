@@ -19,6 +19,7 @@ public class Flavor {
     private Long id;
     private String name;
     private String description;
+    private Double price;
     private LocalDate registered;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -36,25 +37,28 @@ public class Flavor {
     public Flavor() {
     }
 
-    public Flavor(String name, String description) {
+    public Flavor(String name, String description, Double price) {
         this.name = name;
         this.description = description;
+        this.price = price;
     }
 
-    public Flavor(Long id, String name, String description, LocalDate registered, List<Ingredient> ingredients) {
+    public Flavor(Long id, String name, String description, Double price, LocalDate registered, List<Ingredient> ingredients, List<Pizza> pizzas) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.registered = registered;
-        this.ingredients = ingredients;
-    }
-
-    public Flavor(String name, String description, LocalDate registered, List<Ingredient> ingredients, List<Pizza> pizzas) {
-        this.name = name;
-        this.description = description;
+        this.price = price;
         this.registered = registered;
         this.ingredients = ingredients;
         this.pizzas = pizzas;
+    }
+
+    public Flavor(String name, String description, Double price, LocalDate registered, List<Ingredient> ingredients) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.registered = registered;
+        this.ingredients = ingredients;
     }
 
     public Long getId() {
@@ -79,6 +83,14 @@ public class Flavor {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public LocalDate getRegistered() {

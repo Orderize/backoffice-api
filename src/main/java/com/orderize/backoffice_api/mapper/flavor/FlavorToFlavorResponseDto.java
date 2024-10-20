@@ -24,6 +24,7 @@ public class FlavorToFlavorResponseDto {
                 flavor.getId(),
                 flavor.getName(),
                 flavor.getDescription(),
+                flavor.getPrice(),
                 flavor.getRegistered(),
                 flavor.getIngredients().stream().map(it -> ingredientToIngredientResponseDto.map(it)).collect(Collectors.toList())
         );
@@ -34,6 +35,7 @@ public class FlavorToFlavorResponseDto {
                 flavor.getId(),
                 flavor.getName(),
                 flavor.getDescription(),
+                flavor.getPrice(),
                 flavor.getRegistered(),
                 ingredients.stream().map(it -> ingredientToIngredientResponseDto.map(it)).collect(Collectors.toList())
         );

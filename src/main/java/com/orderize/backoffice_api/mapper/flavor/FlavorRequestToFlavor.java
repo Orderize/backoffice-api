@@ -12,14 +12,17 @@ public class FlavorRequestToFlavor implements Mapper<FlavorRequestDto, Flavor> {
     public Flavor map(FlavorRequestDto flavorRequestDto) {
         return new Flavor(
                 flavorRequestDto.name(),
-                flavorRequestDto.description()
+                flavorRequestDto.description(),
+                flavorRequestDto.price()
         );
     }
 
     public Flavor map(Flavor flavor, FlavorRequestDto flavorRequestDto) {
         return new Flavor(
+            flavor.getId(),
             flavorRequestDto.name(),
             flavorRequestDto.description() != null ? flavorRequestDto.description() : flavor.getDescription(),
+            flavorRequestDto.price(),
             flavor.getRegistered(),
             flavor.getIngredients(),
             flavor.getPizzas()

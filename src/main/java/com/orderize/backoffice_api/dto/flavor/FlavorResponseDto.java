@@ -9,6 +9,7 @@ public record FlavorResponseDto (
     Long id,
     String name,
     String description,
+    Double price,
     LocalDate registered,
     List<IngredientResponseDto> ingredients
 ) {

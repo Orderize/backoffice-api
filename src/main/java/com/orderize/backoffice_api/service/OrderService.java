@@ -1,54 +1,68 @@
-package com.orderize.backoffice_api.service;
+package com.orderize.backoffice_api.service.order;
 
+import com.orderize.backoffice_api.dto.drink.DrinkResponseDto;
 import com.orderize.backoffice_api.dto.order.OrderRequestDto;
 import com.orderize.backoffice_api.dto.order.OrderResponseDto;
+import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
+import com.orderize.backoffice_api.dto.user.UserResponseDto;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.order.OrderRequestToOrder;
 import com.orderize.backoffice_api.mapper.order.OrderToOrderResponse;
 import com.orderize.backoffice_api.model.Order;
 import com.orderize.backoffice_api.model.OrderDrink;
 import com.orderize.backoffice_api.model.OrderPizza;
+import com.orderize.backoffice_api.model.Pizza;
 import com.orderize.backoffice_api.model.User;
-import com.orderize.backoffice_api.repository.OrderDrinkRepository;
-import com.orderize.backoffice_api.repository.OrderPizzaRepository;
-import com.orderize.backoffice_api.repository.OrderRepository;
-import com.orderize.backoffice_api.repository.UserRepository;
+import com.orderize.backoffice_api.repository.drink.DrinkRepository;
+import com.orderize.backoffice_api.repository.order.OrderDrinkRepository;
+import com.orderize.backoffice_api.repository.order.OrderPizzaRepository;
+import com.orderize.backoffice_api.repository.order.OrderRepository;
+import com.orderize.backoffice_api.repository.pizza.PizzaRepository;
+import com.orderize.backoffice_api.repository.user.UserRepository;
+import com.orderize.backoffice_api.service.drink.DrinkService;
+import com.orderize.backoffice_api.service.pizza.PizzaService;
+import com.orderize.backoffice_api.service.user.UserService;
+
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
     private final OrderRepository repository;
-    private final OrderPizzaRepository orderPizzaRepository;
-    private final OrderDrinkRepository orderDrinkRepository;
-    private final UserRepository userRepository;
     private final OrderToOrderResponse mapperOrderToOrderResponse;
     private final OrderRequestToOrder mapperOrderRequestToOrder;
 
+    private final UserService userService;
+    private final PizzaService pizzaService;
+    private final DrinkService drinkService;
+
     public OrderService(
             OrderRepository repository,
-            OrderPizzaRepository orderPizzaRepository,
-            OrderDrinkRepository orderDrinkRepository,
-            UserRepository userRepository,
             OrderToOrderResponse mapperOrderToOrderResponse,
-            OrderRequestToOrder mapperOrderRequestToOrder
+            OrderRequestToOrder mapperOrderRequestToOrder,
+            UserService userService,
+            PizzaService pizzaService,
+            DrinkService drinkService
     ){
         this.repository = repository;
-        this.orderPizzaRepository = orderPizzaRepository;
-        this.orderDrinkRepository = orderDrinkRepository;
-        this.userRepository = userRepository;
         this.mapperOrderToOrderResponse = mapperOrderToOrderResponse;
         this.mapperOrderRequestToOrder = mapperOrderRequestToOrder;
+        this.userService = userService;
+        this.pizzaService = pizzaService;
+        this.drinkService = drinkService;
     }
 
     public OrderResponseDto calculateOrderPrices(Long id){
         Order order = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
 
-        Double grossTotal = 0;
-        Double netTotal = 0;
+        Double grossTotal = 0.;
+        Double netTotal = 0.;
 
-        List<OrderPizza> pizzas = orderPizzaRepository.findByOrderId(id);
+        // tenho que pegar todas as pizzas com os ids/ pega o valor de todas as pizzas que retornar
+        Optional<Pizza> pizzas = pizzas.findById(id);
+
         for (OrderPizza pizza : pizzas){
             grossTotal += pizza.getGrossPrice() * pizza.getQuantity();
             netTotal += pizza.getNetPrice() * pizza.getQuantity();
@@ -77,24 +91,21 @@ public class OrderService {
     public List<OrderResponseDto> getAllOrders(String type){
         List<Order> orders = repository.findAll();
         if (type != null && !type.isBlank()){
-            orders = orders.stream().filter(it -> it.getType().equals(type)).toList();
+            orders = orders.stream().filter(it -> it.getType().toLowerCase().contains(type.toLowerCase())).toList();
         }
         return orders.stream().map(it -> mapperOrderToOrderResponse.map(it)).toList();
     }
 
     public OrderResponseDto saveOrder(OrderRequestDto orderResquest){
-        User client = null;
-        User responsible = null;
+        UserResponseDto client = userService.getUserById(orderResquest.client());
+        UserResponseDto responsible = userService.getUserById(orderResquest.responsible());
 
-        if (orderResquest.client() != null){
-            client = userRepository.findById(orderResquest.client())
-                    .orElseThrow(() -> new ResourceNotFoundException("Cliente (user) não encontrado"));
-        }
+        // List<Pizza> pizzas = repository.findPizzasById(orderResquest);
+        List<PizzaResponseDto> pizzas = pizzaService.getAllPizzas(orderResquest.pizzas());
+        List<DrinkResponseDto> drinks = drinkService.getAllDrinks(orderResquest.drinks()); 
 
-        if (orderResquest.responsible() != null){
-            responsible = userRepository.findById(orderResquest.responsible())
-                    .orElseThrow(() -> new ResourceNotFoundException("Responsável (user) não encontrado"));
-        }
+
+        /// REFATORAR PARA QUE AS SERVICES RETORNEM OBJETO ENTITY AO INVÉS DE DTO, PARA SEREM REUTILIZADAS AS SERVICES
 
         Order orderToSave = mapperOrderRequestToOrder.map(orderResquest, client, responsible);
         Order savedOrder = repository.save(orderToSave);

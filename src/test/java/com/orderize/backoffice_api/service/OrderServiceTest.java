@@ -7,8 +7,10 @@ import com.orderize.backoffice_api.mapper.order.OrderRequestToOrder;
 import com.orderize.backoffice_api.mapper.order.OrderToOrderResponse;
 import com.orderize.backoffice_api.model.Order;
 import com.orderize.backoffice_api.model.User;
-import com.orderize.backoffice_api.repository.OrderRepository;
-import com.orderize.backoffice_api.repository.UserRepository;
+import com.orderize.backoffice_api.repository.order.OrderRepository;
+import com.orderize.backoffice_api.repository.user.UserRepository;
+import com.orderize.backoffice_api.service.order.OrderService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

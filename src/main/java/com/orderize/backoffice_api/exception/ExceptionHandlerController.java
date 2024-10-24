@@ -53,4 +53,15 @@ public class ExceptionHandlerController {
         );
     }
 
+    @ExceptionHandler(InvalidTimeIntervalException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidTimeIntervalException(InvalidTimeIntervalException exception, HttpServletRequest request) {
+        return new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
+
 }

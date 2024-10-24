@@ -3,6 +3,7 @@ package com.orderize.backoffice_api.model;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 public class Order {
@@ -18,7 +19,30 @@ public class Order {
     @JoinColumn(name = "responsible")
     private User responsible;
 
-    private Timestamp datetime_order;
+    @ManyToMany(
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL
+    )
+    @JoinTable(
+        name = "order_pizza", 
+        joinColumns = @JoinColumn(name = "order_id"), 
+        inverseJoinColumns = @JoinColumn(name = "pizza_id")
+    )
+    private List<Pizza> pizzas;
+
+    @ManyToMany(
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL
+    )
+    @JoinTable(
+        name = "order_drink", 
+        joinColumns = @JoinColumn(name = "order_id"), 
+        inverseJoinColumns = @JoinColumn(name = "drink_id")
+    )
+    private List<Drink> drinks;
+
+
+    private Timestamp datetime;
     private String type;
     private Double freight;
     private Double estimativeTime;
@@ -28,11 +52,27 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long id, User client, User responsible, Timestamp datetime_order, String type, Double freight, Double estimativeTime, Double grossPrice, Double netPrice) {
+
+    public Order(Long id, User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, Double freight, Double estimativeTime, Double grossPrice, Double netPrice) {
         this.id = id;
         this.client = client;
         this.responsible = responsible;
-        this.datetime_order = datetime_order;
+        this.pizzas = pizzas;
+        this.drinks = drinks;
+        this.datetime = datetime;
+        this.type = type;
+        this.freight = freight;
+        this.estimativeTime = estimativeTime;
+        this.grossPrice = grossPrice;
+        this.netPrice = netPrice;
+    }
+
+    public Order(User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, Double freight, Double estimativeTime, Double grossPrice, Double netPrice) {
+        this.client = client;
+        this.responsible = responsible;
+        this.pizzas = pizzas;
+        this.drinks = drinks;
+        this.datetime = datetime;
         this.type = type;
         this.freight = freight;
         this.estimativeTime = estimativeTime;
@@ -64,12 +104,24 @@ public class Order {
         this.responsible = responsible;
     }
 
-    public Timestamp getDatetime_order() {
-        return datetime_order;
+    public List<Pizza> getPizzas() {
+        return pizzas;
     }
 
-    public void setDatetime_order(Timestamp datetime_order) {
-        this.datetime_order = datetime_order;
+    public void setPizzas(List<Pizza> pizzas) {
+        this.pizzas = pizzas;
+    }
+
+    public List<Drink> getDrinks() {
+        return drinks;
+    }
+
+    public Timestamp getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(Timestamp datetime) {
+        this.datetime = datetime;
     }
 
     public String getType() {

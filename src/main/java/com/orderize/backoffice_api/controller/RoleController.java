@@ -2,7 +2,6 @@ package com.orderize.backoffice_api.controller;
 
 import com.orderize.backoffice_api.dto.role.RoleRequestDto;
 import com.orderize.backoffice_api.dto.role.RoleResponseDto;
-import com.orderize.backoffice_api.model.Role;
 import com.orderize.backoffice_api.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

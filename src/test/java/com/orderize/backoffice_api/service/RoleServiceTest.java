@@ -7,10 +7,11 @@ import com.orderize.backoffice_api.dto.role.RoleRequestDto;
 import com.orderize.backoffice_api.dto.role.RoleResponseDto;
 import com.orderize.backoffice_api.exception.AlreadyExistsException;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
-import com.orderize.backoffice_api.mapper.RoleRequestToRole;
-import com.orderize.backoffice_api.mapper.RoleToRoleResponse;
+import com.orderize.backoffice_api.mapper.role.RoleRequestToRole;
+import com.orderize.backoffice_api.mapper.role.RoleToRoleResponse;
 import com.orderize.backoffice_api.model.Role;
-import com.orderize.backoffice_api.repository.RoleRepository;
+import com.orderize.backoffice_api.repository.role.RoleRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

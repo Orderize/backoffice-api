@@ -3,6 +3,8 @@ package com.orderize.backoffice_api.mapper.order.pizza;
 import com.orderize.backoffice_api.dto.order.pizza.OrderPizzaRequestDto;
 import com.orderize.backoffice_api.model.Order;
 import com.orderize.backoffice_api.model.OrderPizza;
+import com.orderize.backoffice_api.model.Pizza;
+
 import org.springframework.stereotype.Component;
 
 @Component

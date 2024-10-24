@@ -27,7 +27,7 @@ public class PizzaToPizzaResponseDto {
                 pizza.getName(),
                 pizza.getPrice(),
                 pizza.getObservations(),
-                pizza.getFlavor().stream().map(flavor -> flavorToFlavorResponseDto.map(flavor)).collect(Collectors.toList())
+                pizza.getFlavors().stream().map(flavor -> flavorToFlavorResponseDto.map(flavor)).collect(Collectors.toList())
         );
     }
 }

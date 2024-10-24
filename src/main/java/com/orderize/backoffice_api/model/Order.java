@@ -2,7 +2,9 @@ package com.orderize.backoffice_api.model;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 public class Order {
@@ -18,26 +20,62 @@ public class Order {
     @JoinColumn(name = "responsible")
     private User responsible;
 
-    private Timestamp datetime_order;
+    @ManyToMany(
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL
+    )
+    @JoinTable(
+        name = "order_pizza", 
+        joinColumns = @JoinColumn(name = "order_id"), 
+        inverseJoinColumns = @JoinColumn(name = "pizza_id")
+    )
+    private List<Pizza> pizzas;
+
+    @ManyToMany(
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL
+    )
+    @JoinTable(
+        name = "order_drink", 
+        joinColumns = @JoinColumn(name = "order_id"), 
+        inverseJoinColumns = @JoinColumn(name = "drink_id")
+    )
+    private List<Drink> drinks;
+
+
+    private Timestamp datetime;
     private String type;
-    private Double freight;
+    private BigDecimal freight;
     private Double estimativeTime;
-    private Double grossPrice;
-    private Double netPrice;
+    private BigDecimal price;
 
     public Order() {
     }
 
-    public Order(Long id, User client, User responsible, Timestamp datetime_order, String type, Double freight, Double estimativeTime, Double grossPrice, Double netPrice) {
+
+    public Order(Long id, User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, BigDecimal freight, Double estimativeTime, BigDecimal price) {
         this.id = id;
         this.client = client;
         this.responsible = responsible;
-        this.datetime_order = datetime_order;
+        this.pizzas = pizzas;
+        this.drinks = drinks;
+        this.datetime = datetime;
         this.type = type;
         this.freight = freight;
         this.estimativeTime = estimativeTime;
-        this.grossPrice = grossPrice;
-        this.netPrice = netPrice;
+        this.price = price;
+    }
+
+    public Order(User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, BigDecimal freight, Double estimativeTime, BigDecimal price) {
+        this.client = client;
+        this.responsible = responsible;
+        this.pizzas = pizzas;
+        this.drinks = drinks;
+        this.datetime = datetime;
+        this.type = type;
+        this.freight = freight;
+        this.estimativeTime = estimativeTime;
+        this.price = price;
     }
 
     public Long getId() {
@@ -64,12 +102,24 @@ public class Order {
         this.responsible = responsible;
     }
 
-    public Timestamp getDatetime_order() {
-        return datetime_order;
+    public List<Pizza> getPizzas() {
+        return pizzas;
     }
 
-    public void setDatetime_order(Timestamp datetime_order) {
-        this.datetime_order = datetime_order;
+    public void setPizzas(List<Pizza> pizzas) {
+        this.pizzas = pizzas;
+    }
+
+    public List<Drink> getDrinks() {
+        return drinks;
+    }
+
+    public Timestamp getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(Timestamp datetime) {
+        this.datetime = datetime;
     }
 
     public String getType() {
@@ -80,11 +130,11 @@ public class Order {
         this.type = type;
     }
 
-    public Double getFreight() {
+    public BigDecimal getFreight() {
         return freight;
     }
 
-    public void setFreight(Double freight) {
+    public void setFreight(BigDecimal freight) {
         this.freight = freight;
     }
 
@@ -96,19 +146,11 @@ public class Order {
         this.estimativeTime = estimativeTime;
     }
 
-    public Double getGrossPrice() {
-        return grossPrice;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setGrossPrice(Double grossPrice) {
-        this.grossPrice = grossPrice;
-    }
-
-    public Double getNetPrice() {
-        return netPrice;
-    }
-
-    public void setNetPrice(Double netPrice) {
-        this.netPrice = netPrice;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

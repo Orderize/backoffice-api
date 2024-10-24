@@ -3,30 +3,23 @@ package com.orderize.backoffice_api.dto.order;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.sql.Time;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 public record OrderRequestDto(
-        @NotNull
-        Long id,
-        @NotNull
-        Long client,
-        @NotNull
-        Long responsible,
+        // acho que na requisição não necessariamente vai ter o id para inserir, caso queira atualizar o id vai ser mandado na uri
+        // @NotNull
+        // Long id,
+        @NotNull Long client,
+        @NotNull Long responsible,
+        @NotNull List<Long> pizzas,
+        @NotNull List<Long> drinks,
         Timestamp datetime_order,
-        @NotBlank
-        String type,
-        @NotNull
-        Double freight,
-        @NotNull
-        Double estimativeTime,
-        @NotNull
-        Double grossPrice,
-        @NotNull
-        Double netPrice
+        @NotBlank String type,
+        @NotNull BigDecimal freight,
+        @NotNull Double estimativeTime,
+        @NotNull BigDecimal price
 
 ) {
-        public OrderRequestDto(Long client, Long responsible, Timestamp datetime_order, String type, Double freight, Double estimativeTime, Double grossPrice, Double netPrice){
-                this(null, client, responsible, datetime_order, type, freight, estimativeTime, grossPrice, netPrice);
-        }
 }

@@ -41,6 +41,11 @@ public class DrinkService {
         return allDrinks.stream().map(it -> mapperEntityToResponse.map(it)).toList();
     }
 
+    public List<DrinkResponseDto> getAllDrinks(List<Long> ids) {
+        List<Drink> allDrinks = repository.findAllById(ids);
+        return allDrinks.stream().map(it -> mapperEntityToResponse.map(it)).toList();
+    }
+
     public DrinkResponseDto saveDrink(DrinkRequestDto request) {
         if (repository.existsByName(request.name())) {
             throw new AlreadyExistsException("Essa bebida já existe no sistema");

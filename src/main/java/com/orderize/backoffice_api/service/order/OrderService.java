@@ -1,7 +1,10 @@
 package com.orderize.backoffice_api.service.order;
 
+import com.orderize.backoffice_api.dto.drink.DrinkResponseDto;
 import com.orderize.backoffice_api.dto.order.OrderRequestDto;
 import com.orderize.backoffice_api.dto.order.OrderResponseDto;
+import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
+import com.orderize.backoffice_api.dto.user.UserResponseDto;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.order.OrderRequestToOrder;
 import com.orderize.backoffice_api.mapper.order.OrderToOrderResponse;
@@ -16,6 +19,9 @@ import com.orderize.backoffice_api.repository.order.OrderPizzaRepository;
 import com.orderize.backoffice_api.repository.order.OrderRepository;
 import com.orderize.backoffice_api.repository.pizza.PizzaRepository;
 import com.orderize.backoffice_api.repository.user.UserRepository;
+import com.orderize.backoffice_api.service.drink.DrinkService;
+import com.orderize.backoffice_api.service.pizza.PizzaService;
+import com.orderize.backoffice_api.service.user.UserService;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -24,26 +30,27 @@ import java.util.Optional;
 @Service
 public class OrderService {
     private final OrderRepository repository;
-    private final PizzaRepository pizzaRepository;
-    private final DrinkRepository drinkRepository;
-    private final UserRepository userRepository;
     private final OrderToOrderResponse mapperOrderToOrderResponse;
     private final OrderRequestToOrder mapperOrderRequestToOrder;
 
+    private final UserService userService;
+    private final PizzaService pizzaService;
+    private final DrinkService drinkService;
+
     public OrderService(
             OrderRepository repository,
-            UserRepository userRepository,
-            PizzaRepository pizzaRepository,
-            DrinkRepository drinkRepository,
             OrderToOrderResponse mapperOrderToOrderResponse,
-            OrderRequestToOrder mapperOrderRequestToOrder
+            OrderRequestToOrder mapperOrderRequestToOrder,
+            UserService userService,
+            PizzaService pizzaService,
+            DrinkService drinkService
     ){
         this.repository = repository;
-        this.userRepository = userRepository;
-        this.pizzaRepository = pizzaRepository;
-        this.drinkRepository = drinkRepository;
         this.mapperOrderToOrderResponse = mapperOrderToOrderResponse;
         this.mapperOrderRequestToOrder = mapperOrderRequestToOrder;
+        this.userService = userService;
+        this.pizzaService = pizzaService;
+        this.drinkService = drinkService;
     }
 
     public OrderResponseDto calculateOrderPrices(Long id){
@@ -54,7 +61,7 @@ public class OrderService {
         Double netTotal = 0.;
 
         // tenho que pegar todas as pizzas com os ids/ pega o valor de todas as pizzas que retornar
-        Optional<Pizza> pizzas = pizzaRepository.findById(id);
+        Optional<Pizza> pizzas = pizzas.findById(id);
 
         for (OrderPizza pizza : pizzas){
             grossTotal += pizza.getGrossPrice() * pizza.getQuantity();
@@ -90,19 +97,15 @@ public class OrderService {
     }
 
     public OrderResponseDto saveOrder(OrderRequestDto orderResquest){
-        User client = userRepository.findById(orderResquest.client())
-            .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
-        
-        User responsible = userRepository.findById(orderResquest.responsible())
-            .orElseThrow(() -> new ResourceNotFoundException("Responsável não encontrado"));
+        UserResponseDto client = userService.getUserById(orderResquest.client());
+        UserResponseDto responsible = userService.getUserById(orderResquest.responsible());
 
         // List<Pizza> pizzas = repository.findPizzasById(orderResquest);
-        List<Pizza> pizzas = pizzaRepository.findAllById(orderResquest.pizzas());
-                    
-        new ResourceNotFoundException("Pizzas não encontradas"));
+        List<PizzaResponseDto> pizzas = pizzaService.getAllPizzas(orderResquest.pizzas());
+        List<DrinkResponseDto> drinks = drinkService.getAllDrinks(orderResquest.drinks()); 
 
 
-
+        /// REFATORAR PARA QUE AS SERVICES RETORNEM OBJETO ENTITY AO INVÉS DE DTO, PARA SEREM REUTILIZADAS AS SERVICES
 
         Order orderToSave = mapperOrderRequestToOrder.map(orderResquest, client, responsible);
         Order savedOrder = repository.save(orderToSave);

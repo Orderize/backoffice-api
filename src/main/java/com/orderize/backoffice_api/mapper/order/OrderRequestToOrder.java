@@ -1,9 +1,6 @@
 package com.orderize.backoffice_api.mapper.order;
 
-import com.orderize.backoffice_api.dto.drink.DrinkResponseDto;
 import com.orderize.backoffice_api.dto.order.OrderRequestDto;
-import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
-import com.orderize.backoffice_api.dto.user.UserResponseDto;
 import com.orderize.backoffice_api.model.Drink;
 import com.orderize.backoffice_api.model.Order;
 import com.orderize.backoffice_api.model.Pizza;
@@ -16,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderRequestToOrder {
 
-    public Order map(OrderRequestDto orderRequestDto, UserResponseDto client, UserResponseDto responsible, List<PizzaResponseDto> pizzas, List<DrinkResponseDto> drinks) {
+    public Order map(OrderRequestDto orderRequestDto, User client, User responsible, List<Pizza> pizzas, List<Drink> drinks) {
         return new Order(
             client,
             responsible,
@@ -26,8 +23,7 @@ public class OrderRequestToOrder {
             orderRequestDto.type(),
             orderRequestDto.freight(),
             orderRequestDto.estimativeTime(),
-            orderRequestDto.grossPrice(),
-            orderRequestDto.netPrice()
+            orderRequestDto.price()
         );
     }
 }

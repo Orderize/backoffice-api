@@ -1,6 +1,7 @@
 package com.orderize.backoffice_api.model;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class Flavor {
     private Long id;
     private String name;
     private String description;
-    private Double price;
+    private BigDecimal price;
     private LocalDate registered;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -37,13 +38,13 @@ public class Flavor {
     public Flavor() {
     }
 
-    public Flavor(String name, String description, Double price) {
+    public Flavor(String name, String description, BigDecimal price) {
         this.name = name;
         this.description = description;
         this.price = price;
     }
 
-    public Flavor(Long id, String name, String description, Double price, LocalDate registered, List<Ingredient> ingredients, List<Pizza> pizzas) {
+    public Flavor(Long id, String name, String description, BigDecimal price, LocalDate registered, List<Ingredient> ingredients, List<Pizza> pizzas) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -53,7 +54,7 @@ public class Flavor {
         this.pizzas = pizzas;
     }
 
-    public Flavor(String name, String description, Double price, LocalDate registered, List<Ingredient> ingredients) {
+    public Flavor(String name, String description, BigDecimal price, LocalDate registered, List<Ingredient> ingredients) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -85,11 +86,11 @@ public class Flavor {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

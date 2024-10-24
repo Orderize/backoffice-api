@@ -2,6 +2,7 @@ package com.orderize.backoffice_api.model;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -44,16 +45,15 @@ public class Order {
 
     private Timestamp datetime;
     private String type;
-    private Double freight;
+    private BigDecimal freight;
     private Double estimativeTime;
-    private Double grossPrice;
-    private Double netPrice;
+    private BigDecimal price;
 
     public Order() {
     }
 
 
-    public Order(Long id, User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, Double freight, Double estimativeTime, Double grossPrice, Double netPrice) {
+    public Order(Long id, User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, BigDecimal freight, Double estimativeTime, BigDecimal price) {
         this.id = id;
         this.client = client;
         this.responsible = responsible;
@@ -63,11 +63,10 @@ public class Order {
         this.type = type;
         this.freight = freight;
         this.estimativeTime = estimativeTime;
-        this.grossPrice = grossPrice;
-        this.netPrice = netPrice;
+        this.price = price;
     }
 
-    public Order(User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, Double freight, Double estimativeTime, Double grossPrice, Double netPrice) {
+    public Order(User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, BigDecimal freight, Double estimativeTime, BigDecimal price) {
         this.client = client;
         this.responsible = responsible;
         this.pizzas = pizzas;
@@ -76,8 +75,7 @@ public class Order {
         this.type = type;
         this.freight = freight;
         this.estimativeTime = estimativeTime;
-        this.grossPrice = grossPrice;
-        this.netPrice = netPrice;
+        this.price = price;
     }
 
     public Long getId() {
@@ -132,11 +130,11 @@ public class Order {
         this.type = type;
     }
 
-    public Double getFreight() {
+    public BigDecimal getFreight() {
         return freight;
     }
 
-    public void setFreight(Double freight) {
+    public void setFreight(BigDecimal freight) {
         this.freight = freight;
     }
 
@@ -148,19 +146,11 @@ public class Order {
         this.estimativeTime = estimativeTime;
     }
 
-    public Double getGrossPrice() {
-        return grossPrice;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setGrossPrice(Double grossPrice) {
-        this.grossPrice = grossPrice;
-    }
-
-    public Double getNetPrice() {
-        return netPrice;
-    }
-
-    public void setNetPrice(Double netPrice) {
-        this.netPrice = netPrice;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

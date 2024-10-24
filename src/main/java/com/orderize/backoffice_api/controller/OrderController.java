@@ -65,9 +65,10 @@ public class OrderController {
     @PutMapping
     @Operation(summary = "Atualiza um pedido", method = "PUT")
     public ResponseEntity<OrderResponseDto> updateOrder(
-            @RequestBody OrderRequestDto orderToUpdate
+        @RequestBody OrderRequestDto orderToUpdate,
+        @PathVariable Long id
     ){
-        OrderResponseDto order = service.updateOrder(orderToUpdate);
+        OrderResponseDto order = service.updateOrder(orderToUpdate, id);
         return ResponseEntity.status(200).body(order);
     }
 

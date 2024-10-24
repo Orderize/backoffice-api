@@ -3,6 +3,7 @@ package com.orderize.backoffice_api.dto.order;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -16,10 +17,9 @@ public record OrderRequestDto(
         @NotNull List<Long> drinks,
         Timestamp datetime_order,
         @NotBlank String type,
-        @NotNull Double freight,
+        @NotNull BigDecimal freight,
         @NotNull Double estimativeTime,
-        @NotNull Double grossPrice,
-        @NotNull Double netPrice
+        @NotNull BigDecimal price
 
 ) {
 }

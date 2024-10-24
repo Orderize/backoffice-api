@@ -3,8 +3,6 @@ package com.orderize.backoffice_api.model;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -88,14 +86,6 @@ public class Pizza {
         this.id = id;
     }
 
-    public List<Flavor> getFlavor() {
-        return flavors;
-    }
-
-    public void setFlavor(List<Flavor> flavors) {
-        this.flavors = flavors;
-    }
-
     public String getName() {
         return name;
     }
@@ -118,10 +108,6 @@ public class Pizza {
 
     public void setObservations(String observations) {
         this.observations = observations;
-    }
-
-    public PizzaResponseDto map(Pizza pizza) {
-        return null;
     }
 
     public Long getId() {

@@ -1,5 +1,6 @@
 package com.orderize.backoffice_api.dto.flavor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -9,7 +10,7 @@ public record FlavorResponseDto (
     Long id,
     String name,
     String description,
-    Double price,
+    BigDecimal price,
     LocalDate registered,
     List<IngredientResponseDto> ingredients
 ) {

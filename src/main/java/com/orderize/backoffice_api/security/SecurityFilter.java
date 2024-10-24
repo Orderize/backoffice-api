@@ -1,6 +1,5 @@
 package com.orderize.backoffice_api.security;
 
-import com.orderize.backoffice_api.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.orderize.backoffice_api.repository.user.UserRepository;
 
 import java.io.IOException;
 

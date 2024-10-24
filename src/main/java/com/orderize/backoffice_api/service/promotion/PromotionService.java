@@ -1,4 +1,4 @@
-package com.orderize.backoffice_api.service;
+package com.orderize.backoffice_api.service.promotion;
 
 import com.orderize.backoffice_api.dto.promotion.PromotionRequestDto;
 import com.orderize.backoffice_api.dto.promotion.PromotionResponseDto;

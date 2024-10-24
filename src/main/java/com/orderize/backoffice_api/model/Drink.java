@@ -4,8 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 public class Drink {
@@ -17,6 +19,12 @@ public class Drink {
     BigDecimal price;
     Integer milimeters;
 
+    @ManyToMany(
+        mappedBy="drinks"
+    )
+    private List<Order> orders;
+
+
     public Drink() {}
 
     public Drink(Long id, String name, String description, BigDecimal price, Integer milimeters) {
@@ -25,6 +33,15 @@ public class Drink {
         this.description = description;
         this.price = price;
         this.milimeters = milimeters;
+    }
+
+    public Drink(Long id, String name, String description, BigDecimal price, Integer milimeters, List<Order> orders) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.milimeters = milimeters;
+        this.orders = orders;
     }
 
     public Long getId() {
@@ -65,5 +82,13 @@ public class Drink {
 
     public void setMilimeters(Integer milimeters) {
         this.milimeters = milimeters;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 }

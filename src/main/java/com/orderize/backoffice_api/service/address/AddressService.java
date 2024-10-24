@@ -1,4 +1,4 @@
-package com.orderize.backoffice_api.service;
+package com.orderize.backoffice_api.service.address;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +14,7 @@ import com.orderize.backoffice_api.dto.viaCep.ViaCepRequestDto;
 import com.orderize.backoffice_api.mapper.address.AddressRequestToAddress;
 import com.orderize.backoffice_api.mapper.address.AddressToAddressResponse;
 import com.orderize.backoffice_api.model.Address;
-import com.orderize.backoffice_api.repository.AddressRepository;
+import com.orderize.backoffice_api.repository.address.AddressRepository;
 
 @Service
 public class AddressService {

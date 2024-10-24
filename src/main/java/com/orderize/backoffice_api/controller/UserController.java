@@ -2,7 +2,8 @@ package com.orderize.backoffice_api.controller;
 
 import com.orderize.backoffice_api.dto.user.UserRequestDto;
 import com.orderize.backoffice_api.dto.user.UserResponseDto;
-import com.orderize.backoffice_api.service.UserService;
+import com.orderize.backoffice_api.service.user.UserService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

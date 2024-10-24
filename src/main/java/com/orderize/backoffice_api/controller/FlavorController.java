@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.orderize.backoffice_api.dto.flavor.FlavorRequestDto;
 import com.orderize.backoffice_api.dto.flavor.FlavorResponseDto;
-import com.orderize.backoffice_api.service.FlavorService;
+import com.orderize.backoffice_api.service.flavor.FlavorService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

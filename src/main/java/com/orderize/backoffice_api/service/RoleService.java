@@ -11,7 +11,7 @@ import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.role.RoleRequestToRole;
 import com.orderize.backoffice_api.mapper.role.RoleToRoleResponse;
 import com.orderize.backoffice_api.model.Role;
-import com.orderize.backoffice_api.repository.RoleRepository;
+import com.orderize.backoffice_api.repository.role.RoleRepository;
 
 @Service
 public class RoleService {

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.orderize.backoffice_api.dto.ingredient.IngredientRequestDto;
 import com.orderize.backoffice_api.dto.ingredient.IngredientResponseDto;
-import com.orderize.backoffice_api.service.IngredientService;
+import com.orderize.backoffice_api.service.ingredient.IngredientService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

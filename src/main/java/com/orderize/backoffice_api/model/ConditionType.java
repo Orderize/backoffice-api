@@ -2,8 +2,6 @@ package com.orderize.backoffice_api.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 public class ConditionType {
 

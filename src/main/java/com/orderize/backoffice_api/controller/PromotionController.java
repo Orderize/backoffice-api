@@ -2,7 +2,8 @@ package com.orderize.backoffice_api.controller;
 
 import com.orderize.backoffice_api.dto.promotion.PromotionRequestDto;
 import com.orderize.backoffice_api.dto.promotion.PromotionResponseDto;
-import com.orderize.backoffice_api.service.PromotionService;
+import com.orderize.backoffice_api.service.promotion.PromotionService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

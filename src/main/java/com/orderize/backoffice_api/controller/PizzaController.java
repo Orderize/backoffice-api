@@ -2,7 +2,8 @@ package com.orderize.backoffice_api.controller;
 
 import com.orderize.backoffice_api.dto.pizza.PizzaRequestDto;
 import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
-import com.orderize.backoffice_api.service.PizzaService;
+import com.orderize.backoffice_api.service.pizza.PizzaService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

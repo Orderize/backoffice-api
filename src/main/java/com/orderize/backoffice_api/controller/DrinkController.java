@@ -2,7 +2,8 @@ package com.orderize.backoffice_api.controller;
 
 import com.orderize.backoffice_api.dto.drink.DrinkRequestDto;
 import com.orderize.backoffice_api.dto.drink.DrinkResponseDto;
-import com.orderize.backoffice_api.service.DrinkService;
+import com.orderize.backoffice_api.service.drink.DrinkService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

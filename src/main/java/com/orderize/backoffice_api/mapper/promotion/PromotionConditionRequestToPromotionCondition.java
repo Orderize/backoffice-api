@@ -4,7 +4,6 @@ import com.orderize.backoffice_api.dto.promotion.PromotionConditionRequestDto;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.Mapper;
 import com.orderize.backoffice_api.model.ConditionType;
-import com.orderize.backoffice_api.model.Promotion;
 import com.orderize.backoffice_api.model.PromotionCondition;
 import com.orderize.backoffice_api.repository.promotion.ConditionTypeRepository;
 import org.springframework.stereotype.Component;

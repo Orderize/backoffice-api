@@ -8,6 +8,8 @@ import com.orderize.backoffice_api.mapper.promotion.PromotionRequestToPromotion;
 import com.orderize.backoffice_api.mapper.promotion.PromotionToPromotionResponse;
 import com.orderize.backoffice_api.model.Promotion;
 import com.orderize.backoffice_api.repository.promotion.PromotionRepository;
+import com.orderize.backoffice_api.service.promotion.PromotionService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

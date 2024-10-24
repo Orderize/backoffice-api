@@ -1,4 +1,4 @@
-package com.orderize.backoffice_api.service;
+package com.orderize.backoffice_api.service.ingredient;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.ingredient.IngredientRequestDtoToIngredient;
 import com.orderize.backoffice_api.mapper.ingredient.IngredientToIngredientResponseDto;
 import com.orderize.backoffice_api.model.Ingredient;
-import com.orderize.backoffice_api.repository.IngredientRepository;
+import com.orderize.backoffice_api.repository.ingredient.IngredientRepository;
 
 @Service
 public class IngredientService {

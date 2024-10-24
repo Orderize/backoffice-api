@@ -3,7 +3,8 @@ package com.orderize.backoffice_api.controller;
 import com.orderize.backoffice_api.dto.address.AddressRequestDto;
 import com.orderize.backoffice_api.dto.address.AddressResponseDto;
 import com.orderize.backoffice_api.dto.viaCep.ViaCepRequestDto;
-import com.orderize.backoffice_api.service.AddressService;
+import com.orderize.backoffice_api.service.address.AddressService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

@@ -11,9 +11,9 @@ import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.UserRoleRequestoToUserRole;
 import com.orderize.backoffice_api.mapper.user.UserToUserResponseDto;
 import com.orderize.backoffice_api.model.UserRole;
-import com.orderize.backoffice_api.repository.RoleRepository;
-import com.orderize.backoffice_api.repository.UserRepository;
-import com.orderize.backoffice_api.repository.UserRoleRepository;
+import com.orderize.backoffice_api.repository.role.RoleRepository;
+import com.orderize.backoffice_api.repository.user.UserRepository;
+import com.orderize.backoffice_api.repository.userRole.UserRoleRepository;
 
 @Service
 public class UserRoleService {

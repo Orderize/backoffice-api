@@ -7,7 +7,9 @@ import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.drink.DrinkRequestToDrink;
 import com.orderize.backoffice_api.mapper.drink.DrinkToDrinkResponse;
 import com.orderize.backoffice_api.model.Drink;
-import com.orderize.backoffice_api.repository.DrinkRepository;
+import com.orderize.backoffice_api.repository.drink.DrinkRepository;
+import com.orderize.backoffice_api.service.drink.DrinkService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

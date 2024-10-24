@@ -10,7 +10,9 @@ import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.enterprise.EnterpriseRequestToEnterprise;
 import com.orderize.backoffice_api.mapper.enterprise.EnterpriseToEnterpriseResponse;
 import com.orderize.backoffice_api.model.Enterprise;
-import com.orderize.backoffice_api.repository.EnterpriseRepository;
+import com.orderize.backoffice_api.repository.enterprise.EnterpriseRepository;
+import com.orderize.backoffice_api.service.enterprise.EnterpriseService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

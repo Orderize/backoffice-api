@@ -25,8 +25,9 @@ import com.orderize.backoffice_api.mapper.pizza.PizzaRequestDtoToPizza;
 import com.orderize.backoffice_api.mapper.pizza.PizzaToPizzaResponseDto;
 import com.orderize.backoffice_api.model.Flavor;
 import com.orderize.backoffice_api.model.Pizza;
-import com.orderize.backoffice_api.repository.FlavorRepository;
-import com.orderize.backoffice_api.repository.PizzaRepository;
+import com.orderize.backoffice_api.repository.flavor.FlavorRepository;
+import com.orderize.backoffice_api.repository.pizza.PizzaRepository;
+import com.orderize.backoffice_api.service.pizza.PizzaService;
 
 public class PizzaServiceTest {
 

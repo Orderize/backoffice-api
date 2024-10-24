@@ -1,4 +1,4 @@
-package com.orderize.backoffice_api.repository;
+package com.orderize.backoffice_api.repository.drink;
 
 import com.orderize.backoffice_api.model.Drink;
 import org.springframework.data.jpa.repository.JpaRepository;

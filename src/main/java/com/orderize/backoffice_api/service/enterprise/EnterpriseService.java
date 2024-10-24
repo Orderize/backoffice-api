@@ -1,4 +1,4 @@
-package com.orderize.backoffice_api.service;
+package com.orderize.backoffice_api.service.enterprise;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.enterprise.EnterpriseRequestToEnterprise;
 import com.orderize.backoffice_api.mapper.enterprise.EnterpriseToEnterpriseResponse;
 import com.orderize.backoffice_api.model.Enterprise;
-import com.orderize.backoffice_api.repository.EnterpriseRepository;
+import com.orderize.backoffice_api.repository.enterprise.EnterpriseRepository;
 
 @Service
 public class EnterpriseService {

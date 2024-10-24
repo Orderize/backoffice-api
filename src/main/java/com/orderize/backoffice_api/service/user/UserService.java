@@ -1,4 +1,4 @@
-package com.orderize.backoffice_api.service;
+package com.orderize.backoffice_api.service.user;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +19,9 @@ import com.orderize.backoffice_api.mapper.user.UserToUserResponseDto;
 import com.orderize.backoffice_api.model.Address;
 import com.orderize.backoffice_api.model.Enterprise;
 import com.orderize.backoffice_api.model.User;
-import com.orderize.backoffice_api.repository.AddressRepository;
-import com.orderize.backoffice_api.repository.EnterpriseRepository;
-import com.orderize.backoffice_api.repository.UserRepository;
+import com.orderize.backoffice_api.repository.address.AddressRepository;
+import com.orderize.backoffice_api.repository.enterprise.EnterpriseRepository;
+import com.orderize.backoffice_api.repository.user.UserRepository;
 
 @Service
 public class UserService implements UserDetailsService {

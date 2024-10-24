@@ -1,4 +1,4 @@
-package com.orderize.backoffice_api.service;
+package com.orderize.backoffice_api.service.flavor;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.flavor.FlavorRequestToFlavor;
 import com.orderize.backoffice_api.mapper.flavor.FlavorToFlavorResponseDto;
 import com.orderize.backoffice_api.model.Flavor;
-import com.orderize.backoffice_api.repository.FlavorRepository;
+import com.orderize.backoffice_api.repository.flavor.FlavorRepository;
 
 @Service
 public class FlavorService {
@@ -30,6 +30,11 @@ public class FlavorService {
     public List<FlavorResponseDto> getAllFlavors() {
         List<Flavor> allFlavors = repository.findAll();
 
+        return allFlavors.stream().map(it -> mapperEntityToResponse.map(it)).toList();
+    }
+
+    public List<FlavorResponseDto> getAllFlavor(List<Long> ids) {
+        List<Flavor> allFlavors = repository.findAllById(ids);
         return allFlavors.stream().map(it -> mapperEntityToResponse.map(it)).toList();
     }
 

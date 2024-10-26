@@ -64,23 +64,23 @@ public class OrderService {
         return orders.stream().map(it -> mapperOrderToOrderResponse.map(it)).toList();
     }
 
-    public OrderResponseDto saveOrder(OrderRequestDto orderResquestDto){
-        User client = userRepository.findById(orderResquestDto.client())
+    public OrderResponseDto saveOrder(OrderRequestDto orderRequestDto){
+        User client = userRepository.findById(orderRequestDto.client())
             .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
 
-        User responsible = userRepository.findById(orderResquestDto.responsible())
+        User responsible = userRepository.findById(orderRequestDto.responsible())
             .orElseThrow(() -> new ResourceNotFoundException("Resposável não encontrado"));
 
 
-        // List<Pizza> pizzas = repository.findPizzasById(orderResquestDto);
+        // List<Pizza> pizzas = repository.findPizzasById(orderRequestDto);
         List<Pizza> pizzas = new ArrayList<>();
-        if(orderResquestDto.pizzas() != null) pizzas = pizzaRepository.findAllById(orderResquestDto.pizzas());
+        if(orderRequestDto.pizzas() != null) pizzas = pizzaRepository.findAllById(orderRequestDto.pizzas());
         List<Drink> drinks = new ArrayList<>();
-        if (orderResquestDto.drinks() != null) drinks = drinkRepository.findAllById(orderResquestDto.drinks()); 
+        if (orderRequestDto.drinks() != null) drinks = drinkRepository.findAllById(orderRequestDto.drinks()); 
 
         /// REFATORAR PARA QUE AS SERVICES RETORNEM OBJETO ENTITY AO INVÉS DE DTO, PARA SEREM
 
-        Order orderToSave = mapperOrderRequestToOrder.map(orderResquestDto, client, responsible, pizzas, drinks);
+        Order orderToSave = mapperOrderRequestToOrder.map(orderRequestDto, client, responsible, pizzas, drinks);
         
         calculateOrderPrices(orderToSave);
 
@@ -91,15 +91,19 @@ public class OrderService {
     void calculateOrderPrices(Order order){
         BigDecimal orderValue = BigDecimal.ZERO;
 
-        orderValue = orderValue.add(order.getPizzas().stream()
-                        .map(pizza -> pizza.getFlavors().stream()
-                            .map(Flavor::getPrice)
-                                .reduce(BigDecimal.ZERO, BigDecimal::add))
-                                    .reduce(BigDecimal.ZERO, BigDecimal::add));
+        if (order.getPizzas() != null) {
+            orderValue = orderValue.add(order.getPizzas().stream()
+                            .map(pizza -> pizza.getFlavors().stream()
+                                .map(Flavor::getPrice)
+                                    .reduce(BigDecimal.ZERO, BigDecimal::add))
+                                        .reduce(BigDecimal.ZERO, BigDecimal::add));
+        }
 
-        orderValue = orderValue.add(order.getDrinks().stream()
-                        .map(Drink::getPrice)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add));
+        if (order.getDrinks() != null) {
+            orderValue = orderValue.add(order.getDrinks().stream()
+                            .map(Drink::getPrice)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add));
+        }                                    
 
         order.setPrice(orderValue);
     }
@@ -113,13 +117,15 @@ public class OrderService {
         User responsible = userRepository.findById(orderRequestDto.responsible())
             .orElseThrow(() -> new ResourceNotFoundException("Responsável (user) não encontrado"));
 
-        List<Pizza> pizzas = pizzaRepository.findAllById(orderRequestDto.pizzas());
-        if (pizzas.isEmpty()) throw new ResourceNotFoundException("Pizzas não encontradas");
-
-        List<Drink> drinks = drinkRepository.findAllById(orderRequestDto.drinks());
-        if (drinks.isEmpty()) throw new ResourceNotFoundException("Drinks não encontrados");
-
+        List<Pizza> pizzas = new ArrayList<>();
+        if(orderRequestDto.pizzas() != null) pizzas = pizzaRepository.findAllById(orderRequestDto.pizzas());
+        List<Drink> drinks = new ArrayList<>();
+        if (orderRequestDto.drinks() != null) drinks = drinkRepository.findAllById(orderRequestDto.drinks()); 
+    
         Order orderToUpdate = mapperOrderRequestToOrder.map(orderRequestDto, client, responsible, pizzas, drinks);
+
+        calculateOrderPrices(orderToUpdate);
+        orderToUpdate.setId(id);
 
         return mapperOrderToOrderResponse.map(repository.save(orderToUpdate));
     }

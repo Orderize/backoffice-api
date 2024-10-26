@@ -7,17 +7,24 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
+@Table(name = "orders")
 public class Order {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_cliente")
+    @ManyToOne(
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL
+    )
+    @JoinColumn(name = "fk_client")
     private User client;
 
-    @ManyToOne
-    @JoinColumn(name = "responsible")
+    @ManyToOne(
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL
+    )
+    @JoinColumn(name = "fk_responsible")
     private User responsible;
 
     @ManyToMany(
@@ -42,18 +49,20 @@ public class Order {
     )
     private List<Drink> drinks;
 
-
     private Timestamp datetime;
+
     private String type;
     private BigDecimal freight;
-    private Double estimativeTime;
+
+    @Column(name = "estimated_time")
+    private Integer estimatedTime;
     private BigDecimal price;
 
     public Order() {
     }
 
 
-    public Order(Long id, User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, BigDecimal freight, Double estimativeTime, BigDecimal price) {
+    public Order(Long id, User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, BigDecimal freight, Integer estimatedTime, BigDecimal price) {
         this.id = id;
         this.client = client;
         this.responsible = responsible;
@@ -62,19 +71,18 @@ public class Order {
         this.datetime = datetime;
         this.type = type;
         this.freight = freight;
-        this.estimativeTime = estimativeTime;
+        this.estimatedTime = estimatedTime;
         this.price = price;
     }
 
-    public Order(User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, BigDecimal freight, Double estimativeTime, BigDecimal price) {
+    public Order(User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, String type, BigDecimal freight, Integer estimatedTime, BigDecimal price) {
         this.client = client;
         this.responsible = responsible;
         this.pizzas = pizzas;
         this.drinks = drinks;
-        this.datetime = datetime;
         this.type = type;
         this.freight = freight;
-        this.estimativeTime = estimativeTime;
+        this.estimatedTime = estimatedTime;
         this.price = price;
     }
 
@@ -138,12 +146,12 @@ public class Order {
         this.freight = freight;
     }
 
-    public Double getEstimativeTime() {
-        return estimativeTime;
+    public Integer getEstimatedTime() {
+        return estimatedTime;
     }
 
-    public void setEstimativeTime(Double estimativeTime) {
-        this.estimativeTime = estimativeTime;
+    public void setEstimatedTime(Integer estimatedTime) {
+        this.estimatedTime = estimatedTime;
     }
 
     public BigDecimal getPrice() {

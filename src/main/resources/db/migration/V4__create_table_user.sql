@@ -12,6 +12,8 @@ CREATE TABLE user (
 );
 
 -- just for tests (MOCK) - bad practice
--- a senha é 12345A
+-- kotlin 12345A
+-- java Senha123
 INSERT INTO user (name, email, password, phone, fk_address, fk_enterprise) VALUES
-    ("Kotlinator of metal", "kotlin@gmail.com", "$2a$12$O.VBqUN3tI8KSNPkR/ZNdeg0tj1Zr5Fq5SVKL3WqjEAtwss/OjM3y", "11945064629", 1, 1);
+    ("Kotlinator of metal", "kotlin@gmail.com", "$2a$12$O.VBqUN3tI8KSNPkR/ZNdeg0tj1Zr5Fq5SVKL3WqjEAtwss/OjM3y", "11945064629", 1, 1),
+    ("Knight Java", "java@gmail.com", "$2a$12$NG6Z1iHH7DFQrk45kucFsO3EbbXuO3wRJh44fi3AsEDHSiLz2ro16", "1194773942", 1, 1);

@@ -18,6 +18,7 @@ import com.orderize.backoffice_api.repository.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -50,6 +51,8 @@ public class OrderService {
         Order order = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
 
+
+
         return mapperOrderToOrderResponse.map(order);
     }
 
@@ -70,23 +73,22 @@ public class OrderService {
 
 
         // List<Pizza> pizzas = repository.findPizzasById(orderResquestDto);
-        List<Pizza> pizzas = pizzaRepository.findAllById(orderResquestDto.pizzas());
-        if (pizzas.isEmpty()) throw new ResourceNotFoundException("Pizzas não encontradas");
-        List<Drink> drinks = drinkRepository.findAllById(orderResquestDto.drinks()); 
-        if (drinks.isEmpty()) throw new ResourceNotFoundException("Drinks não encontrados");
+        List<Pizza> pizzas = new ArrayList<>();
+        if(orderResquestDto.pizzas() != null) pizzas = pizzaRepository.findAllById(orderResquestDto.pizzas());
+        List<Drink> drinks = new ArrayList<>();
+        if (orderResquestDto.drinks() != null) drinks = drinkRepository.findAllById(orderResquestDto.drinks()); 
 
         /// REFATORAR PARA QUE AS SERVICES RETORNEM OBJETO ENTITY AO INVÉS DE DTO, PARA SEREM
 
         Order orderToSave = mapperOrderRequestToOrder.map(orderResquestDto, client, responsible, pizzas, drinks);
-        Order savedOrder = repository.save(orderToSave);
         
-        calculateOrderPrices(savedOrder);
+        calculateOrderPrices(orderToSave);
 
-        return mapperOrderToOrderResponse.map(orderToSave);
+        return mapperOrderToOrderResponse.map(repository.save(orderToSave));
     }
 
     // Tem outra forma de fazer isso que é fazendo um select nas tabelas de relacionamento atraves do id do usuario
-    OrderResponseDto calculateOrderPrices(Order order){
+    void calculateOrderPrices(Order order){
         BigDecimal orderValue = BigDecimal.ZERO;
 
         orderValue = orderValue.add(order.getPizzas().stream()
@@ -99,7 +101,7 @@ public class OrderService {
                         .map(Drink::getPrice)
                             .reduce(BigDecimal.ZERO, BigDecimal::add));
 
-        return mapperOrderToOrderResponse.map(repository.save(order));
+        order.setPrice(orderValue);
     }
 
     public OrderResponseDto updateOrder(OrderRequestDto orderRequestDto, Long id){

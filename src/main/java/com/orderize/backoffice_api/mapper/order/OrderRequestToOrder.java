@@ -19,10 +19,9 @@ public class OrderRequestToOrder {
             responsible,
             pizzas,
             drinks,
-            orderRequestDto.datetime_order(),
             orderRequestDto.type(),
             orderRequestDto.freight(),
-            orderRequestDto.estimativeTime(),
+            orderRequestDto.estimatedTime(),
             orderRequestDto.price()
         );
     }

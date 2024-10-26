@@ -32,8 +32,11 @@ public class User implements UserDetails {
     )
     private List<Role> roles;
 
-    @OneToMany(mappedBy = "order")
-    private List<Order> orders;
+    @OneToMany(mappedBy = "client")
+    private List<Order> ordersClient;
+
+    @OneToMany(mappedBy = "responsible")
+    private List<Order> ordersResponsible;
 
     public User() {}
 
@@ -90,10 +93,11 @@ public class User implements UserDetails {
     }
 
     //construtor para controle de pedido
-    public User(Long id, String name, List<Order> orders){
+    public User(Long id, String name, List<Order> ordersClient, List<Order> ordersResponsible){
         this.id = id;
         this.name = name;
-        this.orders = orders;
+        this.ordersClient = ordersClient;
+        this.ordersResponsible = ordersResponsible;
     }
 
     public Long getId() {
@@ -188,6 +192,22 @@ public class User implements UserDetails {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public List<Order> getOrdersClient() {
+        return ordersClient;
+    }
+
+    public void setOrdersClient(List<Order> ordersClient) {
+        this.ordersClient = ordersClient;
+    }
+
+    public List<Order> getOrdersResponsible() {
+        return ordersResponsible;
+    }
+
+    public void setOrdersResponsible(List<Order> ordersResponsible) {
+        this.ordersResponsible = ordersResponsible;
     }
 
 }

@@ -14,10 +14,10 @@ public record OrderResponseDto (
         UserResponseDto responsible,
         List<PizzaResponseDto> pizzas,
         List<DrinkResponseDto> drinks,
-        Timestamp datetime_order,
+        Timestamp datetime,
         String type,
         BigDecimal freight,
-        Double estimativeTime,
-        BigDecimal rice
+        Integer estimatedTime,
+        BigDecimal price
 ) {
 }

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/pedidos", produces = {"application/json"})
-@Tag(name = "/pedidos")
+@RequestMapping(value = "/orders", produces = {"application/json"})
+@Tag(name = "/orders")
 public class OrderController {
     private final OrderService service;
 

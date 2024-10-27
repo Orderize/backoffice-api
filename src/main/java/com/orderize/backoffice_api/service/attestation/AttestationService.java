@@ -2,7 +2,9 @@ package com.orderize.backoffice_api.service.attestation;
 
 import com.orderize.backoffice_api.dto.attestation.AttestationRequestDto;
 import com.orderize.backoffice_api.dto.attestation.AttestationResponseDto;
+import com.orderize.backoffice_api.dto.csv.CsvResponseDto;
 import com.orderize.backoffice_api.exception.AlreadyExistsException;
+import com.orderize.backoffice_api.exception.CsvFileException;
 import com.orderize.backoffice_api.exception.InvalidTimeIntervalException;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.attestation.AttestationRequestToAttestation;
@@ -11,8 +13,13 @@ import com.orderize.backoffice_api.model.Attestation;
 import com.orderize.backoffice_api.model.Order;
 import com.orderize.backoffice_api.repository.AttestationRepository;
 import com.orderize.backoffice_api.repository.OrderRepository;
+import com.orderize.backoffice_api.util.CsvFileUtils;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -79,4 +86,31 @@ public class AttestationService {
         repository.delete(attestation);
     }
 
+    public CsvResponseDto writeCsvFile(LocalDate date, LocalDate startDate, LocalDate endDate) {
+        List<Attestation> attestations;
+
+        if (date != null) {
+            attestations = repository.findAllByCreatedTime(date);
+        } else if (startDate != null && endDate != null) {
+            if (startDate.isAfter(endDate)) {
+                throw new InvalidTimeIntervalException("Intervalo de tempo inválido");
+            }
+            attestations = repository.findAllByCreatedTimeBetween(startDate, endDate);
+        } else {
+            attestations = repository.findAll();
+        }
+
+        CsvFileUtils.writeFile(attestations);
+
+        File file = new File("attestations.csv");
+        try {
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+            return new CsvResponseDto(
+                    resource,
+                    file
+            );
+        } catch (FileNotFoundException e) {
+            throw new CsvFileException("Arquivo não encontrado");
+        }
+    }
 }

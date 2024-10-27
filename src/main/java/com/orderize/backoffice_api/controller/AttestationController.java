@@ -3,10 +3,8 @@ package com.orderize.backoffice_api.controller;
 import com.orderize.backoffice_api.dto.attestation.AttestationRequestDto;
 import com.orderize.backoffice_api.dto.attestation.AttestationResponseDto;
 import com.orderize.backoffice_api.dto.csv.CsvResponseDto;
-import com.orderize.backoffice_api.model.Attestation;
 import com.orderize.backoffice_api.repository.AttestationRepository;
 import com.orderize.backoffice_api.service.attestation.AttestationService;
-import com.orderize.backoffice_api.util.CsvFileUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.core.io.InputStreamResource;
@@ -15,10 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 

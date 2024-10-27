@@ -1,12 +1,8 @@
-package com.orderize.backoffice_api.util;
+package com.orderize.backoffice_api.util.csv;
 
 import com.orderize.backoffice_api.exception.CsvFileException;
 import com.orderize.backoffice_api.model.Attestation;
-import com.orderize.backoffice_api.model.Drink;
-import com.orderize.backoffice_api.model.Pizza;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;

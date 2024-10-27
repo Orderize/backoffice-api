@@ -10,7 +10,7 @@ import com.orderize.backoffice_api.mapper.attestation.AttestationToAttestationRe
 import com.orderize.backoffice_api.model.Attestation;
 import com.orderize.backoffice_api.model.Order;
 import com.orderize.backoffice_api.repository.AttestationRepository;
-import com.orderize.backoffice_api.repository.order.OrderRepository;
+import com.orderize.backoffice_api.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

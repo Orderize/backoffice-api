@@ -16,16 +16,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderRequestToOrder {
 
-    public Order map(OrderRequestDto orderRequestDto, UserResponseDto client, UserResponseDto responsible, List<PizzaResponseDto> pizzas, List<DrinkResponseDto> drinks) {
+    public Order map(OrderRequestDto orderRequestDto, User client, User responsible, List<Pizza> pizzas, List<Drink> drinks) {
         return new Order(
-            client,
-            responsible,
-            pizzas,
-            drinks,
-            orderRequestDto.type(),
-            orderRequestDto.freight(),
-            orderRequestDto.estimatedTime(),
-            orderRequestDto.price()
+                client,
+                responsible,
+                pizzas,
+                drinks,
+                orderRequestDto.type(),
+                orderRequestDto.freight(),
+                orderRequestDto.estimatedTime(),
+                orderRequestDto.price()
         );
     }
 }

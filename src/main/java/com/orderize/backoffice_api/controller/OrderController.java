@@ -2,7 +2,6 @@ package com.orderize.backoffice_api.controller;
 
 import com.orderize.backoffice_api.dto.order.OrderRequestDto;
 import com.orderize.backoffice_api.dto.order.OrderResponseDto;
-import com.orderize.backoffice_api.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -14,9 +13,9 @@ import java.util.List;
 @RequestMapping(value = "/orders", produces = {"application/json"})
 @Tag(name = "/orders")
 public class OrderController {
-    private final OrderService service;
+    private final com.orderize.backoffice_api.service.order.OrderService service;
 
-    public OrderController(OrderService service){
+    public OrderController(com.orderize.backoffice_api.service.order.OrderService service){
         this.service = service;
     }
 

@@ -10,11 +10,11 @@ import com.orderize.backoffice_api.model.Flavor;
 import com.orderize.backoffice_api.model.Order;
 import com.orderize.backoffice_api.model.Pizza;
 import com.orderize.backoffice_api.model.User;
-import com.orderize.backoffice_api.repository.drink.DrinkRepository;
-import com.orderize.backoffice_api.repository.order.OrderRepository;
-import com.orderize.backoffice_api.repository.pizza.PizzaRepository;
-import com.orderize.backoffice_api.repository.user.UserRepository;
 
+import com.orderize.backoffice_api.repository.DrinkRepository;
+import com.orderize.backoffice_api.repository.OrderRepository;
+import com.orderize.backoffice_api.repository.PizzaRepository;
+import com.orderize.backoffice_api.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

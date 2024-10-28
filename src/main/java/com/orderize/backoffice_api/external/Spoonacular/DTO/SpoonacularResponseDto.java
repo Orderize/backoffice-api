@@ -1,11 +1,8 @@
-package com.orderize.backoffice_api.external.spoonacular.dto;
+package com.orderize.backoffice_api.external.Spoonacular.DTO;
 
 import java.util.List;
 
 import com.orderize.backoffice_api.dto.ingredient.IngredientResponseDto;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public record SpoonacularResponseDto(
     Long id,

@@ -1,11 +1,12 @@
-package com.orderize.backoffice_api.external.spoonacular;
+package com.orderize.backoffice_api.external.Spoonacular;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.orderize.backoffice_api.external.spoonacular.dto.SpoonacularListDto;
-import com.orderize.backoffice_api.external.spoonacular.dto.SpoonacularResponseDto;
+import com.orderize.backoffice_api.external.Spoonacular.DTO.SpoonacularListDto;
+import com.orderize.backoffice_api.external.Spoonacular.DTO.SpoonacularResponseDto;
+import com.orderize.backoffice_api.utils.List__c;
 
 import java.util.List;
 

@@ -1,54 +1,56 @@
 package com.orderize.backoffice_api.utils;
 
+import java.util.Comparator;
 import java.util.Random;
 
-public class QuickSortStrategy<T extends Comparable<T>> implements SortStrategy<T> {
+public class QuickSortStrategy<T> {
 
-    private T[] itens;
+    private final Comparator<T> comparator;
 
-    public QuickSortStrategy(){}
-
-    public QuickSortStrategy(T[] itens) {
-        this.itens = itens;
+    public QuickSortStrategy(Comparator<T> comparator) {
+        this.comparator = comparator;
     }
 
-    @Override
-    public T[] sort() {
-        if (itens == null || itens.length == 0) return null;
+    public void sort(T[] vetor) {
+        if (vetor == null || vetor.length == 0) {
+            System.out.println("Vetor inválido");
+            return;
+        }
 
         int low = 0;
-        int high = this.itens.length-1;
+        int high = vetor.length-1;
         
-        quickSort(low, high);
-        return itens;
+        quickSort(vetor, low, high);
     }
 
-    private void quickSort(int low, int high) {
+    private void quickSort(T[] vetor, int low, int high) {
         int mid = new Random().nextInt(high - low + 1) + low;
-        T pivot = this.itens[mid];
+        T pivot = vetor[mid];
         int l = low;
         int h = high;
 
         while (l <= h) {
             // Ponteiro l é incrementado 1 enquanto for menor que o pivo 
-            while (this.itens[l].compareTo(pivot) < 0) l++;
+            while (comparator.compare(vetor[l],pivot) < 0) l++;
             // Ponteiro h é decrementado 1 enquanto for maior ou igual ao pivo 
-            while (this.itens[h].compareTo(pivot) > 0) h--;
+            while (comparator.compare(vetor[h], pivot) > 0) h--;
 
             if (l <= h) {
-                T tempItem = this.itens[l];
-                this.itens[l] = this.itens[h];
-                this.itens[h] = tempItem;
-
+                swap(vetor, l, h);
                 l++;
                 h--; 
             }
         }
 
         // Se a posição low for menor que o ponteiro h, chama o quickSort com a primeira posição sendo o low e a última sendo o ponteiro h 
-        if (low < h) quickSort(low, h);
+        if (low < h) quickSort(vetor, low, h);
         // Se o ponteiro l for menor que a posição high, chama o quickSort com a primeira posição sendo o l e a última sendo a posição high 
-        if (l < high) quickSort(l, high);
+        if (l < high) quickSort(vetor, l, high);
     }
 
+    private void swap(T[] vetor, int low, int high) {
+        T auxItem = vetor[low];
+        vetor[low] = vetor[high];
+        vetor[high] = auxItem;
+    }
 }

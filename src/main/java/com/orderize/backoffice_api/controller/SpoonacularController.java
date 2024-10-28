@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.orderize.backoffice_api.external.spoonacular.dto.SpoonacularResponseDto;
-import com.orderize.backoffice_api.service.PizzaService;
+import com.orderize.backoffice_api.external.Spoonacular.DTO.SpoonacularResponseDto;
+import com.orderize.backoffice_api.service.SpoonacularService;
 
 
 
 @RestController
-@RequestMapping("/pizzas")
-public class PizzaController {
+@RequestMapping("/spoonacular")
+public class SpoonacularController {
     
     @Autowired
-    private PizzaService pizzaService;
+    private SpoonacularService pizzaService;
 
     @GetMapping
     public ResponseEntity<List<SpoonacularResponseDto>> getAllPizzas() {

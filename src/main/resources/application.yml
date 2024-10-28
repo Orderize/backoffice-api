@@ -14,4 +14,4 @@ spring:
 external-spoonacular:
   url: https://api.spoonacular.com
   api:
-    key: 59f94a96a38c4681b31619aacd7e5ec4
+    key: 59f94a96a38c4681b31619aacd7e5ec4 

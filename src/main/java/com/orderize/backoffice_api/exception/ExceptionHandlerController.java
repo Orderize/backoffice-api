@@ -75,4 +75,15 @@ public class ExceptionHandlerController {
         );
     }
 
+    @ExceptionHandler(CsvFileException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleCsvFileException(CsvFileException exception, HttpServletRequest request) {
+        return new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
+
 }

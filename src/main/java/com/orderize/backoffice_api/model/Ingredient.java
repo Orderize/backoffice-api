@@ -1,5 +1,6 @@
 package com.orderize.backoffice_api.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -15,14 +16,14 @@ public class Ingredient {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Double paid;
+    private BigDecimal paid;
     @ManyToMany(mappedBy="ingredients")
     private List<Flavor> flavors;
         
     public Ingredient() {
     }
     
-    public Ingredient(String name, Double paid) {
+    public Ingredient(String name, BigDecimal paid) {
         this.name = name;
         this.paid = paid;
     }
@@ -43,11 +44,11 @@ public class Ingredient {
         this.name = name;
     }
     
-    public Double getPaid() {
+    public BigDecimal getPaid() {
         return paid;
     }
     
-    public void setPaid(Double paid) {
+    public void setPaid(BigDecimal paid) {
         this.paid = paid;
     }
 

@@ -1,5 +1,6 @@
 package com.orderize.backoffice_api.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -57,9 +58,9 @@ public class FlavorServiceTest {
     @Test
     @DisplayName("Ao salvar um Flavor válido")
     void testSaveFlavor_Success() {
-        FlavorRequestDto requestDto = new FlavorRequestDto("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", 13.43);
-        Flavor flavor = new Flavor("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", 13.43, LocalDate.parse("2020-04-20"), ingredients);
-        FlavorResponseDto responseDto = new FlavorResponseDto(1L, "Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", 13.43, LocalDate.parse("2020-04-20"), ingredientResponseDtos);
+        FlavorRequestDto requestDto = new FlavorRequestDto("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43));
+        Flavor flavor = new Flavor("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43), LocalDate.parse("2020-04-20"), ingredients);
+        FlavorResponseDto responseDto = new FlavorResponseDto(1L, "Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43), LocalDate.parse("2020-04-20"), ingredientResponseDtos);
         
         when(flavorRequestToFlavor.map(requestDto)).thenReturn(flavor);
         when(flavorRepository.save(flavor)).thenReturn(flavor);
@@ -81,8 +82,8 @@ public class FlavorServiceTest {
     @Test
     @DisplayName("Ao salvar um Flavor que já existe pelo nome")
     void testSaveFlavor_AlreadyExistsByName() {
-        FlavorRequestDto requestDto = new FlavorRequestDto("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", 13.43);
-        Flavor flavor = new Flavor("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", 13.43, LocalDate.parse("2020-04-20"), ingredients);
+        FlavorRequestDto requestDto = new FlavorRequestDto("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43));
+        Flavor flavor = new Flavor("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43), LocalDate.parse("2020-04-20"), ingredients);
 
         when(flavorRequestToFlavor.map(requestDto)).thenReturn(flavor);
         when(flavorRepository.existsByName("Calabresa")).thenReturn(true);
@@ -100,9 +101,9 @@ public class FlavorServiceTest {
     @Test
     @DisplayName("Ao atualizar um Flavor válida")
     void testUpdateFlavor_Success() {
-        FlavorRequestDto requestDto = new FlavorRequestDto("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", 13.43);
-        Flavor updatedFlavor = new Flavor("Calabresa", "Coberta com fatias de calabresa defumada.", 13.43, LocalDate.parse("2020-03-20"), ingredients);
-        FlavorResponseDto responseDto = new FlavorResponseDto(1L, "Calabresa", "Coberta com fatias de calabresa defumada.", 13.43, LocalDate.parse("2020-03-20"), ingredientResponseDtos);
+        FlavorRequestDto requestDto = new FlavorRequestDto("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43));
+        Flavor updatedFlavor = new Flavor("Calabresa", "Coberta com fatias de calabresa defumada.", BigDecimal.valueOf(13.43), LocalDate.parse("2020-03-20"), ingredients);
+        FlavorResponseDto responseDto = new FlavorResponseDto(1L, "Calabresa", "Coberta com fatias de calabresa defumada.", BigDecimal.valueOf(13.43), LocalDate.parse("2020-03-20"), ingredientResponseDtos);
 
         when(flavorRepository.findById(1L)).thenReturn(Optional.of(updatedFlavor));
         when(flavorRequestToFlavor.map(updatedFlavor, requestDto)).thenReturn(updatedFlavor);
@@ -126,7 +127,7 @@ public class FlavorServiceTest {
     @Test
     @DisplayName("Ao atualizar um Flavor que não existe")
     void testUpdateFlavor_NotFound() {
-        FlavorRequestDto requestDto = new FlavorRequestDto("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", 13.43);
+        FlavorRequestDto requestDto = new FlavorRequestDto("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43));
 
         when(flavorRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -143,10 +144,10 @@ public class FlavorServiceTest {
     @Test
     @DisplayName("Ao buscar todos os Flavors")
     void testGetAllFlavors_Success() {
-        Flavor flavor1 = new Flavor("Margherita", "Pizza tradicional com molho de tomate, mussarela de búfala e manjericão fresco.",  13.43, LocalDate.parse("2020-04-20"), ingredients);
-        Flavor flavor2 = new Flavor("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", 13.43, LocalDate.parse("2020-05-20"), ingredients);
-        FlavorResponseDto responseDto1 = new FlavorResponseDto(1L, "Margherita", "Pizza tradicional com molho de tomate, mussarela de búfala e manjericão fresco.", 13.43,  LocalDate.parse("2020-04-20"), ingredientResponseDtos);
-        FlavorResponseDto responseDto2 = new FlavorResponseDto(2L, "Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", 13.43, LocalDate.parse("2020-05-20"), ingredientResponseDtos);
+        Flavor flavor1 = new Flavor("Margherita", "Pizza tradicional com molho de tomate, mussarela de búfala e manjericão fresco.",  BigDecimal.valueOf(13.43), LocalDate.parse("2020-04-20"), ingredients);
+        Flavor flavor2 = new Flavor("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43), LocalDate.parse("2020-05-20"), ingredients);
+        FlavorResponseDto responseDto1 = new FlavorResponseDto(1L, "Margherita", "Pizza tradicional com molho de tomate, mussarela de búfala e manjericão fresco.", BigDecimal.valueOf(13.43),  LocalDate.parse("2020-04-20"), ingredientResponseDtos);
+        FlavorResponseDto responseDto2 = new FlavorResponseDto(2L, "Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43), LocalDate.parse("2020-05-20"), ingredientResponseDtos);
 
         when(flavorRepository.findAll()).thenReturn(List.of(flavor1, flavor2));
         when(flavorToFlavorResponseDto.map(flavor1)).thenReturn(responseDto1);
@@ -166,8 +167,8 @@ public class FlavorServiceTest {
     @Test
     @DisplayName("Ao buscar um Flavor pelo ID com sucesso")
     void testGetFlavorById_Success() {
-        Flavor flavor = new Flavor("Margherita", "Pizza tradicional com molho de tomate, mussarela de búfala e manjericão fresco.",  13.43, LocalDate.parse("2020-04-20"), ingredients);
-        FlavorResponseDto responseDto = new FlavorResponseDto(1L, "Margherita", "Pizza tradicional com molho de tomate, mussarela de búfala e manjericão fresco.",  13.43, LocalDate.parse("2020-04-20"), ingredientResponseDtos);
+        Flavor flavor = new Flavor("Margherita", "Pizza tradicional com molho de tomate, mussarela de búfala e manjericão fresco.",  BigDecimal.valueOf(13.43), LocalDate.parse("2020-04-20"), ingredients);
+        FlavorResponseDto responseDto = new FlavorResponseDto(1L, "Margherita", "Pizza tradicional com molho de tomate, mussarela de búfala e manjericão fresco.",  BigDecimal.valueOf(13.43), LocalDate.parse("2020-04-20"), ingredientResponseDtos);
 
         when(flavorRepository.findById(1L)).thenReturn(Optional.of(flavor));
         when(flavorToFlavorResponseDto.map(flavor)).thenReturn(responseDto);

@@ -15,6 +15,9 @@ import com.orderize.backoffice_api.repository.DrinkRepository;
 import com.orderize.backoffice_api.repository.OrderRepository;
 import com.orderize.backoffice_api.repository.PizzaRepository;
 import com.orderize.backoffice_api.repository.UserRepository;
+import com.orderize.backoffice_api.util.observer.order_attestation.OrderObserver;
+import com.orderize.backoffice_api.util.observer.order_attestation.OrderObserverSubject;
+import org.flywaydb.core.internal.util.JsonUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -22,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class OrderService {
+public class OrderService implements OrderObserverSubject {
     private final OrderRepository repository;
     private final OrderToOrderResponse mapperOrderToOrderResponse;
     private final OrderRequestToOrder mapperOrderRequestToOrder;
@@ -30,6 +33,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final PizzaRepository pizzaRepository;
     private final DrinkRepository drinkRepository;
+    private final List<OrderObserver> observers;
 
     public OrderService(
             OrderRepository repository,
@@ -45,13 +49,29 @@ public class OrderService {
         this.userRepository = userRepository;
         this.pizzaRepository = pizzaRepository;
         this.drinkRepository = drinkRepository;
+        this.observers = new ArrayList<>();
+    }
+
+    @Override
+    public void addObserver(OrderObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(OrderObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(Order order) {
+        for (OrderObserver observer : observers) {
+            observer.onOrderCreated(order);
+        }
     }
 
     public OrderResponseDto getOrderById(Long id){
         Order order = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
-
-
 
         return mapperOrderToOrderResponse.map(order);
     }
@@ -84,7 +104,16 @@ public class OrderService {
         
         calculateOrderPrices(orderToSave);
 
-        return mapperOrderToOrderResponse.map(repository.save(orderToSave));
+        Order savedOrder = repository.save(orderToSave);
+
+        notifyObservers(savedOrder);
+
+        /*
+        Estou salvando a order duas vezes porque ela precisa ser salva antes de notificar os observers para ter o id
+        gerado (caso do Attestation), mas ela também pode ser alterada por algum observer como será o de promoções
+        então ela é salva e atualizada dps
+         */
+        return mapperOrderToOrderResponse.map(repository.save(savedOrder));
     }
 
     // Tem outra forma de fazer isso que é fazendo um select nas tabelas de relacionamento atraves do id do usuario
@@ -92,19 +121,20 @@ public class OrderService {
         BigDecimal orderValue = BigDecimal.ZERO;
 
         if (order.getPizzas() != null) {
-            orderValue = orderValue.add(order.getPizzas().stream()
-                            .map(pizza -> pizza.getFlavors().stream()
-                                .map(Flavor::getPrice)
-                                    .reduce(BigDecimal.ZERO, BigDecimal::add))
-                                        .reduce(BigDecimal.ZERO, BigDecimal::add));
+            for (int i = 0; i < order.getPizzas().size(); i++) {
+                orderValue = orderValue.add(order.getPizzas().get(i).getPrice());
+            }
         }
 
         if (order.getDrinks() != null) {
             orderValue = orderValue.add(order.getDrinks().stream()
                             .map(Drink::getPrice)
                                 .reduce(BigDecimal.ZERO, BigDecimal::add));
-        }                                    
+        }
 
+        if (order.getFreight() != null) {
+            orderValue = orderValue.add(order.getFreight());
+        }
         order.setPrice(orderValue);
     }
 

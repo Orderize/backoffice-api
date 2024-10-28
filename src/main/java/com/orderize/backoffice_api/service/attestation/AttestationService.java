@@ -13,7 +13,8 @@ import com.orderize.backoffice_api.model.Attestation;
 import com.orderize.backoffice_api.model.Order;
 import com.orderize.backoffice_api.repository.AttestationRepository;
 import com.orderize.backoffice_api.repository.OrderRepository;
-import com.orderize.backoffice_api.util.CsvFileUtils;
+import com.orderize.backoffice_api.util.csv.CsvFileUtils;
+import com.orderize.backoffice_api.util.observer.order_attestation.OrderObserver;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class AttestationService {
+public class AttestationService implements OrderObserver {
 
     // TODO: REFATORAR ISSO AQUI, O ATTESTATIONSERVICE DEVE INJETAR O ORDERSERVICE E NÃO ORDERREPOSITORY DIRETAMENTE
     private final AttestationRepository repository;
@@ -112,5 +113,10 @@ public class AttestationService {
         } catch (FileNotFoundException e) {
             throw new CsvFileException("Arquivo não encontrado");
         }
+    }
+
+    @Override
+    public void onOrderCreated(Order order) {
+        saveAttestation(new AttestationRequestDto(order.getId()));
     }
 }

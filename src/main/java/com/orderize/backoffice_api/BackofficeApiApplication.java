@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "Backoffice api", version = "1", description = "Api braba"))
+@OpenAPIDefinition(info = @Info(title = "Backoffice api", version = "1", description = "Api Backoffice Orderize"))
 public class BackofficeApiApplication {
 
 	public static void main(String[] args) {

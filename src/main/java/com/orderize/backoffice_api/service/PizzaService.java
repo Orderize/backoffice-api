@@ -19,16 +19,16 @@ import com.orderize.backoffice_api.repository.PizzaRepository;
 public class PizzaService {
 
     private final PizzaRepository pizzaRepository;
-    private final PizzaRequestDtoToPizza pizzaRequestToPizza;
-    private final PizzaToPizzaResponseDto pizzaToPizzaResponseDto;
+    private final PizzaRequestDtoToPizza mapperPizzaRequestToPizza;
+    private final PizzaToPizzaResponseDto mapperPizzaToPizzaResponse;
     private final FlavorRepository flavorRepository;
 
     public PizzaService(
-        PizzaRepository pizzaRepository, PizzaRequestDtoToPizza pizzaRequestToPizza, PizzaToPizzaResponseDto pizzaToPizzaResponseDto, FlavorRepository flavorRepository
+        PizzaRepository pizzaRepository, PizzaRequestDtoToPizza mapperPizzaRequestToPizza, PizzaToPizzaResponseDto mapperPizzaToPizzaResponse, FlavorRepository flavorRepository
     ) {
         this.pizzaRepository = pizzaRepository;
-        this.pizzaRequestToPizza = pizzaRequestToPizza;
-        this.pizzaToPizzaResponseDto = pizzaToPizzaResponseDto;
+        this.mapperPizzaRequestToPizza = mapperPizzaRequestToPizza;
+        this.mapperPizzaToPizzaResponse = mapperPizzaToPizzaResponse;
         this.flavorRepository = flavorRepository;
     }
 
@@ -37,15 +37,23 @@ public class PizzaService {
         if (pizzas.isEmpty()) throw new ResourceNotFoundException("Pizza não encontrada"); 
 
         return pizzas.stream()
-                .map(it -> pizzaToPizzaResponseDto.map(it))
+                .map(it -> mapperPizzaToPizzaResponse.map(it))
                 .collect(Collectors.toList());
+    }
+
+    public List<PizzaResponseDto> getAllPizzas(List<Long> ids) {
+        List<Pizza> pizzas = pizzaRepository.findAllById(ids);
+
+        if (pizzas.isEmpty()) throw new ResourceNotFoundException("Pizzas não encontradas");
+
+        return pizzas.stream().map(it -> mapperPizzaToPizzaResponse.map(it)).toList();
     }
 
     public PizzaResponseDto getPizzaById(Long id) {
         Pizza pizza = pizzaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pizza não encontrada com ID: " + id));
 
-        return pizzaToPizzaResponseDto.map(pizza);
+        return mapperPizzaToPizzaResponse.map(pizza);
     }
 
     public PizzaResponseDto savePizza(PizzaRequestDto requestDto) {
@@ -55,11 +63,11 @@ public class PizzaService {
 
         Flavor flavor = flavorRepository.findById(requestDto.flavor()).get();
 
-        Pizza pizza = pizzaRequestToPizza.map(requestDto, flavor);
+        Pizza pizza = mapperPizzaRequestToPizza.map(requestDto, flavor);
 
         Pizza savedPizza = pizzaRepository.save(pizza);
 
-        return pizzaToPizzaResponseDto.map(savedPizza);
+        return mapperPizzaToPizzaResponse.map(savedPizza);
     }
 
     // precisa conseguir inserir sabor e tirar sabor
@@ -70,10 +78,10 @@ public class PizzaService {
         
         Flavor flavor = flavorRepository.findById(requestDto.flavor()).get();
         
-        Pizza updatedPizza = pizzaRequestToPizza.map(requestDto, existingPizza, flavor);
+        Pizza updatedPizza = mapperPizzaRequestToPizza.map(requestDto, existingPizza, flavor);
         pizzaRepository.save(updatedPizza);
 
-        return pizzaToPizzaResponseDto.map(updatedPizza);
+        return mapperPizzaToPizzaResponse.map(updatedPizza);
     }
 
     public void deletePizza(Long id) {

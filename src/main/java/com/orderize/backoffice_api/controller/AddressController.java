@@ -35,7 +35,7 @@ public class AddressController {
         }
     }
 
-    @GetMapping("/cep")
+    @PostMapping("/cep")
     @Operation(
             summary = "Busca um endereço utilizando a API ViaCep",
             method = "GET",

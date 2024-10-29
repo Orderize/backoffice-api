@@ -1,5 +1,6 @@
 package com.orderize.backoffice_api.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,9 +48,9 @@ public class IngredientServiceTest {
     @Test
     @DisplayName("Ao salvar um Ingredient válido")
     void testSaveIngredient_Success() {
-        IngredientRequestDto requestDto = new IngredientRequestDto("Mozzarella Cheese", 1.50);
-        Ingredient ingredient = new Ingredient("Mozzarella Cheese", 1.50);
-        IngredientResponseDto responseDto = new IngredientResponseDto(1L, "Mozzarella Cheese", 1.50);
+        IngredientRequestDto requestDto = new IngredientRequestDto("Mozzarella Cheese", BigDecimal.valueOf(1.50));
+        Ingredient ingredient = new Ingredient("Mozzarella Cheese", BigDecimal.valueOf(1.50));
+        IngredientResponseDto responseDto = new IngredientResponseDto(1L, "Mozzarella Cheese", BigDecimal.valueOf(1.50));
         
         when(ingredientRequestDtoToIngredient.map(requestDto)).thenReturn(ingredient);
         when(ingredientRepository.save(ingredient)).thenReturn(ingredient);
@@ -69,8 +70,8 @@ public class IngredientServiceTest {
     @Test
     @DisplayName("Ao salvar um Ingredient que já existe pelo nome")
     void testSaveIngredient_AlreadyExistsByName() {
-        IngredientRequestDto requestDto = new IngredientRequestDto("Mozzarella Cheese", 1.50);
-        Ingredient ingredient = new Ingredient("Mozzarella Cheese", 1.50);
+        IngredientRequestDto requestDto = new IngredientRequestDto("Mozzarella Cheese", BigDecimal.valueOf(1.50));
+        Ingredient ingredient = new Ingredient("Mozzarella Cheese", BigDecimal.valueOf(1.50));
 
         when(ingredientRequestDtoToIngredient.map(requestDto)).thenReturn(ingredient);
         when(ingredientRepository.existsByName("Mozzarella Cheese")).thenReturn(true);
@@ -88,9 +89,9 @@ public class IngredientServiceTest {
     @Test
     @DisplayName("Ao atualizar um Ingredient válida")
     void testUpdateIngredient_Success() {
-        IngredientRequestDto requestDto = new IngredientRequestDto("Mozzarella Cheese", 1.50);
-        Ingredient updatedIngredient = new Ingredient("Mozzarella", 1.30);
-        IngredientResponseDto responseDto = new IngredientResponseDto(1L, "Mozzarella", 1.30);
+        IngredientRequestDto requestDto = new IngredientRequestDto("Mozzarella Cheese", BigDecimal.valueOf(1.50));
+        Ingredient updatedIngredient = new Ingredient("Mozzarella", BigDecimal.valueOf(1.30));
+        IngredientResponseDto responseDto = new IngredientResponseDto(1L, "Mozzarella", BigDecimal.valueOf(1.30));
 
 
         when(ingredientRepository.existsById(1L)).thenReturn(true);
@@ -113,7 +114,7 @@ public class IngredientServiceTest {
     @Test
     @DisplayName("Ao atualizar um Ingredient que não existe")
     void testUpdateIngredient_NotFound() {
-        IngredientRequestDto requestDto = new IngredientRequestDto("Mozzarella Cheese", 1.50);
+        IngredientRequestDto requestDto = new IngredientRequestDto("Mozzarella Cheese", BigDecimal.valueOf(1.50));
 
 
         when(ingredientRepository.existsById(1L)).thenReturn(false);
@@ -131,10 +132,10 @@ public class IngredientServiceTest {
     @Test
     @DisplayName("Ao buscar todos os Ingredients")
     void testGetAllIngredients_Success() {
-        Ingredient ingredient1 = new Ingredient("Mozzarella", 1.30);
-        Ingredient ingredient2 = new Ingredient("Pepperoni", 2.00);
-        IngredientResponseDto responseDto1 = new IngredientResponseDto(1L, "Mozzarella", 1.30);
-        IngredientResponseDto responseDto2 = new IngredientResponseDto(2L, "Pepperoni", 2.00);
+        Ingredient ingredient1 = new Ingredient("Mozzarella", BigDecimal.valueOf(1.30));
+        Ingredient ingredient2 = new Ingredient("Pepperoni", BigDecimal.valueOf(2.00));
+        IngredientResponseDto responseDto1 = new IngredientResponseDto(1L, "Mozzarella", BigDecimal.valueOf(1.30));
+        IngredientResponseDto responseDto2 = new IngredientResponseDto(2L, "Pepperoni", BigDecimal.valueOf(2.00));
 
         when(ingredientRepository.findAll()).thenReturn(List.of(ingredient1, ingredient2));
         when(ingredientToIngredientResponseDto.map(ingredient1)).thenReturn(responseDto1);
@@ -154,8 +155,8 @@ public class IngredientServiceTest {
     @Test
     @DisplayName("Ao buscar um Ingredient pelo ID com sucesso")
     void testGetIngredientById_Success() {
-        Ingredient ingredient = new Ingredient("Mozzarella", 1.30);
-        IngredientResponseDto responseDto = new IngredientResponseDto(1L, "Mozzarella", 1.30);
+        Ingredient ingredient = new Ingredient("Mozzarella", BigDecimal.valueOf(1.30));
+        IngredientResponseDto responseDto = new IngredientResponseDto(1L, "Mozzarella", BigDecimal.valueOf(1.30));
 
         when(ingredientRepository.findById(1L)).thenReturn(Optional.of(ingredient));
         when(ingredientToIngredientResponseDto.map(ingredient)).thenReturn(responseDto);

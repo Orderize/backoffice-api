@@ -38,6 +38,11 @@ public class FlavorService {
         return allFlavors.stream().map(it -> mapperEntityToResponse.map(it)).toList();
     }
 
+    public List<FlavorResponseDto> getAllFlavor(List<Long> ids) {
+        List<Flavor> allFlavors = repository.findAllById(ids);
+        return allFlavors.stream().map(it -> mapperEntityToResponse.map(it)).toList();
+    }
+
     public List<FlavorResponseDto> getAllFlavorsByPop(String value) {
         List<Flavor> flavors = repository.findByPopularity();
 

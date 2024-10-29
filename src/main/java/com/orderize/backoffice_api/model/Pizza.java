@@ -3,8 +3,7 @@ package com.orderize.backoffice_api.model;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -36,7 +35,8 @@ public class Pizza {
     private Long id;
 
     @ManyToMany(
-        fetch = FetchType.EAGER
+        fetch = FetchType.EAGER,
+        cascade = CascadeType.ALL
     )
     @JoinTable(
         name = "pizza_flavor", 
@@ -44,6 +44,12 @@ public class Pizza {
         inverseJoinColumns = @JoinColumn(name = "flavor_id")
     )
     private List<Flavor> flavors;
+
+
+    @ManyToMany(
+        mappedBy="pizzas"
+    )
+    private List<Order> orders;
 
     private String name;
     private BigDecimal price;
@@ -75,20 +81,23 @@ public class Pizza {
         this.flavors = flavors;
     }
 
+
+    public Pizza(Long id, String name, BigDecimal price, String observations, List<Flavor> flavors, List<Order> orders) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.observations = observations;
+        this.flavors = flavors;
+        this.orders = orders;
+    }
+
+
     public Long getIdPizza() {
         return id;
     }
 
     public void setIdPizza(Long id) {
         this.id = id;
-    }
-
-    public List<Flavor> getFlavor() {
-        return flavors;
-    }
-
-    public void setFlavor(List<Flavor> flavors) {
-        this.flavors = flavors;
     }
 
     public String getName() {
@@ -115,7 +124,37 @@ public class Pizza {
         this.observations = observations;
     }
 
-    public PizzaResponseDto map(Pizza pizza) {
-        return null;
+    public Long getId() {
+        return id;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Flavor> getFlavors() {
+        return flavors;
+    }
+
+    public void setFlavors(List<Flavor> flavors) {
+        this.flavors = flavors;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    @Override
+    public String toString() {
+        return "Pizza{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                '}';
+    }
+
 }

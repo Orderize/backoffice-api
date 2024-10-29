@@ -2,7 +2,10 @@ package com.orderize.backoffice_api.controller;
 
 import com.orderize.backoffice_api.dto.address.AddressRequestDto;
 import com.orderize.backoffice_api.dto.address.AddressResponseDto;
+import com.orderize.backoffice_api.dto.viaCep.ViaCepRequestDto;
 import com.orderize.backoffice_api.service.AddressService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/addresses")
+@RequestMapping(value = "/addresses", produces = {"application/json"})
+@Tag(name = "/addresses")
 public class AddressController {
 
     private final AddressService service;
@@ -20,6 +24,7 @@ public class AddressController {
     }
 
     @GetMapping
+    @Operation(summary = "Lista todos os endereços", method = "GET")
     public ResponseEntity<List<AddressResponseDto>> getAllAddresses() {
         List<AddressResponseDto> addresses = service.getAllAddresses();
 
@@ -30,7 +35,23 @@ public class AddressController {
         }
     }
 
+    @GetMapping("/cep")
+    @Operation(
+            summary = "Busca um endereço utilizando a API ViaCep",
+            method = "GET",
+            description = "Recebe um body com o cep e o número do endereço, retorna o endereço completo buscando " +
+                    "dados na API ViaCep, retorna um id null porque o Endereço buscado não é inserido no banco"
+    )
+    public ResponseEntity<AddressResponseDto>  getAddressByViaCep(
+            @RequestBody @Valid ViaCepRequestDto request
+    ) {
+        AddressResponseDto response = service.getAddressByViaCep(request);
+
+        return ResponseEntity.status(200).body(response);
+    }
+
     @PostMapping
+    @Operation(summary = "Salva um novo endereço", method = "POST")
     public ResponseEntity<AddressResponseDto> postAddAddress(
             @RequestBody @Valid AddressRequestDto address
     ) {
@@ -40,6 +61,7 @@ public class AddressController {
     }
 
     @PutMapping
+    @Operation(summary = "Atualiza um endereço", method = "PUT")
     public ResponseEntity<AddressResponseDto> putAddress(
             @RequestBody @Valid AddressRequestDto reqAddress
     ) {
@@ -53,6 +75,7 @@ public class AddressController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta um endereço", method = "DELETE")
     public ResponseEntity<Object> deleteAddress(
             @PathVariable Long id
     ) {

@@ -1,10 +1,11 @@
-package com.orderize.backoffice_api.mapper;
+package com.orderize.backoffice_api.mapper.user;
+
+import org.springframework.stereotype.Component;
 
 import com.orderize.backoffice_api.dto.user.UserRequestDto;
 import com.orderize.backoffice_api.model.Address;
 import com.orderize.backoffice_api.model.Enterprise;
 import com.orderize.backoffice_api.model.User;
-import org.springframework.stereotype.Component;
 
 @Component
 public class UserRequestToUser {

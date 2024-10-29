@@ -1,59 +1,94 @@
 package com.orderize.backoffice_api.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 
 @Entity
 public class Pizza {
     
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    // @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private Integer id;
+
+    // private String name;
+
+    // private Double price;
+
+    // private Double estimatedTimeFinishing;
+
+    // private String image;
+
+    // @ManyToMany
+    // private List<Ingredient> ingredients;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToMany(
+        fetch = FetchType.EAGER
+    )
+    @JoinTable(
+        name = "pizza_flavor", 
+        joinColumns = @JoinColumn(name = "pizza_id"), 
+        inverseJoinColumns = @JoinColumn(name = "flavor_id")
+    )
+    private List<Flavor> flavors;
 
     private String name;
-
-    private Double price;
-
-    private Double estimatedTimeFinishing;
-
-    private String image;
-
-    @ManyToMany
-    private List<Ingredient> ingredients;
+    private BigDecimal price;
+    private String observations;
 
     public Pizza() {
     }
 
-    public Pizza(String name, Double price, Double estimatedTimeFinishing, String image, List<Ingredient> ingredients) {
-        this.name = name;
-        this.price = price;
-        this.estimatedTimeFinishing = estimatedTimeFinishing;
-        this.image = image;
-        this.ingredients = ingredients;
-    }
-
-    public Pizza(Integer id, String name, Double price, Double estimatedTimeFinishing, String image,
-            List<Ingredient> ingredients) {
+    public Pizza(Long id, String name, BigDecimal price, String observations) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.estimatedTimeFinishing = estimatedTimeFinishing;
-        this.image = image;
-        this.ingredients = ingredients;
+        this.observations = observations;
     }
 
-    public Integer getId() {
+    public Pizza(String name, BigDecimal price, String observations, List<Flavor> flavors) {
+        this.name = name;
+        this.price = price;
+        this.observations = observations;
+        this.flavors = flavors;
+    }
+
+
+    public Pizza(Long id, String name, BigDecimal price, String observations, List<Flavor> flavors) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.observations = observations;
+        this.flavors = flavors;
+    }
+
+    public Long getIdPizza() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setIdPizza(Long id) {
         this.id = id;
+    }
+
+    public List<Flavor> getFlavor() {
+        return flavors;
+    }
+
+    public void setFlavor(List<Flavor> flavors) {
+        this.flavors = flavors;
     }
 
     public String getName() {
@@ -64,36 +99,23 @@ public class Pizza {
         this.name = name;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public Double getEstimatedTimeFinishing() {
-        return estimatedTimeFinishing;
+    public String getObservations() {
+        return observations;
     }
 
-    public void setEstimatedTimeFinishing(Double estimatedTimeFinishing) {
-        this.estimatedTimeFinishing = estimatedTimeFinishing;
+    public void setObservations(String observations) {
+        this.observations = observations;
     }
 
-    public String getImage() {
-        return image;
+    public PizzaResponseDto map(Pizza pizza) {
+        return null;
     }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public List<Ingredient> getIngredients() {
-        return ingredients;
-    }
-
-    public void setIngredients(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
-    }
-
 }

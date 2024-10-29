@@ -41,4 +41,27 @@ public class ExceptionHandlerController {
         );
     }
 
+    @ExceptionHandler(AlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleAlreadyExistsException(AlreadyExistsException exception, HttpServletRequest request) {
+        return new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.name(),
+                exception.getMessage(),
+                request.getServletPath()
+
+        );
+    }
+
+    @ExceptionHandler(InvalidTimeIntervalException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidTimeIntervalException(InvalidTimeIntervalException exception, HttpServletRequest request) {
+        return new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
+
 }

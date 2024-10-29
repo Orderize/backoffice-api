@@ -1,18 +1,14 @@
 package com.orderize.backoffice_api.dto.pizza;
 
-import java.util.List;
+import java.math.BigDecimal;
 
-import com.orderize.backoffice_api.dto.ingredient.IngredientRequestDto;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public record PizzaRequestDto(
-    Long id,
-    String name,
-    Double price,
-    Double estimatedTimeFinishing,
-    String image,
-    List<IngredientRequestDto> ingredients
-) {
-    public PizzaRequestDto(String name, Double price, Double estimatedTimeFinishing, String image, List<IngredientRequestDto> ingredients) {
-        this(null, name, price, estimatedTimeFinishing, image, ingredients);
-    }
-}
+        @NotBlank String name,
+        @NotNull BigDecimal price,
+        @Size(max = 300) String observations,
+        @NotNull Long flavor
+) {}

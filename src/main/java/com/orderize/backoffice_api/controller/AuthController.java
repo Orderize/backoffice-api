@@ -3,6 +3,8 @@ package com.orderize.backoffice_api.controller;
 import com.orderize.backoffice_api.dto.auth.AuthenticationDto;
 import com.orderize.backoffice_api.dto.auth.LoginResponseDto;
 import com.orderize.backoffice_api.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping(value = "auth", produces = {"application/json"})
+@Tag(name = "/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -20,6 +23,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Faz login", method = "POST", description = "Caso o login seja realizado com sucesso, retor" +
+            "na um token JWT que deve ser utilizado como header Authorization para fazer requisições")
     public ResponseEntity<LoginResponseDto> login(
             @RequestBody AuthenticationDto authDto
     ) {

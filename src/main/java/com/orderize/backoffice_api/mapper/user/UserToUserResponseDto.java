@@ -1,13 +1,15 @@
-package com.orderize.backoffice_api.mapper;
+package com.orderize.backoffice_api.mapper.user;
+
+import java.util.Collections;
+
+import org.springframework.stereotype.Component;
 
 import com.orderize.backoffice_api.dto.RoleResponseDto;
 import com.orderize.backoffice_api.dto.address.AddressResponseDto;
 import com.orderize.backoffice_api.dto.enterprise.EnterpriseResponseDto;
 import com.orderize.backoffice_api.dto.user.UserResponseDto;
+import com.orderize.backoffice_api.mapper.Mapper;
 import com.orderize.backoffice_api.model.User;
-import org.springframework.stereotype.Component;
-
-import java.util.Collections;
 
 @Component
 public class UserToUserResponseDto implements Mapper<User, UserResponseDto> {
@@ -35,7 +37,7 @@ public class UserToUserResponseDto implements Mapper<User, UserResponseDto> {
                 user.getRoles() != null ?
                         user.getRoles().stream().map(it -> new RoleResponseDto(
                         it.getId(),
-                        it.getNome()
+                        it.getName()
                 )).toList()
         : Collections.emptyList()
         );

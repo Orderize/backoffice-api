@@ -12,7 +12,9 @@ import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.flavor.FlavorRequestToFlavor;
 import com.orderize.backoffice_api.mapper.flavor.FlavorToFlavorResponseDto;
 import com.orderize.backoffice_api.model.Flavor;
+import com.orderize.backoffice_api.model.Ingredient;
 import com.orderize.backoffice_api.repository.FlavorRepository;
+import com.orderize.backoffice_api.repository.IngredientRepository;
 
 @Service
 public class FlavorService {
@@ -21,10 +23,13 @@ public class FlavorService {
     private final FlavorRequestToFlavor mapperRequestToEntity;
     private final FlavorToFlavorResponseDto mapperEntityToResponse;
 
-    public FlavorService(FlavorRepository repository, FlavorRequestToFlavor mapperRequestToEntity, FlavorToFlavorResponseDto mapperEntityToResponse) {
+    private final IngredientRepository ingredientRepository;
+
+    public FlavorService(FlavorRepository repository, FlavorRequestToFlavor mapperRequestToEntity, FlavorToFlavorResponseDto mapperEntityToResponse, IngredientRepository ingredientRepository) {
         this.repository = repository;
         this.mapperRequestToEntity = mapperRequestToEntity;
         this.mapperEntityToResponse = mapperEntityToResponse;
+        this.ingredientRepository = ingredientRepository;
     }
 
     public List<FlavorResponseDto> getAllFlavors() {
@@ -60,7 +65,8 @@ public class FlavorService {
 
 
     public FlavorResponseDto saveFlavor(FlavorRequestDto request) {
-        Flavor flavorToSave = mapperRequestToEntity.map(request);
+        List<Ingredient> ingredients = ingredientRepository.findAllById(request.ingredients());
+        Flavor flavorToSave = mapperRequestToEntity.map(request, ingredients);
 
         if (repository.existsByName(flavorToSave.getName())) {
             throw new AlreadyExistsException("Já existe um sabor com este nome");

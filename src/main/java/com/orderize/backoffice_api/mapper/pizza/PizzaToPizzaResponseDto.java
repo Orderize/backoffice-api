@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
 import com.orderize.backoffice_api.mapper.flavor.FlavorToFlavorResponseDto;
-import com.orderize.backoffice_api.model.Flavor;
 import com.orderize.backoffice_api.model.Pizza;
 
 @Component

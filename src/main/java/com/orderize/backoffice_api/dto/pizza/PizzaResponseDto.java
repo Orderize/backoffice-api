@@ -5,15 +5,16 @@ import java.util.List;
 
 import com.orderize.backoffice_api.dto.flavor.FlavorResponseDto;
 
+
 public class PizzaResponseDto {
-    private Long idPizza;
+    private Long id;
     private String name;
     private BigDecimal price;
     private String observations;
     private List<FlavorResponseDto> flavors;
 
-    public PizzaResponseDto(Long idPizza, String name, BigDecimal price, String observations, List<FlavorResponseDto> flavors) {
-        this.idPizza = idPizza;
+    public PizzaResponseDto(Long id, String name, BigDecimal price, String observations, List<FlavorResponseDto> flavors) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.observations = observations;
@@ -21,8 +22,8 @@ public class PizzaResponseDto {
     }
 
 
-    public Long getIdPizza() {
-        return idPizza;
+    public Long getId() {
+        return id;
     }
 
     public String getName() {

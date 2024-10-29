@@ -44,6 +44,13 @@ public class Flavor {
         this.price = price;
     }
 
+    public Flavor(String name, String description, BigDecimal price, List<Ingredient> ingredients) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.ingredients = ingredients;
+    }
+
     public Flavor(Long id, String name, String description, BigDecimal price, LocalDate registered, List<Ingredient> ingredients, List<Pizza> pizzas) {
         this.id = id;
         this.name = name;

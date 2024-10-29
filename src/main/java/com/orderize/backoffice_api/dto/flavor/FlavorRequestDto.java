@@ -1,5 +1,6 @@
 package com.orderize.backoffice_api.dto.flavor;
 
+import java.util.List;
 import java.math.BigDecimal;
 
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +10,7 @@ public record FlavorRequestDto (
     @NotBlank String name,
     String description,
     @NotNull BigDecimal price,
-    Long ingredient
+    List<Long> ingredients
 ) {
 
     public FlavorRequestDto(String name, BigDecimal price) {

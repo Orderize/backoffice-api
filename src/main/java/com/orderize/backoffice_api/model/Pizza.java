@@ -15,6 +15,20 @@ import jakarta.persistence.ManyToMany;
 
 @Entity
 public class Pizza {
+    
+    // @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private Integer id;
+
+    // private String name;
+
+    // private Double price;
+
+    // private Double estimatedTimeFinishing;
+
+    // private String image;
+
+    // @ManyToMany
+    // private List<Ingredient> ingredients;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

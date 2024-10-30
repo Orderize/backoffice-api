@@ -2,6 +2,7 @@ package com.orderize.backoffice_api.service;
 
 import com.orderize.backoffice_api.dto.auth.AuthenticationDto;
 import com.orderize.backoffice_api.dto.auth.LoginResponseDto;
+import com.orderize.backoffice_api.dto.user.UserInfoResponseDto;
 import com.orderize.backoffice_api.mapper.auth.AuthToResponse;
 import com.orderize.backoffice_api.model.User;
 import com.orderize.backoffice_api.repository.UserRepository;
@@ -34,6 +35,22 @@ public class AuthService {
         User user = (User) auth.getPrincipal();
         var token = tokenService.generationToken(user);
         
-        return authToResponse.map(token, user);
+        return authToResponse.map(token);
+    }
+
+    public UserInfoResponseDto getUserInfo( String token ) {
+
+        Long userId;
+        try {
+            token = token.replace("Bearer ", "");
+            userId = tokenService.getUserIdFromToken(token);
+        } catch (Exception e) {
+            throw new RuntimeException("Token inválido ou expirado.", e);
+        }
+
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        return authToResponse.map(user);
     }
 }

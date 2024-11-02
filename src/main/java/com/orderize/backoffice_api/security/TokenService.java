@@ -3,37 +3,48 @@ package com.orderize.backoffice_api.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.orderize.backoffice_api.model.User;
+
+import io.github.cdimascio.dotenv.Dotenv;
+
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
 @Service
 public class TokenService {
     // Lembrar de esconder essa parada, não pode ficar no github não, mas a essa altura do campeonato acho que não
     // pega nada
-    private final String secret = "orderize_super_confidential";
+    private final String secret;
+    private final Algorithm algorithm;
+
+    public TokenService() {
+        Dotenv dotenv = Dotenv.load();
+        if (dotenv.get("TOKEN_SECRET") != null) this.secret = dotenv.get("TOKEN_SECRET");
+        else this.secret = System.getenv("TOKEN_SECRET");
+
+        this.algorithm = Algorithm.HMAC256(secret);
+    }
 
     public String generationToken(User user) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-
             String token = JWT.create()
                     .withIssuer("auth")
                     .withSubject(user.getEmail())
+                    .withClaim("userId", user.getId())
+                    .withClaim("name", user.getName())
                     .withExpiresAt(getExpirationTokenDate())
                     .sign(algorithm);
             return token;
         } catch (Exception e) {
-            throw new RuntimeException("Erro na criação do token JWT");
+            throw new RuntimeException("Erro na criação do token JWT", e);
         }
     }
 
     public String validateToken(String token) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-
             return JWT.require(algorithm)
                     .withIssuer("auth")
                     .build()
@@ -41,6 +52,18 @@ public class TokenService {
                     .getSubject();
         } catch (Exception e) {
             throw new RuntimeException("Erro na verificação do token JWT");
+        }
+    }
+
+    public Long getUserIdFromToken(String token) {
+        try {
+            return JWT.require(algorithm)
+                    .withIssuer("auth")
+                    .build()
+                    .verify(token)
+                    .getClaim("userId").asLong();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao verificar identificado do usuário", e);
         }
     }
 

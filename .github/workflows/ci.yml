@@ -1,0 +1,23 @@
+name: CI Workflow
+
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+
+      - name: Build with Maven
+        env: 
+          TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
+        run: mvn clean package

@@ -68,7 +68,7 @@ public class PizzaServiceTest {
 
         PizzaResponseDto result = pizzaService.savePizza(requestDto);
 
-        assertEquals(1L, result.getIdPizza());
+        assertEquals(1L, result.getId());
         assertEquals("Pepperoni", result.getName());
         assertEquals(flavors, result.getFlavors());
 
@@ -112,7 +112,7 @@ public class PizzaServiceTest {
 
         PizzaResponseDto result = pizzaService.getPizzaById(1L);
 
-        assertEquals(1L, result.getIdPizza());
+        assertEquals(1L, result.getId());
         assertEquals("Pepperoni", result.getName());
         assertEquals(flavors, result.getFlavors());
         verify(pizzaRepository).findById(1L);

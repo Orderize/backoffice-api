@@ -64,4 +64,26 @@ public class ExceptionHandlerController {
         );
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleResourceNotFoundException(ResourceNotFoundException exception, HttpServletRequest request) {
+        return new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
+
+    @ExceptionHandler(CsvFileException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleCsvFileException(CsvFileException exception, HttpServletRequest request) {
+        return new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.name(),
+                exception.getMessage(),
+                request.getServletPath()
+        );
+    }
+
 }

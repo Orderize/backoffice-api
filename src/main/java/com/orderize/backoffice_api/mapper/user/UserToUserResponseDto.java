@@ -3,7 +3,6 @@ package com.orderize.backoffice_api.mapper.user;
 import java.util.Collections;
 
 import org.springframework.stereotype.Component;
-
 import com.orderize.backoffice_api.dto.address.AddressResponseDto;
 import com.orderize.backoffice_api.dto.enterprise.EnterpriseResponseDto;
 import com.orderize.backoffice_api.dto.role.RoleResponseDto;

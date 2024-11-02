@@ -66,4 +66,14 @@ public class Drink {
     public void setMilimeters(Integer milimeters) {
         this.milimeters = milimeters;
     }
+
+    @Override
+    public String toString() {
+        return "Drink{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", milimeters=" + milimeters +
+                '}';
+    }
 }

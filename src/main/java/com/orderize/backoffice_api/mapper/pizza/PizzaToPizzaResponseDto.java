@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
 import com.orderize.backoffice_api.mapper.flavor.FlavorToFlavorResponseDto;
-import com.orderize.backoffice_api.model.Flavor;
 import com.orderize.backoffice_api.model.Pizza;
 
 @Component
@@ -27,7 +26,7 @@ public class PizzaToPizzaResponseDto {
                 pizza.getName(),
                 pizza.getPrice(),
                 pizza.getObservations(),
-                pizza.getFlavor().stream().map(flavor -> flavorToFlavorResponseDto.map(flavor)).collect(Collectors.toList())
+                pizza.getFlavors().stream().map(flavor -> flavorToFlavorResponseDto.map(flavor)).collect(Collectors.toList())
         );
     }
 }

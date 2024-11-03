@@ -29,8 +29,8 @@ jobs:
           context: .
           push: true
           tags: santthiago/orderize-backend:latest
-          build-args:
-            token_secret: ${{ secrets.TOKEN_SECRET }}
-            spring_datasource_url: ${{ secrets.SPRING_DATASOURCE_URL }}
-            spring_datasource_username: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
-            spring_datasource_password: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+          build-args: |
+            TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
+            SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
+            SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+            SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}

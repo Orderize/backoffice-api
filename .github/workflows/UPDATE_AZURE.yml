@@ -1,0 +1,26 @@
+name: Deploy to Azure App Service
+
+on: 
+  push:
+    branches:
+      - main
+
+  repository_dispatch:
+    types: [update-docker-image]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Update Azure Web App
+        run: |
+          az webapp update --name orderize-backend --resource-group orderize --set containerSettings={...}

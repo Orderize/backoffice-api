@@ -24,4 +24,4 @@ jobs:
 
       - name: Update Azure Web App
         run: |
-          az webapp update --name orderize-backend --resource-group orderize --set containerSettings='{"dockerImageName": "santthiago/orderize-backend:latest"}'
+          az webapp update --name orderize-backend --resource-group orderize --container-image santthiago/orderize-backend:latest

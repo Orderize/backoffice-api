@@ -15,15 +15,12 @@ import java.util.List;
 
 @Service
 public class TokenService {
-    // Lembrar de esconder essa parada, não pode ficar no github não, mas a essa altura do campeonato acho que não
-    // pega nada
     private final String secret;
     private final Algorithm algorithm;
 
     public TokenService() {
         Dotenv dotenv = Dotenv.load();
-        if (dotenv.get("TOKEN_SECRET") != null) this.secret = dotenv.get("TOKEN_SECRET");
-        else this.secret = System.getenv("TOKEN_SECRET");
+        this.secret = dotenv.get("TOKEN_SECRET");
 
         this.algorithm = Algorithm.HMAC256(secret);
     }

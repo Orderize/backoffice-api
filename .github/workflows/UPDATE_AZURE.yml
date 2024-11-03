@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - development
 
   repository_dispatch:
     types: [update-docker-image]

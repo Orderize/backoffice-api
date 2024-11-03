@@ -28,7 +28,7 @@ jobs:
         with: 
           context: .
           push: true
-          tags: santthiago/orderize-backend:latest
+          tags: santthiago/orderize-backend:1.0.0
           build-args:
             TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
             SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}

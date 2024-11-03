@@ -21,7 +21,6 @@ public class TokenService {
     public TokenService() {
         
         this.secret = System.getenv("TOKEN_SECRET");
-
         this.algorithm = Algorithm.HMAC256(secret);
     }
 

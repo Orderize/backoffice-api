@@ -24,4 +24,4 @@ jobs:
 
       - name: Set Docker Image for Azure Web App
         run: |
-          az webapp config container set --name orderize-backend --resource-group orderize --docker-image-name santthiago/orderize-backend:latest
+          az webapp config container set --name orderize-backend --resource-group orderize --docker-custom-image-name santthiago/orderize-backend:latest

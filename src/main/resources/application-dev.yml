@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://orderize-database:3306/orderize?createDatabaseIfNotExist=true
+    username: root
+    password: 1234
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect

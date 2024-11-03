@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - development
 
   repository_dispatch:
     types: [update-docker-image]
@@ -23,4 +24,4 @@ jobs:
 
       - name: Update Azure Web App
         run: |
-          az webapp update --name orderize-backend --resource-group orderize --set containerSettings={...}
+          az webapp update --name nome-da-aplicacao --resource-group nome-do-grupo --set containerSettings={"dockerImageName": "santthiago/orderize-backend:latest"}

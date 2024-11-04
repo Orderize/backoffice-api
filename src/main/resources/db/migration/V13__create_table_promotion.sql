@@ -3,8 +3,8 @@ CREATE TABLE promotion(
     name varchar(90) not null,
     description varchar(300),
     discount_value decimal(10,2),
-    start_date date default current_date,
-    end_date date default current_date,
+    start_date date default (current_date),
+    end_date date default (current_date),
     primary key (id)
 );
 

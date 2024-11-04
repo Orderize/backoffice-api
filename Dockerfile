@@ -9,6 +9,8 @@ RUN mvn dependency:go-offline -B
 
 COPY src ./src
 
+COPY .env .
+
 # Compila a aplicação Spring Boot e pula os testes
 RUN mvn clean package -DskipTests
 

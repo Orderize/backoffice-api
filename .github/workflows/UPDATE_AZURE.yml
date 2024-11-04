@@ -5,11 +5,11 @@ on:
     workflows: ["Build and Publish Docker Image"]
     types:
       - completed
-      
-  push:
-    branches:
-      - main
-      - development
+        
+    push:
+      branches:
+        - main
+        - development
 
   repository_dispatch:
     types: [update-docker-image]
@@ -30,3 +30,4 @@ jobs:
       - name: Set Docker Image for Azure Web App
         run: |
           az webapp config container set --name orderize-backend --resource-group orderize --docker-custom-image-name santthiago/orderize-backend:latest
+

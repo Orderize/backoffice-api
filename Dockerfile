@@ -9,6 +9,8 @@ RUN mvn dependency:go-offline -B
 
 COPY src ./src
 
+COPY .env /app
+
 # Compila a aplicação Spring Boot e pula os testes
 RUN mvn clean package -DskipTests
 
@@ -20,9 +22,7 @@ COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-# ENV SPRING_DATASOURCE_URL=jdbc:mariadb://container-mariadb:3306/orderize
-ENV SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/orderize
-ENV SPRING_DATASOURCE_USERNAME=root
-ENV SPRING_DATASOURCE_PASSWORD=1234
+ARG TOKEN_SECRET
+ENV TOKEN_SECRET=${TOKEN_SECRET}
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

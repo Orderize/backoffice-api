@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - development
+      - infra*
 
 jobs:
   build-and-deploy:
@@ -28,3 +30,6 @@ jobs:
           context: .
           push: true
           tags: santthiago/orderize-backend:latest
+          build-args: |
+            TOKEN_SECRET=${{ secrets.TOKEN_SECRET }}
+

@@ -10,8 +10,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Permite requisições em todos os endpoints
-                .allowedOrigins("http://localhost:5173") // Origem permitida (front-end)
-                .allowedOrigins("http://orderize-frontend.azurewebsites.net") // Origem permitida (front-end)
+                .allowedOrigins("http://localhost:5173", "http://orderize-frontend.azurewebsites.net") // Origem permitida (front-end)
                 .allowedMethods("GET", "POST", "PUT", "DELETE") // Métodos permitidos
                 .allowedHeaders("*"); // Todos os header permitidos
     }

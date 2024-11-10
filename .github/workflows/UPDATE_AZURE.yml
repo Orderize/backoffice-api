@@ -1,0 +1,34 @@
+name: Deploy to Azure App Service
+
+on: 
+  workflow_run:
+    workflows: ["Build and Publish Docker Image"]
+    types:
+      - completed
+        
+  push:
+    branches:
+      - main
+      - development
+      - feature/infra/build-docker
+
+  repository_dispatch:
+    types: [update-docker-image]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set Docker Image for Azure Web App
+        run: |
+          az webapp config container set --name orderize-backend --resource-group orderize --docker-custom-image-name santthiago/orderize-backend:latest
+

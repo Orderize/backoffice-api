@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mariadb://orderize-database:3306/orderize?createDatabaseIfNotExist=true
+    url: jdbc:mariadb://mariadb:3306/orderize?createDatabaseIfNotExist=true
     username: root
     password: 1234
     driver-class-name: org.mariadb.jdbc.Driver

@@ -15,28 +15,13 @@ import jakarta.persistence.ManyToMany;
 
 @Entity
 public class Pizza {
-    
-    // @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // private Integer id;
-
-    // private String name;
-
-    // private Double price;
-
-    // private Double estimatedTimeFinishing;
-
-    // private String image;
-
-    // @ManyToMany
-    // private List<Ingredient> ingredients;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToMany(
-        fetch = FetchType.EAGER,
-        cascade = CascadeType.ALL
+        fetch = FetchType.EAGER
     )
     @JoinTable(
         name = "pizza_flavor", 
@@ -45,33 +30,12 @@ public class Pizza {
     )
     private List<Flavor> flavors;
 
-
-    @ManyToMany(
-        mappedBy="pizzas"
-    )
-    private List<Order> orders;
-
     private String name;
     private BigDecimal price;
     private String observations;
 
     public Pizza() {
     }
-
-    public Pizza(Long id, String name, BigDecimal price, String observations) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.observations = observations;
-    }
-
-    public Pizza(String name, BigDecimal price, String observations, List<Flavor> flavors) {
-        this.name = name;
-        this.price = price;
-        this.observations = observations;
-        this.flavors = flavors;
-    }
-
 
     public Pizza(Long id, String name, BigDecimal price, String observations, List<Flavor> flavors) {
         this.id = id;
@@ -82,22 +46,20 @@ public class Pizza {
     }
 
 
-    public Pizza(Long id, String name, BigDecimal price, String observations, List<Flavor> flavors, List<Order> orders) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.observations = observations;
-        this.flavors = flavors;
-        this.orders = orders;
-    }
-
-
-    public Long getIdPizza() {
+    public Long getId() {
         return id;
     }
 
-    public void setIdPizza(Long id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Flavor> getFlavors() {
+        return flavors;
+    }
+
+    public void setFlavors(List<Flavor> flavors) {
+        this.flavors = flavors;
     }
 
     public String getName() {
@@ -122,30 +84,6 @@ public class Pizza {
 
     public void setObservations(String observations) {
         this.observations = observations;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<Flavor> getFlavors() {
-        return flavors;
-    }
-
-    public void setFlavors(List<Flavor> flavors) {
-        this.flavors = flavors;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
     }
 
     @Override

@@ -32,38 +32,37 @@ public class FlavorService {
         this.ingredientRepository = ingredientRepository;
     }
 
-    public List<FlavorResponseDto> getAllFlavors() {
-        List<Flavor> allFlavors = repository.findAll();
-
-        return allFlavors.stream().map(it -> mapperEntityToResponse.map(it)).toList();
+    public List<Flavor> getAllFlavors() {
+        return repository.findAll();
     }
 
-    public List<FlavorResponseDto> getAllFlavor(List<Long> ids) {
+    public List<Flavor> getAllFlavor(List<Long> ids) {
         List<Flavor> allFlavors = repository.findAllById(ids);
-        return allFlavors.stream().map(it -> mapperEntityToResponse.map(it)).toList();
+        return allFlavors;
     }
 
-    public List<FlavorResponseDto> getAllFlavorsByPop(String value) {
+    public List<Flavor> getAllFlavorsByPop(String value) {
         List<Flavor> flavors = repository.findByPopularity();
 
         if (!value.isBlank()) {
             flavors = flavors.stream().filter(it -> it.getId().toString().contains(value) || it.getName().toLowerCase().contains(value.toLowerCase())).toList();
         };
 
-        return flavors.stream().map(it -> mapperEntityToResponse.map(it)).toList();
+        return flavors;
     }
 
-    public FlavorResponseDto getFlavorById(Long id) {
+    public Flavor getFlavorById(Long id) {
         Optional<Flavor> possibleFlavor = repository.findById(id);
 
         if (possibleFlavor.isPresent()) {
-            return mapperEntityToResponse.map(possibleFlavor.get());
+            return possibleFlavor.get();
         } else {
             throw new ResourceNotFoundException("Sabor não encontrado");
         }
     }
 
-
+    // TODO: Ainda não refatorei essa parte, porque ainda vou pegar uma tarefa relacionada apenas a isso
+    // TODO: No momento só refatorei aqueles que eram simples e só usariam o de response
     public FlavorResponseDto saveFlavor(FlavorRequestDto request) {
         List<Ingredient> ingredients = ingredientRepository.findAllById(request.ingredients());
         Flavor flavorToSave = mapperRequestToEntity.map(request, ingredients);

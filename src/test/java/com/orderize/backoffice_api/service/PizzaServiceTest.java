@@ -1,32 +1,24 @@
 package com.orderize.backoffice_api.service;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import org.mockito.MockitoAnnotations;
-
-import com.orderize.backoffice_api.dto.flavor.FlavorResponseDto;
-import com.orderize.backoffice_api.dto.pizza.PizzaRequestDto;
-import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
-import com.orderize.backoffice_api.mapper.pizza.PizzaRequestDtoToPizza;
-import com.orderize.backoffice_api.mapper.pizza.PizzaToPizzaResponseDto;
 import com.orderize.backoffice_api.model.Flavor;
 import com.orderize.backoffice_api.model.Pizza;
 import com.orderize.backoffice_api.repository.FlavorRepository;
 import com.orderize.backoffice_api.repository.PizzaRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PizzaServiceTest {
 
@@ -37,134 +29,261 @@ public class PizzaServiceTest {
     private FlavorRepository flavorRepository;
 
     @Mock
-    private PizzaRequestDtoToPizza pizzaRequestToPizza;
-
-    @Mock
-    private PizzaToPizzaResponseDto pizzaToPizzaResponseDto;
-
-    @Mock
     private Flavor flavor;
 
     @InjectMocks
     private PizzaService pizzaService;
 
+    private static List<Flavor> flavors;
+
+    private static List<Pizza> pizzas;
+
+    private static Pizza pizza;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        flavors = List.of(
+                new Flavor(
+                        "Marguerita",
+                        "Sabor gostoso",
+                        BigDecimal.valueOf(128.0)
+                ),
+                new Flavor(
+                        "Mussarela",
+                        "Sabor gostoso",
+                        BigDecimal.valueOf(130.0)
+                ),
+                new Flavor(
+                        "Frango com catupiry",
+                        "Sabor gostoso",
+                        BigDecimal.valueOf(12.0)
+                )
+        );
+
+        pizzas = List.of(
+                new Pizza(
+                        1L,
+                        "Marguerita",
+                        BigDecimal.valueOf(128.0),
+                        "Muitas observacoes",
+                        flavors
+                ),
+                new Pizza(
+                        2L,
+                        "JHVJHVV",
+                        BigDecimal.valueOf(128.0),
+                        "Muitas observacoes",
+                        flavors
+                ),
+                new Pizza(
+                        3L,
+                        "fsdfsdffreg",
+                        BigDecimal.valueOf(128.0),
+                        "Muitas observacoes",
+                        flavors
+                )
+        );
+
+        pizza = new Pizza(
+                1L,
+                "Marguerita",
+                BigDecimal.valueOf(128.0),
+                "Muitas observacoes",
+                flavors
+        );
     }
 
     @Test
-    @DisplayName("Ao salvar uma Pizza válida")
-    void testSavePizza_Success() {
-        PizzaRequestDto requestDto = new PizzaRequestDto("Pepperoni", new BigDecimal("25.99"), "Delicious pizza", 1L);
-        Pizza pizza = new Pizza(1L, "Pepperoni", new BigDecimal("25.99"), "Delicious pizza");
-        List<FlavorResponseDto>  flavors = List.of();
-        PizzaResponseDto responseDto = new PizzaResponseDto(1L, "Pepperoni", new BigDecimal("25.99"), "Delicious pizza", flavors);
+    @DisplayName("getAllPizzas quando invocado e não houverem pizzas no banco deve retornar uma lista vazia")
+    void getAllPizzasQuandoInvocadoENaoHouveremPizzasNoBancoDeveRetornarUmaListaVazia() {
+        when(pizzaRepository.findAll()).thenReturn(Collections.emptyList());
 
-        when(flavorRepository.findById(requestDto.flavor())).thenReturn(Optional.of(flavor));
-        when(pizzaRequestToPizza.map(requestDto, flavor)).thenReturn(pizza);
-        when(pizzaRepository.save(pizza)).thenReturn(pizza);
-        when(pizzaToPizzaResponseDto.map(pizza)).thenReturn(responseDto);
+        List<Pizza> result = pizzaService.getAllPizzas();
 
-        PizzaResponseDto result = pizzaService.savePizza(requestDto);
-
-        assertEquals(1L, result.getId());
-        assertEquals("Pepperoni", result.getName());
-        assertEquals(flavors, result.getFlavors());
-
-        verify(flavorRepository).findById(requestDto.flavor());
-        verify(pizzaRequestToPizza).map(requestDto, flavor);
-        verify(pizzaRepository).save(pizza);
-        verify(pizzaToPizzaResponseDto).map(pizza);
+        assertTrue(result.isEmpty());
+        verify(
+                pizzaRepository,
+                times(1)
+        ).findAll();
     }
 
     @Test
-    @DisplayName("Ao buscar todas as Pizzas")
-    void testGetAllPizzas_Success() {
-        Pizza pizza1 = new Pizza(1L, "Pepperoni", new BigDecimal("25.99"), "Delicious pizza");
-        Pizza pizza2 = new Pizza(2L, "Margherita", new BigDecimal("30.00"), "Classic pizza");
-        List<FlavorResponseDto> flavors = List.of();
-        PizzaResponseDto responseDto1 = new PizzaResponseDto(1L, "Pepperoni", new BigDecimal("25.99"), "Delicious pizza", flavors);
-        PizzaResponseDto responseDto2 = new PizzaResponseDto(2L, "Margherita", new BigDecimal("30.00"), "Classic pizza", flavors);
+    @DisplayName("getAllPizzas quando invocado e houverem pizzas no banco deve retornar uma lista de pizzas")
+    void getAllPizzasQuandoInvocadoEHouveremPizzasNoBancoDeveRetornarUmaListaDePizzas() {
+        when(pizzaRepository.findAll()).thenReturn(pizzas);
 
-        when(pizzaRepository.findAll()).thenReturn(List.of(pizza1, pizza2));
-        when(pizzaToPizzaResponseDto.map(pizza1)).thenReturn(responseDto1);
-        when(pizzaToPizzaResponseDto.map(pizza2)).thenReturn(responseDto2);
+        List<Pizza> result = pizzaService.getAllPizzas();
 
-        List<PizzaResponseDto> pizzas = pizzaService.getAllPizzas();
-
-        assertEquals(2, pizzas.size());
-        assertEquals("Pepperoni", pizzas.get(0).getName());
-        assertEquals("Margherita", pizzas.get(1).getName());
-        assertEquals(flavors, pizzas.get(0).getFlavors());
-        verify(pizzaRepository).findAll();
+        assertFalse(result.isEmpty());
+        verify(
+                pizzaRepository,
+                times(1)
+        ).findAll();
     }
 
     @Test
-    @DisplayName("Ao buscar uma Pizza pelo ID com sucesso")
-    void testGetPizzaById_Success() {
-        Pizza pizza = new Pizza(1L, "Pepperoni", new BigDecimal("25.99"), "Delicious pizza");
-        List<FlavorResponseDto> flavors = List.of();
-        PizzaResponseDto responseDto = new PizzaResponseDto(1L, "Pepperoni", new BigDecimal("25.99"), "Delicious pizza", flavors);
+    @DisplayName("getPizzaById quando invocado com id inválido deve lancar ResourceNotFoundException")
+    void getPizzaByIdQuandoInvocadoComIdInvalidoDeveLancarResourceNotFoundException() {
+        when(pizzaRepository.findById(anyLong())).thenReturn(Optional.empty());
 
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> pizzaService.getPizzaById(1L)
+        );
+        assertEquals("Pizza não encontrada", exception.getMessage());
+        verify(
+                pizzaRepository,
+                times(1)
+        ).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("getPizzaById quando invocado com id válido deve retornar Pizza")
+    void getPizzaByIdQuandoInvocadoComIdValidoDeveRetornarPizza() {
         when(pizzaRepository.findById(1L)).thenReturn(Optional.of(pizza));
-        when(pizzaToPizzaResponseDto.map(pizza)).thenReturn(responseDto);
 
-        PizzaResponseDto result = pizzaService.getPizzaById(1L);
+        Pizza result = pizzaService.getPizzaById(1L);
+
+        assertNotNull(result);
+        assertEquals(pizza, result);
+        verify(
+                pizzaRepository,
+                times(1)
+        ).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("savePizza quando invocado com pizza válida deve salvar e retornar Pizza salva")
+    void savePizzaQuandoInvocadoComPizzaValidaDeveSalvarPizza() {
+        Pizza pizzaToSave = new Pizza(
+                null,
+                pizza.getName(),
+                pizza.getPrice(),
+                pizza.getObservations(),
+                pizza.getFlavors()
+        );
+        pizzaToSave.setId(null);
+        when(pizzaRepository.save(pizzaToSave)).thenReturn(pizza);
+
+        Pizza result = pizzaService.savePizza(pizzaToSave);
 
         assertEquals(1L, result.getId());
-        assertEquals("Pepperoni", result.getName());
-        assertEquals(flavors, result.getFlavors());
-        verify(pizzaRepository).findById(1L);
+        assertEquals(pizzaToSave.getName(), result.getName());
+        assertEquals(pizzaToSave.getPrice(), result.getPrice());
+        assertEquals(pizzaToSave.getObservations(), result.getObservations());
+        assertEquals(pizzaToSave.getFlavors(), result.getFlavors());
+        verify(
+                pizzaRepository,
+                times(1)
+        ).save(pizzaToSave);
     }
 
     @Test
-    @DisplayName("Ao excluir uma Pizza válida")
-    void testDeletePizza_Success() {
+    @DisplayName("updatePizza quando invocado com id válido e request válido deve atualizar a pizza no banco")
+    void updatePizzaQuandoInvocadoComIdValidoERequestValidoDeveAtualizarAPizzaNoBanco() {
+        Long id = 1L;
+        Pizza pizzaToSave = new Pizza(
+                null,
+                pizza.getName(),
+                pizza.getPrice(),
+                pizza.getObservations(),
+                pizza.getFlavors()
+        );
         when(pizzaRepository.existsById(1L)).thenReturn(true);
+        when(pizzaRepository.save(pizzaToSave)).thenReturn(pizza);
 
-        pizzaService.deletePizza(1L);
+        Pizza result = pizzaService.updatePizza(1L, pizzaToSave);
 
-        verify(pizzaRepository).existsById(1L);
-        verify(pizzaRepository).deleteById(1L);
-    }
-
-
-
-    @Test
-    @DisplayName("Ao salvar uma Pizza inválida")
-    void testSavePizza_Invalid() {
-        PizzaRequestDto invalidRequestDto = new PizzaRequestDto(null, null, null, null);
-
-        assertThrows(IllegalArgumentException.class, () -> pizzaService.savePizza(invalidRequestDto));
-        verify(pizzaRepository, never()).save(any());
-    }
-
-    @Test
-    @DisplayName("Ao buscar uma Pizza por ID inexistente")
-    void testGetPizzaById_NotFound() {
-        when(pizzaRepository.findById(999L)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> pizzaService.getPizzaById(999L));
-        verify(pizzaRepository).findById(999L);
+        assertEquals(id, result.getId());
+        assertEquals(pizzaToSave.getName(), result.getName());
+        assertEquals(pizzaToSave.getPrice(), result.getPrice());
+        assertEquals(pizzaToSave.getObservations(), result.getObservations());
+        assertEquals(pizzaToSave.getFlavors(), result.getFlavors());
+        verify(
+                pizzaRepository,
+                times(1)
+        ).existsById(id);
+        verify(
+                pizzaRepository,
+                times(1)
+        ).save(pizzaToSave);
     }
 
     @Test
-    @DisplayName("Ao excluir uma Pizza que não existe")
-    void testDeletePizza_NotFound() {
-        when(pizzaRepository.existsById(999L)).thenReturn(false);
+    @DisplayName("updatePizza quando invocado com id inexistente deve lançar ResourceNotFoundException")
+    void updatePizzaQuandoInvocadoComIdInexistenteDeveLancarResourceNotFoundException() {
+        Long id = 1L;
+        when(pizzaRepository.existsById(1L)).thenReturn(false);
 
-        assertThrows(ResourceNotFoundException.class, () -> pizzaService.deletePizza(999L));
-        verify(pizzaRepository).existsById(999L);
-        verify(pizzaRepository, never()).deleteById(999L);
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> pizzaService.updatePizza(1L, pizza)
+        );
+        assertEquals("Pizza não encontrada", exception.getMessage());
+        verify(
+                pizzaRepository,
+                never()
+        ).save(any());
     }
 
     @Test
-    @DisplayName("Falha ao buscar todas as Pizzas")
-    void testGetAllPizzas_Failure() {
-        when(pizzaRepository.findAll()).thenThrow(new RuntimeException("Erro ao acessar o banco de dados"));
+    @DisplayName("getPizzaFlavors quando receber ids válidos deve retornar uma lista de flavor")
+    void getPizzaFlavorsQuandoReceberIdsValidosDeveRetornarUmaListaDeFlavor() {
+        List<Long> ids = List.of(
+                1L,
+                2L,
+                3L
+        );
+        when(flavorRepository.findAllById(ids)).thenReturn(flavors);
 
-        assertThrows(RuntimeException.class, () -> pizzaService.getAllPizzas());
-        verify(pizzaRepository).findAll();
+        List<Flavor> result = pizzaService.getPizzaFlavors(ids);
+
+        assertEquals(flavors, result);
+        verify(
+                flavorRepository,
+                times(1)
+        ).findAllById(ids);
     }
+
+    @Test
+    @DisplayName("getPizzaFlavors quando receber ids inválidos deve retornar uma lista vázia")
+    void getPizzaFlavorsQuandoReceberIdsInvalidosDeveRetornarUmaListaVazia() {
+        List<Long> ids = List.of(
+                1L,
+                2L,
+                3L
+        );
+        when(flavorRepository.findAllById(ids)).thenReturn(Collections.emptyList());
+
+        List<Flavor> result = pizzaService.getPizzaFlavors(ids);
+
+        assertEquals(Collections.emptyList(), result);
+        verify(
+                flavorRepository,
+                times(1)
+        ).findAllById(ids);
+    }
+
+    @Test
+    @DisplayName("getPrice quando invocado deve retornar o preço do Flavor com preço mais alto")
+    void getPriceQuandoInvocadoDeveRetornarOPrecoDoFlavorComPrecoMaisAlto() {
+        BigDecimal expectedPrice = BigDecimal.valueOf(130);
+
+        BigDecimal result = pizzaService.getPrice(flavors);
+
+        assertEquals(expectedPrice.doubleValue(), result.doubleValue());
+    }
+
+    @Test
+    @DisplayName("getPizzaName quando invocado deve retornar o nome da pizza que será o nome dos Flavors concatenados")
+    void getPizzaNameQuandoInvocadoDeveRetornarONomeDaPizzaQueSeraONomeDosFlavorsConcatenados() {
+        String expectedName = "Marguerita Mussarela e Frango com catupiry";
+
+        String result = pizzaService.getPizzaName(flavors);
+
+        assertEquals(expectedName, result);
+    }
+
 }

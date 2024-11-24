@@ -3,7 +3,6 @@ package com.orderize.backoffice_api.model;
 import java.math.BigDecimal;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -63,7 +62,6 @@ public class Pizza {
         this.name = name;
         this.price = price;
         this.observations = observations;
-        this.flavors = flavors;
         this.border = border;
         this.size = size;
         this.mass = mass;

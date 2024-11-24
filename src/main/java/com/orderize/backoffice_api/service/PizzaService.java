@@ -1,17 +1,10 @@
 package com.orderize.backoffice_api.service;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.orderize.backoffice_api.mapper.pizza.PizzaRequestToPizza;
-import com.orderize.backoffice_api.mapper.pizza.PizzaToPizzaResponse;
 import org.springframework.stereotype.Service;
 
-import com.orderize.backoffice_api.dto.pizza.PizzaRequestDto;
-import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.model.Flavor;
 import com.orderize.backoffice_api.model.Pizza;

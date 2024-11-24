@@ -33,6 +33,10 @@ public class Pizza {
     private String name;
     private BigDecimal price;
     private String observations;
+    private String border;
+    private String size;
+    private String mass;
+
 
     public Pizza() {
     }
@@ -45,21 +49,25 @@ public class Pizza {
         this.flavors = flavors;
     }
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
+    public Pizza(Long id, String name, BigDecimal price, String observations, List<Flavor> flavors, String border, String size, String mass) {
         this.id = id;
-    }
-
-    public List<Flavor> getFlavors() {
-        return flavors;
-    }
-
-    public void setFlavors(List<Flavor> flavors) {
+        this.name = name;
+        this.price = price;
+        this.observations = observations;
         this.flavors = flavors;
+        this.border = border;
+        this.size = size;
+        this.mass = mass;
+    }
+
+    public Pizza(String name, BigDecimal price, String observations, List<Flavor> flavors, String border, String size, String mass) {
+        this.name = name;
+        this.price = price;
+        this.observations = observations;
+        this.flavors = flavors;
+        this.border = border;
+        this.size = size;
+        this.mass = mass;
     }
 
     public String getName() {
@@ -84,6 +92,46 @@ public class Pizza {
 
     public void setObservations(String observations) {
         this.observations = observations;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Flavor> getFlavors() {
+        return flavors;
+    }
+
+    public void setFlavors(List<Flavor> flavors) {
+        this.flavors = flavors;
+    }
+
+    public String getBorder() {
+        return border;
+    }
+
+    public void setBorder(String border) {
+        this.border = border;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getMass() {
+        return mass;
+    }
+
+    public void setMass(String mass) {
+        this.mass = mass;
     }
 
     @Override

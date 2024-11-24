@@ -56,13 +56,13 @@ public class PizzaServiceTest {
     @Test
     @DisplayName("Ao salvar uma Pizza válida")
     void testSavePizza_Success() {
-        PizzaRequestDto requestDto = new PizzaRequestDto("Pepperoni", new BigDecimal("25.99"), "Delicious pizza", 1L, "Catupiry", "Pequena", "Fina");
+        PizzaRequestDto requestDto = new PizzaRequestDto("Pepperoni", new BigDecimal("25.99"), "Delicious pizza", List.of(1L), "Catupiry", "Pequena", "Fina");
         Pizza pizza = new Pizza(1L, "Pepperoni", new BigDecimal("25.99"), "Delicious pizza");
         List<FlavorResponseDto>  flavors = List.of();
         PizzaResponseDto responseDto = new PizzaResponseDto(1L, "Pepperoni", new BigDecimal("25.99"), "Delicious pizza", flavors, "Catupiry", "Pequena", "Fina");
 
-        when(flavorRepository.findById(requestDto.flavor())).thenReturn(Optional.of(flavor));
-        when(pizzaRequestToPizza.map(requestDto, flavor)).thenReturn(pizza);
+        when(flavorRepository.findAllById(requestDto.flavors())).thenReturn(List.of(flavor));
+        when(pizzaRequestToPizza.map(requestDto)).thenReturn(pizza);
         when(pizzaRepository.save(pizza)).thenReturn(pizza);
         when(pizzaToPizzaResponseDto.map(pizza)).thenReturn(responseDto);
 
@@ -72,8 +72,8 @@ public class PizzaServiceTest {
         assertEquals("Pepperoni", result.name());
         assertEquals(flavors, result.flavors());
 
-        verify(flavorRepository).findById(requestDto.flavor());
-        verify(pizzaRequestToPizza).map(requestDto, flavor);
+        verify(flavorRepository).findAllById(requestDto.flavors());
+        verify(pizzaRequestToPizza).map(requestDto);
         verify(pizzaRepository).save(pizza);
         verify(pizzaToPizzaResponseDto).map(pizza);
     }

@@ -57,28 +57,30 @@ public class PizzaService {
     }
 
     public PizzaResponseDto savePizza(PizzaRequestDto requestDto) {
-        if (requestDto.name() == null || requestDto.price() == null || requestDto.observations() == null || requestDto.flavor() == null) {
+        if (requestDto.name() == null || requestDto.price() == null || requestDto.observations() == null || requestDto.flavors() == null) {
             throw new IllegalArgumentException("Os campos nome, preço, descrição e sabor são obrigatórios.");
         }
 
-        Flavor flavor = flavorRepository.findById(requestDto.flavor()).get();
+        List<Flavor> flavors = flavorRepository.findAllById(requestDto.flavors());
 
-        Pizza pizza = mapperPizzaRequestToPizza.map(requestDto, flavor);
+        Pizza pizza = mapperPizzaRequestToPizza.map(requestDto);
+        pizza.setFlavors(flavors);
 
         Pizza savedPizza = pizzaRepository.save(pizza);
 
         return mapperPizzaToPizzaResponse.map(savedPizza);
     }
 
-    // precisa conseguir inserir sabor e tirar sabor
-    // deve permitir uma lista de sabores para adicionar ou excluir
     public PizzaResponseDto updatePizza(Long id, PizzaRequestDto requestDto) {
         Pizza existingPizza = pizzaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pizza not found with id: " + id));
         
-        Flavor flavor = flavorRepository.findById(requestDto.flavor()).get();
+        List<Flavor> flavors = flavorRepository.findAllById(requestDto.flavors());
         
-        Pizza updatedPizza = mapperPizzaRequestToPizza.map(requestDto, existingPizza, flavor);
+        Pizza updatedPizza = mapperPizzaRequestToPizza.map(requestDto);
+        updatedPizza.setId(existingPizza.getId());
+        updatedPizza.setFlavors(flavors);
+
         pizzaRepository.save(updatedPizza);
 
         return mapperPizzaToPizzaResponse.map(updatedPizza);

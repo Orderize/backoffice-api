@@ -10,5 +10,8 @@ public record PizzaRequestDto(
         @NotBlank String name,
         @NotNull BigDecimal price,
         @Size(max = 300) String observations,
-        @NotNull Long flavor
+        @NotNull Long flavor,
+        @NotBlank String border,
+        @NotBlank String size,
+        @NotBlank String mass
 ) {}

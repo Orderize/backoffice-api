@@ -16,7 +16,10 @@ public class PizzaRequestDtoToPizza {
                 pizzaRequestDto.name(),
                 pizzaRequestDto.price(),
                 pizzaRequestDto.observations(),
-                List.of(flavor)
+                List.of(flavor),
+                pizzaRequestDto.border(),
+                pizzaRequestDto.size(),
+                pizzaRequestDto.mass()
         );
     }
 
@@ -25,11 +28,14 @@ public class PizzaRequestDtoToPizza {
         flavors.add(flavor);
 
         return new Pizza(
-            pizza.getIdPizza(),
+            pizza.getId(),
             pizzaRequestDto.name(),
             pizzaRequestDto.price(),
             pizzaRequestDto.observations(),
-            flavors        
+            flavors,
+            pizzaRequestDto.border(),
+            pizzaRequestDto.size(),
+            pizzaRequestDto.mass()
         );
     }
 }

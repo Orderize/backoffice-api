@@ -22,11 +22,14 @@ public class PizzaToPizzaResponseDto {
     // Incluir ingredients aqui nesse método
     public PizzaResponseDto map(Pizza pizza) {
         return new PizzaResponseDto(
-                pizza.getIdPizza(),
-                pizza.getName(),
-                pizza.getPrice(),
-                pizza.getObservations(),
-                pizza.getFlavors().stream().map(flavor -> flavorToFlavorResponseDto.map(flavor)).collect(Collectors.toList())
+            pizza.getId(),
+            pizza.getName(),
+            pizza.getPrice(),
+            pizza.getObservations(),
+            pizza.getFlavors().stream().map(flavor -> flavorToFlavorResponseDto.map(flavor)).collect(Collectors.toList()),
+            pizza.getBorder(),
+            pizza.getSize(),
+            pizza.getMass()
         );
     }
 }

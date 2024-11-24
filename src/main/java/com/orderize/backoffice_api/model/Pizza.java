@@ -15,7 +15,6 @@ import jakarta.persistence.ManyToMany;
 
 @Entity
 public class Pizza {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -22,7 +22,10 @@ public class PizzaToPizzaResponse implements Mapper<Pizza, PizzaResponseDto> {
                 pizza.getName(),
                 pizza.getPrice(),
                 pizza.getObservations(),
-                pizza.getFlavors().stream().map(flavorMapper::map).toList()
+                pizza.getFlavors().stream().map(flavorMapper::map).toList(),
+                pizza.getBorder(),
+                pizza.getSize(),
+                pizza.getMass()
         );
     }
 

@@ -21,7 +21,7 @@ public class PizzaRequestToPizza implements Mapper<PizzaRequestDto, Pizza> {
 
     @Override
     public Pizza map(PizzaRequestDto pizzaRequestDto) {
-        List<Flavor> flavors = pizzaService.getPizzaFlavors(pizzaRequestDto.flavor());
+        List<Flavor> flavors = pizzaService.getPizzaFlavors(pizzaRequestDto.flavors());
         BigDecimal price = pizzaService.getPrice(flavors);
         String name = pizzaService.getPizzaName(flavors);
 
@@ -30,7 +30,10 @@ public class PizzaRequestToPizza implements Mapper<PizzaRequestDto, Pizza> {
                 name,
                 price,
                 pizzaRequestDto.observations(),
-                flavors
+                flavors,
+                pizzaRequestDto.border(),
+                pizzaRequestDto.size(),
+                pizzaRequestDto.mass()
         );
     }
 

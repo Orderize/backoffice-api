@@ -58,7 +58,7 @@ public class Pizza {
         this.mass = mass;
     }
 
-    public Pizza(String name, BigDecimal price, String observations, List<Flavor> flavors, String border, String size, String mass) {
+    public Pizza(String name, BigDecimal price, String observations, String border, String size, String mass) {
         this.name = name;
         this.price = price;
         this.observations = observations;

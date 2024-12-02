@@ -1,6 +1,5 @@
 package com.orderize.backoffice_api.dto.promotion;
 
-import com.orderize.backoffice_api.exception.InvalidTimeIntervalException;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,7 +10,7 @@ import java.util.List;
 public record PromotionRequestDto(
         @NotBlank
         String name,
-        @NotBlank
+        @NotNull
         String description,
         @NotNull
         BigDecimal discountValue,

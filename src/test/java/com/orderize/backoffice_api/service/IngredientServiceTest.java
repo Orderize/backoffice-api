@@ -60,7 +60,7 @@ public class IngredientServiceTest {
         
         assertEquals(1L, result.id(), "O ID do IngredientResponseDto deveria ser 1");
         assertEquals("Mozzarella Cheese", result.name(), "O nome deveria ser 'Mozzarella Cheese'");
-        assertEquals(1.50, result.paid(), "A valor pago deveria ser 1.50");
+        assertEquals(BigDecimal.valueOf(1.5), result.paid(), "A valor pago deveria ser 1.50");
         
         verify(ingredientRequestDtoToIngredient).map(requestDto);
         verify(ingredientRepository).save(ingredient);
@@ -103,7 +103,7 @@ public class IngredientServiceTest {
 
         assertEquals(1L, result.id(), "O ID do IngredientResponseDto deveria ser 1");
         assertEquals("Mozzarella", result.name(), "O nome deveria ser 'Mozzarella'");
-        assertEquals(1.30, result.paid(), "O valor pago deveria ser 1.30");
+        assertEquals(BigDecimal.valueOf(1.3), result.paid(), "O valor pago deveria ser 1.30");
         
         verify(ingredientRepository).existsById(1l);
         verify(ingredientRequestDtoToIngredient).map(requestDto);
@@ -165,7 +165,7 @@ public class IngredientServiceTest {
 
         assertEquals(1L, result.id(), "O ID do IngredientResponseDto deveria ser 1");
         assertEquals("Mozzarella", result.name(), "O nome deveria ser 'Mozzarella'");
-        assertEquals(1.30, result.paid(), "O valor pago deveria ser 1.30");
+        assertEquals(BigDecimal.valueOf(1.30), result.paid(), "O valor pago deveria ser 1.30");
         
         verify(ingredientRepository).findById(1L);
     }

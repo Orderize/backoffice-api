@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Refatorar
 @Service
 public class OrderService implements OrderObserverSubject {
     private final OrderRepository repository;
@@ -165,5 +166,25 @@ public class OrderService implements OrderObserverSubject {
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
 
         repository.deleteById(order.getId());
+    }
+
+    // TODO: horrível porém peguei da saveOrder porque a necessidade era urgente, refatorar
+    // TODO: Criar testes unitários, não criei ainda pq a service será refatorada
+    public BigDecimal getTotalPrice(OrderRequestDto orderRequestDto) {
+        User client = userRepository.findById(orderRequestDto.client())
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+
+        User responsible = userRepository.findById(orderRequestDto.responsible())
+                .orElseThrow(() -> new ResourceNotFoundException("Resposável não encontrado"));
+
+        List<Pizza> pizzas = new ArrayList<>();
+        if(orderRequestDto.pizzas() != null) pizzas = pizzaRepository.findAllById(orderRequestDto.pizzas());
+        List<Drink> drinks = new ArrayList<>();
+        if (orderRequestDto.drinks() != null) drinks = drinkRepository.findAllById(orderRequestDto.drinks());
+
+        Order orderToSave = mapperOrderRequestToOrder.map(orderRequestDto, client, responsible, pizzas, drinks);
+
+        calculateOrderPrices(orderToSave);
+        return orderToSave.getPrice();
     }
 }

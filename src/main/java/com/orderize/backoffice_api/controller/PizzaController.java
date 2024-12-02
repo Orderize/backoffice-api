@@ -2,6 +2,9 @@ package com.orderize.backoffice_api.controller;
 
 import com.orderize.backoffice_api.dto.pizza.PizzaRequestDto;
 import com.orderize.backoffice_api.dto.pizza.PizzaResponseDto;
+import com.orderize.backoffice_api.mapper.pizza.PizzaRequestToPizza;
+import com.orderize.backoffice_api.mapper.pizza.PizzaToPizzaResponse;
+import com.orderize.backoffice_api.model.Pizza;
 import com.orderize.backoffice_api.service.PizzaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,9 +20,13 @@ import java.util.List;
 public class PizzaController {
 
     private final PizzaService service;
+    private final PizzaRequestToPizza mapperRequestToEntity;
+    private final PizzaToPizzaResponse mapperEntityToResponse;
 
-    public PizzaController(PizzaService service) {
+    public PizzaController(PizzaService service, PizzaRequestToPizza mapperRequestToEntity, PizzaToPizzaResponse mapperEntityToResponse) {
         this.service = service;
+        this.mapperRequestToEntity = mapperRequestToEntity;
+        this.mapperEntityToResponse = mapperEntityToResponse;
     }
 
     @GetMapping
@@ -29,12 +36,14 @@ public class PizzaController {
             description = "Retorna uma lista com todas as pizzas."
     )
     public ResponseEntity<List<PizzaResponseDto>> getAllPizzas() {
-        List<PizzaResponseDto> pizzas = service.getAllPizzas();
+        List<Pizza> pizzas = service.getAllPizzas();
 
         if (pizzas.isEmpty()) {
             return ResponseEntity.status(204).build();
         }
-        return ResponseEntity.status(200).body(pizzas);
+
+        List<PizzaResponseDto> response = pizzas.stream().map(mapperEntityToResponse::map).toList();
+        return ResponseEntity.status(200).body(response);
     }
 
     @GetMapping("/{id}")
@@ -42,8 +51,8 @@ public class PizzaController {
     public ResponseEntity<PizzaResponseDto> getPizzaById(
             @PathVariable("id") Long id
     ) {
-        PizzaResponseDto pizza = service.getPizzaById(id);
-        return ResponseEntity.status(200).body(pizza);
+        Pizza pizza = service.getPizzaById(id);
+        return ResponseEntity.status(200).body(mapperEntityToResponse.map(pizza));
     }
 
     @PostMapping
@@ -51,8 +60,8 @@ public class PizzaController {
     public ResponseEntity<PizzaResponseDto> postPizza(
             @RequestBody @Valid PizzaRequestDto request
     ) {
-        PizzaResponseDto savedPizza = service.savePizza(request);
-        return ResponseEntity.status(201).body(savedPizza);
+        Pizza savedPizza = service.savePizza(mapperRequestToEntity.map(request));
+        return ResponseEntity.status(201).body(mapperEntityToResponse.map(savedPizza));
     }
 
     @PutMapping("/{id}")
@@ -61,16 +70,8 @@ public class PizzaController {
             @PathVariable("id") Long id,
             @RequestBody @Valid PizzaRequestDto request
     ) {
-        PizzaResponseDto updatedPizza = service.updatePizza(id, request);
-        return ResponseEntity.status(200).body(updatedPizza);
+        Pizza updatedPizza = service.updatePizza(id, mapperRequestToEntity.map(request));
+        return ResponseEntity.status(200).body(mapperEntityToResponse.map(updatedPizza));
     }
 
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Deleta uma pizza existente", method = "DELETE")
-    public ResponseEntity<Void> deletePizza(
-            @PathVariable("id") Long id
-    ) {
-        service.deletePizza(id);
-        return ResponseEntity.status(204).build();
-    }
 }

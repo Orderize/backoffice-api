@@ -6,6 +6,9 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.CurrentTimestamp;
+
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -49,6 +52,7 @@ public class Order {
     )
     private List<Drink> drinks;
 
+    @CurrentTimestamp
     private Timestamp datetime;
 
     private String type;

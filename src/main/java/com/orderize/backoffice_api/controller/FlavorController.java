@@ -2,6 +2,8 @@ package com.orderize.backoffice_api.controller;
 
 import java.util.List;
 
+import com.orderize.backoffice_api.mapper.flavor.FlavorToFlavorResponseDto;
+import com.orderize.backoffice_api.model.Flavor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,9 +29,11 @@ import jakarta.validation.Valid;
 public class FlavorController {
 
     private final FlavorService service;
+    private final FlavorToFlavorResponseDto mapperEntityToResponse;
 
-    public FlavorController(FlavorService service) {
+    public FlavorController(FlavorService service, FlavorToFlavorResponseDto mapperEntityToResponse) {
         this.service = service;
+        this.mapperEntityToResponse = mapperEntityToResponse;
     }
 
     @GetMapping
@@ -39,24 +43,26 @@ public class FlavorController {
             description = "Retorna uma lista com todos os sabores."
     )
     public ResponseEntity<List<FlavorResponseDto>> getAllFlavors() {
-        List<FlavorResponseDto> flavors = service.getAllFlavors();
+        List<Flavor> flavors = service.getAllFlavors();
 
         if (flavors.isEmpty()) {
             return ResponseEntity.status(204).build();
         }
-        return ResponseEntity.status(200).body(flavors);
+        return ResponseEntity.status(200).body(flavors.stream().map(it ->
+                mapperEntityToResponse.map(it)).toList());
     }
 
     @GetMapping("/pop")
     @Operation(summary = "Busca todos os sabores por popularidade", method = "GET")
     public ResponseEntity<List<FlavorResponseDto>> getAllFlavorsByPop(@RequestParam String value) {
-        List<FlavorResponseDto> flavors = service.getAllFlavorsByPop(value);
+        List<Flavor> flavors = service.getAllFlavorsByPop(value);
         
         if (flavors.isEmpty()) {
             return ResponseEntity.status(204).build();
         } 
         
-        return ResponseEntity.status(200).body(flavors);
+        return ResponseEntity.status(200).body(flavors.stream().map(it ->
+                mapperEntityToResponse.map(it)).toList());
     }
 
     @GetMapping("/{id}")
@@ -64,8 +70,8 @@ public class FlavorController {
     public ResponseEntity<FlavorResponseDto> getFlavorById(
             @PathVariable("id") Long id
     ) {
-        FlavorResponseDto flavorResponseDto = service.getFlavorById(id);
-        return ResponseEntity.status(200).body(flavorResponseDto);
+        Flavor flavor = service.getFlavorById(id);
+        return ResponseEntity.status(200).body(mapperEntityToResponse.map(flavor));
     }
 
     @PostMapping

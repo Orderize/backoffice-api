@@ -9,10 +9,12 @@ import com.orderize.backoffice_api.model.Order;
 import com.orderize.backoffice_api.model.Pizza;
 import com.orderize.backoffice_api.model.User;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+// TODO: Jogar isso fora e refatorar
 @Component
 public class OrderRequestToOrder {
 
@@ -25,7 +27,7 @@ public class OrderRequestToOrder {
                 orderRequestDto.type(),
                 orderRequestDto.freight(),
                 orderRequestDto.estimatedTime(),
-                orderRequestDto.price()
+                BigDecimal.valueOf(0.0)
         );
     }
 }

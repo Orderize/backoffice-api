@@ -85,6 +85,11 @@ public class OrderService implements OrderObserverSubject {
         return orders.stream().map(it -> mapperOrderToOrderResponse.map(it)).toList();
     }
 
+    public List<OrderResponseDto> getLastOrders() {
+        List<Order> orders = repository.findByDatetimeDesc();
+        return orders.stream().map(it -> mapperOrderToOrderResponse.map(it)).toList();
+    }
+
     public OrderResponseDto saveOrder(OrderRequestDto orderRequestDto){
         User client = userRepository.findById(orderRequestDto.client())
             .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));

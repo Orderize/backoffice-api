@@ -57,6 +57,24 @@ public class OrderController {
         }
     }
 
+    @GetMapping
+    @Operation(
+        summary = "Busca todos os últimos pedidos",
+        method = "GET",
+        description = "Não recebe request param" + 
+        "filtrando os dados de forma descrescente, "+
+        "pelo atributo .data"
+    )
+    public ResponseEntity<List<OrderResponseDto>> getLastOrders(
+        @RequestParam(required = false) String type
+    )  {
+        List<OrderResponseDto> orders = service.getLastOrders();
+        if (orders.isEmpty()) {
+            return ResponseEntity.status(204).build();
+        }
+        return ResponseEntity.status(200).body(orders);
+     }
+
     @PostMapping
     @Operation(summary = "Salva um novo pedido", method = "POST")
     public ResponseEntity<OrderResponseDto> saveOrder(

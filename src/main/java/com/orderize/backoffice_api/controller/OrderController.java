@@ -57,7 +57,7 @@ public class OrderController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/last")
     @Operation(
         summary = "Busca todos os últimos pedidos",
         method = "GET",

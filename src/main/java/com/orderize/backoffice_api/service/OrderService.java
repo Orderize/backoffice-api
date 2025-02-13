@@ -86,7 +86,7 @@ public class OrderService implements OrderObserverSubject {
     }
 
     public List<OrderResponseDto> getLastOrders() {
-        List<Order> orders = repository.findByDatetimeDesc();
+        List<Order> orders = repository.findByOrderByDatetimeDesc();
         return orders.stream().map(it -> mapperOrderToOrderResponse.map(it)).toList();
     }
 

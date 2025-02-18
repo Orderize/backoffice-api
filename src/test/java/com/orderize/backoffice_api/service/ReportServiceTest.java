@@ -1,27 +1,36 @@
 package com.orderize.backoffice_api.service;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
+
 import com.orderize.backoffice_api.dto.report.ReportResponseDto;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.drink.DrinkToDrinkResponse;
 import com.orderize.backoffice_api.mapper.flavor.FlavorToFlavorResponseDto;
-import com.orderize.backoffice_api.model.*;
+import com.orderize.backoffice_api.model.Attestation;
+import com.orderize.backoffice_api.model.Drink;
+import com.orderize.backoffice_api.model.Flavor;
+import com.orderize.backoffice_api.model.Order;
+import com.orderize.backoffice_api.model.Pizza;
+import com.orderize.backoffice_api.model.User;
 import com.orderize.backoffice_api.repository.AttestationRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ReportServiceTest {
 
@@ -124,7 +133,7 @@ public class ReportServiceTest {
                         users.get(1),
                         pizzas,
                         drinks,
-                        Timestamp.valueOf(LocalDateTime.now()),
+                        Instant.now(),
                         "delivery",
                         BigDecimal.valueOf(10.0),
                         10,
@@ -136,7 +145,7 @@ public class ReportServiceTest {
                         users.get(1),
                         List.of(pizzas.get(0)),
                         List.of(drinks.get(0)),
-                        Timestamp.valueOf(LocalDateTime.now()),
+                        Instant.now(),
                         "delivery",
                         BigDecimal.valueOf(10.0),
                         10,
@@ -148,7 +157,7 @@ public class ReportServiceTest {
                         users.get(1),
                         List.of(pizzas.get(0), pizzas.get(1)),
                         List.of(drinks.get(0)),
-                        Timestamp.valueOf(LocalDateTime.now()),
+                        Instant.now(),
                         "delivery",
                         BigDecimal.valueOf(10.0),
                         10,

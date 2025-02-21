@@ -86,9 +86,6 @@ public class OrderService implements OrderObserverSubject {
 
     public List<OrderResponseDto> getLastOrders(Instant datetime) {
         List<Order> orders;
-        System.out.println("Aqui com o datetime" + datetime);
-        System.out.flush();
-        // quero ver essas informações
         if (datetime != null) {
             orders = repository.findByDatetimeBeforeOrderByDatetimeAsc(datetime);
         } else {

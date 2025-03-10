@@ -62,11 +62,13 @@ public class Order {
     private Integer estimatedTime;
     private BigDecimal price;
 
+    private String status;
+
     public Order() {
     }
 
 
-    public Order(Long id, User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, BigDecimal freight, Integer estimatedTime, BigDecimal price) {
+    public Order(Long id, User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, BigDecimal freight, Integer estimatedTime, BigDecimal price, String status) {
         this.id = id;
         this.client = client;
         this.responsible = responsible;
@@ -77,9 +79,10 @@ public class Order {
         this.freight = freight;
         this.estimatedTime = estimatedTime;
         this.price = price;
+        this.status = status;
     }
 
-    public Order(User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, String type, BigDecimal freight, Integer estimatedTime, BigDecimal price) {
+    public Order(User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, String type, BigDecimal freight, Integer estimatedTime, BigDecimal price, String status) {
         this.client = client;
         this.responsible = responsible;
         this.pizzas = pizzas;
@@ -88,7 +91,10 @@ public class Order {
         this.freight = freight;
         this.estimatedTime = estimatedTime;
         this.price = price;
+        this.status = status;
     }
+
+
 
     public Long getId() {
         return id;
@@ -164,5 +170,17 @@ public class Order {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public void setDrinks(List<Drink> drinks) {
+        this.drinks = drinks;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

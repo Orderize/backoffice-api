@@ -15,6 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
@@ -118,7 +119,7 @@ public class OrderServiceTest {
         verify(pizzaRepository).findAllById(requestDto.pizzas());
         verify(drinkRepository).findAllById(requestDto.drinks());
         verify(mapperRequestToEntity).map(requestDto, client, responsible, pizzas, drinks);
-        verify(repository).save(order);
+        verify(repository, times(2)).save(order);
         verify(mapperEntityToResponse).map(order);
     }
 

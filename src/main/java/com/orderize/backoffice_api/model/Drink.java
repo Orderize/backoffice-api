@@ -6,6 +6,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.math.BigDecimal;
+import java.util.List;
+
+import jakarta.persistence.ManyToMany;
 
 @Entity
 public class Drink {
@@ -16,6 +19,9 @@ public class Drink {
     String description;
     BigDecimal price;
     Integer milimeters;
+
+    @ManyToMany(mappedBy = "drinks")
+    private List<Order> orders;
 
     public Drink() {}
 
@@ -65,6 +71,14 @@ public class Drink {
 
     public void setMilimeters(Integer milimeters) {
         this.milimeters = milimeters;
+    }
+
+    public List<Order> getOrders() {
+        return this.orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 
     @Override

@@ -1,28 +1,27 @@
 package com.orderize.backoffice_api.service;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.orderize.backoffice_api.dto.order.OrderRequestDto;
 import com.orderize.backoffice_api.dto.order.OrderResponseDto;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.order.OrderRequestToOrder;
 import com.orderize.backoffice_api.mapper.order.OrderToOrderResponse;
 import com.orderize.backoffice_api.model.Drink;
-import com.orderize.backoffice_api.model.Flavor;
+import com.orderize.backoffice_api.model.Order;
 import com.orderize.backoffice_api.model.Pizza;
 import com.orderize.backoffice_api.model.User;
-import com.orderize.backoffice_api.model.Order;
-import com.orderize.backoffice_api.dto.order.OrderRequestDto;
-
 import com.orderize.backoffice_api.repository.DrinkRepository;
 import com.orderize.backoffice_api.repository.OrderRepository;
 import com.orderize.backoffice_api.repository.PizzaRepository;
 import com.orderize.backoffice_api.repository.UserRepository;
 import com.orderize.backoffice_api.util.observer.order_attestation.OrderObserver;
 import com.orderize.backoffice_api.util.observer.order_attestation.OrderObserverSubject;
-import org.flywaydb.core.internal.util.JsonUtils;
-import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 // TODO: Refatorar
 @Service
@@ -82,6 +81,17 @@ public class OrderService implements OrderObserverSubject {
         if (type != null && !type.isBlank()){
             orders = orders.stream().filter(it -> it.getType().toLowerCase().contains(type.toLowerCase())).toList();
         }
+        return orders.stream().map(it -> mapperOrderToOrderResponse.map(it)).toList();
+    }
+
+    public List<OrderResponseDto> getLastOrders(Instant datetime) {
+        List<Order> orders;
+        if (datetime != null) {
+            orders = repository.findByDatetimeBeforeOrderByDatetimeAsc(datetime);
+        } else {
+            orders = repository.findAllByOrderByDatetimeAsc();
+        }
+
         return orders.stream().map(it -> mapperOrderToOrderResponse.map(it)).toList();
     }
 

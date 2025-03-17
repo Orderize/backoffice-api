@@ -45,7 +45,8 @@ public class FlavorService {
         List<Flavor> flavors = repository.findByPopularity();
 
         if (!value.isBlank()) {
-            flavors = flavors.stream().filter(it -> it.getId().toString().contains(value) || it.getName().toLowerCase().contains(value.toLowerCase())).toList();
+            flavors = flavors.stream()
+                .filter(it -> it.getId().toString().contains(value) || it.getName().toLowerCase().contains(value.toLowerCase())).toList();
         };
 
         return flavors;

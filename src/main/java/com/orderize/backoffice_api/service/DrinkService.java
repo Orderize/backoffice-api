@@ -12,6 +12,7 @@ import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.drink.DrinkRequestToDrink;
 import com.orderize.backoffice_api.mapper.drink.DrinkToDrinkResponse;
 import com.orderize.backoffice_api.model.Drink;
+import com.orderize.backoffice_api.model.Flavor;
 import com.orderize.backoffice_api.repository.DrinkRepository;
 
 @Service
@@ -44,6 +45,17 @@ public class DrinkService {
     public List<DrinkResponseDto> getAllDrinks(List<Long> ids) {
         List<Drink> allDrinks = repository.findAllById(ids);
         return allDrinks.stream().map(it -> mapperEntityToResponse.map(it)).toList();
+    }
+
+    public List<Drink> getAllDrinksByPop(String value) {
+        List<Drink> drinks = repository.findByPopularity();
+
+        if (!value.isBlank()) {
+            drinks = drinks.stream()
+                .filter(it -> it.getId().toString().contains(value) || it.getName().toLowerCase().contains(value.toLowerCase())).toList();
+        };
+
+        return drinks;
     }
 
     public DrinkResponseDto saveDrink(DrinkRequestDto request) {

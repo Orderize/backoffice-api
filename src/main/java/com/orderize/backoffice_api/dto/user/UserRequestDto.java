@@ -1,11 +1,12 @@
 package com.orderize.backoffice_api.dto.user;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 
 public record UserRequestDto(
         Long id,
         String name,
-        @Email String email,
+        @Email @Nullable String email,
         String password,
         String phone,
         Long address,

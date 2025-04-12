@@ -11,4 +11,6 @@ CREATE TABLE address (
 
 -- just for tests (MOCK) - bad practice
 INSERT INTO address (cep, state, number, street, city, neighborhood) VALUES
-    (09941580, "São Paulo", 40, "Rua Amélia Bazzo Falasque", "Diadema", "Canhema");
+    (09941580, 'São Paulo', 40, 'Rua Amélia Bazzo Falasque', 'Diadema', 'Canhema'),
+    (11045320, 'São Paulo', 100, 'Rua dos Alfeneiros', 'São Paulo', 'Centro'),
+    (22031010, 'Rio de Janeiro', 30, 'Avenida Atlântica', 'Rio de Janeiro', 'Copacabana');

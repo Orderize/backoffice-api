@@ -74,9 +74,9 @@ public class UserService implements UserDetailsService {
                     .orElseThrow(() -> new RuntimeException("Enterprise not found"));
         }
 
-        if (repository.existsByEmail(userRequest.email())) {
-            throw new AlreadyExistsException("Já existe um usuário utilizando este email");
-        }
+//        if (repository.existsByEmail(userRequest.email())) {
+//            throw new AlreadyExistsException("Já existe um usuário utilizando este email");
+//        }
 
         if (repository.existsByPhone(userRequest.phone())) {
             throw new AlreadyExistsException("Já existe um usuário utilizando este telefone");

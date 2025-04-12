@@ -3,7 +3,6 @@ package com.orderize.backoffice_api.model;
 import java.math.BigDecimal;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -15,28 +14,12 @@ import jakarta.persistence.ManyToMany;
 
 @Entity
 public class Pizza {
-    
-    // @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // private Integer id;
-
-    // private String name;
-
-    // private Double price;
-
-    // private Double estimatedTimeFinishing;
-
-    // private String image;
-
-    // @ManyToMany
-    // private List<Ingredient> ingredients;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToMany(
-        fetch = FetchType.EAGER,
-        cascade = CascadeType.ALL
+        fetch = FetchType.EAGER
     )
     @JoinTable(
         name = "pizza_flavor", 
@@ -45,33 +28,16 @@ public class Pizza {
     )
     private List<Flavor> flavors;
 
-
-    @ManyToMany(
-        mappedBy="pizzas"
-    )
-    private List<Order> orders;
-
     private String name;
     private BigDecimal price;
     private String observations;
+    private String border;
+    private String size;
+    private String mass;
+
 
     public Pizza() {
     }
-
-    public Pizza(Long id, String name, BigDecimal price, String observations) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.observations = observations;
-    }
-
-    public Pizza(String name, BigDecimal price, String observations, List<Flavor> flavors) {
-        this.name = name;
-        this.price = price;
-        this.observations = observations;
-        this.flavors = flavors;
-    }
-
 
     public Pizza(Long id, String name, BigDecimal price, String observations, List<Flavor> flavors) {
         this.id = id;
@@ -81,23 +47,24 @@ public class Pizza {
         this.flavors = flavors;
     }
 
-
-    public Pizza(Long id, String name, BigDecimal price, String observations, List<Flavor> flavors, List<Order> orders) {
+    public Pizza(Long id, String name, BigDecimal price, String observations, List<Flavor> flavors, String border, String size, String mass) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.observations = observations;
         this.flavors = flavors;
-        this.orders = orders;
+        this.border = border;
+        this.size = size;
+        this.mass = mass;
     }
 
-
-    public Long getIdPizza() {
-        return id;
-    }
-
-    public void setIdPizza(Long id) {
-        this.id = id;
+    public Pizza(String name, BigDecimal price, String observations, String border, String size, String mass) {
+        this.name = name;
+        this.price = price;
+        this.observations = observations;
+        this.border = border;
+        this.size = size;
+        this.mass = mass;
     }
 
     public String getName() {
@@ -140,12 +107,28 @@ public class Pizza {
         this.flavors = flavors;
     }
 
-    public List<Order> getOrders() {
-        return orders;
+    public String getBorder() {
+        return border;
     }
 
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
+    public void setBorder(String border) {
+        this.border = border;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getMass() {
+        return mass;
+    }
+
+    public void setMass(String mass) {
+        this.mass = mass;
     }
 
     @Override

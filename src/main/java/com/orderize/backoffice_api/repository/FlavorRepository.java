@@ -11,7 +11,11 @@ import com.orderize.backoffice_api.model.Flavor;
 public interface FlavorRepository extends JpaRepository<Flavor, Long>{
     Boolean existsByName(String name);
    
-    @Query(value = "SELECT f.*, pf.quant FROM flavor f LEFT JOIN (SELECT flavor_id, COUNT(flavor_id) quant FROM pizza_flavor GROUP BY flavor_id) pf ON f.id = pf.flavor_id ORDER BY pf.quant DESC", nativeQuery = true)
+    @Query(
+        "SELECT f FROM Flavor f " +
+        "LEFT JOIN f.pizzas p " + 
+        "GROUP BY f " +
+        "ORDER BY COUNT(p) DESC")
     List<Flavor> findByPopularity();
 }
 

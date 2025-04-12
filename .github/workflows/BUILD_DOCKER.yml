@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - development
+      - feature/infra/build-docker
 
 jobs:
   build-and-deploy:
@@ -22,9 +24,22 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build and push Docker image (latest)
         uses: docker/build-push-action@v4
         with: 
           context: .
           push: true
           tags: santthiago/orderize-backend:latest
+          build-args: |
+            TOKEN_SECRET=${{ secrets.TOKEN_SECRET }}
+            SPRING_PROFILES_ACTIVE=prod
+
+      - name: Build and push Docker image (dev)
+        uses: docker/build-push-action@v4
+        with: 
+          context: .
+          push: true
+          tags: santthiago/orderize-backend:dev
+          build-args: |
+            TOKEN_SECRET=${{ secrets.TOKEN_SECRET }}
+            SPRING_PROFILES_ACTIVE=dev

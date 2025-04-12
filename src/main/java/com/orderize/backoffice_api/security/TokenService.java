@@ -19,9 +19,12 @@ public class TokenService {
     private final Algorithm algorithm;
 
     public TokenService() {
-        Dotenv dotenv = Dotenv.load();
-        this.secret = dotenv.get("TOKEN_SECRET");
-
+        if (System.getenv("TOKEN_SECRET") != null) {
+            this.secret = System.getenv("TOKEN_SECRET");
+        } else { 
+            Dotenv dotenv = Dotenv.load();
+            this.secret = dotenv.get("TOKEN_SECRET");
+        }
         this.algorithm = Algorithm.HMAC256(secret);
     }
 

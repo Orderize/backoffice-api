@@ -1,10 +1,23 @@
 package com.orderize.backoffice_api.model;
 
-import jakarta.persistence.*;
-
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
+
+import org.hibernate.annotations.CurrentTimestamp;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "orders")
@@ -49,7 +62,8 @@ public class Order {
     )
     private List<Drink> drinks;
 
-    private Timestamp datetime;
+    @CurrentTimestamp
+    private Instant datetime;
 
     private String type;
     private BigDecimal freight;
@@ -62,7 +76,7 @@ public class Order {
     }
 
 
-    public Order(Long id, User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Timestamp datetime, String type, BigDecimal freight, Integer estimatedTime, BigDecimal price) {
+    public Order(Long id, User client, User responsible, List<Pizza> pizzas, List<Drink> drinks, Instant datetime, String type, BigDecimal freight, Integer estimatedTime, BigDecimal price) {
         this.id = id;
         this.client = client;
         this.responsible = responsible;
@@ -122,11 +136,11 @@ public class Order {
         return drinks;
     }
 
-    public Timestamp getDatetime() {
+    public Instant getDatetime() {
         return datetime;
     }
 
-    public void setDatetime(Timestamp datetime) {
+    public void setDatetime(Instant datetime) {
         this.datetime = datetime;
     }
 

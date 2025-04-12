@@ -30,8 +30,7 @@ jobs:
 
       - name: Install and Run Tests
         run: |
-          mvn install -B
-          mvn test -Dspring.profiles.active=test
+          mvn clean test -B -Dspring.profiles.active=test
 
       - name: Test Results
         if: always()

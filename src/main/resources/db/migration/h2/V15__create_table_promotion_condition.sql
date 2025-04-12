@@ -9,5 +9,5 @@ CREATE TABLE promotion_condition(
 );
 
 INSERT INTO promotion_condition (fk_promotion, fk_condition_type, required_value, ids_required_itens) VALUES
-    (1, 1, null, "1"),
+    (1, 1, null, '1'),
     (1, 3, 50.00, null);

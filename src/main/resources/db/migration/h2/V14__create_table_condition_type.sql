@@ -5,6 +5,6 @@ CREATE TABLE condition_type(
 );
 
 INSERT INTO condition_type (description) VALUES
-    ("Pedido conter bebidas"),
-    ("Pedido conter pizzas"),
-    ("Valor mínimo de pedido");
+    ('Pedido conter bebidas'),
+    ('Pedido conter pizzas'),
+    ('Valor mínimo de pedido');

@@ -6,12 +6,6 @@ on:
     types:
       - completed
         
-  push:
-    branches:
-      - main
-      - development
-      - feature/infra/build-docker
-
   repository_dispatch:
     types: [update-docker-image]
 

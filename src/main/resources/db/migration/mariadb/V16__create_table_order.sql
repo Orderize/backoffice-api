@@ -8,8 +8,8 @@ CREATE TABLE orders(
     estimated_time INT,
     price decimal(20, 2) not null,
     primary key(id),
-    foreign key(fk_client) references user(id),
-    foreign key (fk_responsible) references user(id)
+    foreign key(fk_client) references `user`(id),
+    foreign key (fk_responsible) references `user`(id)
 );
 
 -- just for tests (MOCK) - bad practice

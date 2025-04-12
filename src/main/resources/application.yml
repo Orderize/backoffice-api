@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: dev
+  flyway:
+    locations: classpath:db/migration/mariadb
+
 
 external-spoonacular:
   url: https://api.spoonacular.com

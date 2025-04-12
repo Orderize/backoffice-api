@@ -1,7 +1,7 @@
 spring:
   datasource:
-    url: jdbc:mariadb://orderize-db.mysql.database.azure.com:3306/orderize?createDatabaseIfNotExist=true&useSSL=true&requireSSL=true
-    username: dev
+    url: jdbc:mariadb://10.0.0.149:3306/orderize?createDatabaseIfNotExist=true&useSSL=true&requireSSL=true
+    username: client
     password: 1234
     driver-class-name: org.mariadb.jdbc.Driver
 

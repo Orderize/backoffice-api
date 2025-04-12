@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,6 +28,7 @@ import com.orderize.backoffice_api.mapper.flavor.FlavorToFlavorResponseDto;
 import com.orderize.backoffice_api.model.Flavor;
 import com.orderize.backoffice_api.model.Ingredient;
 import com.orderize.backoffice_api.repository.FlavorRepository;
+import com.orderize.backoffice_api.repository.IngredientRepository;
 
 public class FlavorServiceTest {
 
@@ -43,6 +43,9 @@ public class FlavorServiceTest {
 
     @Mock
     private List<Ingredient> ingredients;
+
+    @Mock
+    private IngredientRepository ingredientRepository;
 
     @Mock
     private List<IngredientResponseDto> ingredientResponseDtos;
@@ -62,7 +65,9 @@ public class FlavorServiceTest {
         Flavor flavor = new Flavor("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43), LocalDate.parse("2020-04-20"), ingredients);
         FlavorResponseDto responseDto = new FlavorResponseDto(1L, "Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43), LocalDate.parse("2020-04-20"), ingredientResponseDtos);
         
-        when(flavorRequestToFlavor.map(requestDto)).thenReturn(flavor);
+        when(ingredientRepository.findAllById(any())).thenReturn(ingredients);
+        when(flavorRequestToFlavor.map(requestDto, ingredients)).thenReturn(flavor);
+        when(flavorRepository.existsByName(flavor.getName())).thenReturn(false);
         when(flavorRepository.save(flavor)).thenReturn(flavor);
         when(flavorToFlavorResponseDto.map(flavor)).thenReturn(responseDto);
         
@@ -74,7 +79,7 @@ public class FlavorServiceTest {
         assertEquals(LocalDate.parse("2020-04-20"), result.registered(), "A data de registro deveria ser 2020-04-20");
         assertEquals(ingredientResponseDtos, result.ingredients(), "A lista de ingredientes não correponde ao esperado");
         
-        verify(flavorRequestToFlavor).map(requestDto);
+        verify(flavorRequestToFlavor).map(requestDto, ingredients);
         verify(flavorRepository).save(flavor);
         verify(flavorToFlavorResponseDto).map(flavor);
     }
@@ -85,6 +90,8 @@ public class FlavorServiceTest {
         FlavorRequestDto requestDto = new FlavorRequestDto("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43));
         Flavor flavor = new Flavor("Calabresa", "Coberta com fatias de calabresa defumada, cebola e azeitonas pretas.", BigDecimal.valueOf(13.43), LocalDate.parse("2020-04-20"), ingredients);
 
+        when(ingredientRepository.findAllById(any())).thenReturn(ingredients);
+        when(flavorRequestToFlavor.map(requestDto, ingredients)).thenReturn(flavor);
         when(flavorRequestToFlavor.map(requestDto)).thenReturn(flavor);
         when(flavorRepository.existsByName("Calabresa")).thenReturn(true);
 

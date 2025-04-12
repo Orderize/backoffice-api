@@ -25,7 +25,6 @@ public class TokenService {
             Dotenv dotenv = Dotenv.load();
             this.secret = dotenv.get("TOKEN_SECRET");
         }
-
         this.algorithm = Algorithm.HMAC256(secret);
     }
 

@@ -1,8 +1,8 @@
 package com.orderize.backoffice_api.service;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
@@ -91,8 +92,8 @@ public class OrderServiceTest {
     @DisplayName("Ao salvar um pedido válido")
     void testSaveOrder(){
         OrderRequestDto requestDto = new OrderRequestDto(2L, 1L, List.of(1L, 2L, 3L), List.of(1L, 2L, 3L), "delivery", BigDecimal.valueOf(45.0), 50);
-        Order order = new Order(1L, client, responsible, pizzas, drinks, Timestamp.valueOf(LocalDateTime.now()), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, drinksDto, Timestamp.valueOf(LocalDateTime.now()), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        Order order = new Order(1L, client, responsible, pizzas, drinks, Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
 
         when(userRepository.findById(requestDto.client())).thenReturn(Optional.of(client));
         when(userRepository.findById(requestDto.responsible())).thenReturn(Optional.of(responsible));
@@ -118,7 +119,7 @@ public class OrderServiceTest {
         verify(pizzaRepository).findAllById(requestDto.pizzas());
         verify(drinkRepository).findAllById(requestDto.drinks());
         verify(mapperRequestToEntity).map(requestDto, client, responsible, pizzas, drinks);
-        verify(repository).save(order);
+        verify(repository, times(2)).save(order);
         verify(mapperEntityToResponse).map(order);
     }
 
@@ -138,8 +139,8 @@ public class OrderServiceTest {
     @DisplayName("Ao atualizar um pedido válido")
     void testUpdateOrder_Sucess(){
         OrderRequestDto requestDto = new OrderRequestDto(2L, 1L, List.of(1L, 2L, 3L), null, "delivery", BigDecimal.valueOf(45.0), 50);
-        Order updatedOrder = new Order(1L, client, responsible, pizzas, List.of(), Timestamp.valueOf(LocalDateTime.now().minusHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Timestamp.valueOf(LocalDateTime.now()), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        Order updatedOrder = new Order(1L, client, responsible, pizzas, List.of(), Instant.now().minus(Duration.ofHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
 
         when(repository.existsById(1L)).thenReturn(true);
         when(userRepository.findById(requestDto.client())).thenReturn(Optional.of(client));
@@ -184,7 +185,7 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao deletar um pedido válido")
     void testDeleteOrder_Sucess(){
-        Order order = new Order(1L, client, responsible, pizzas, List.of(), Timestamp.valueOf(LocalDateTime.now().minusHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        Order order = new Order(1L, client, responsible, pizzas, List.of(), Instant.now().minus(Duration.ofHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
 
         when(repository.findById(1L)).thenReturn(Optional.of(order));
         orderService.deleteOrder(order.getId());
@@ -210,8 +211,8 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao buscar um pedido pelo ID com sucesso")
     void testGetOrderById_Success(){
-        Order order = new Order(1L, client, responsible, pizzas, List.of(), Timestamp.valueOf(LocalDateTime.now().minusHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Timestamp.valueOf(LocalDateTime.now()), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        Order order = new Order(1L, client, responsible, pizzas, List.of(), Instant.now().minus(Duration.ofHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
 
         when(repository.findById(1L)).thenReturn(Optional.of(order));
         when(mapperEntityToResponse.map(order)).thenReturn(responseDto);
@@ -245,10 +246,10 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao buscar todos os pedidos")
     void testGetAllOrders_Sucess() {
-        Order order1 = new Order(1L, client, responsible, pizzas, List.of(), Timestamp.valueOf(LocalDateTime.now().minusHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        Order order2 = new Order(2L, client, responsible, pizzas, drinks, Timestamp.valueOf(LocalDateTime.now()), "delivery", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0));
-        OrderResponseDto responseDto1 = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Timestamp.valueOf(LocalDateTime.now()), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        OrderResponseDto responseDto2 = new OrderResponseDto(2L, clientDto, responsibleDto, pizzasDto, drinksDto, Timestamp.valueOf(LocalDateTime.now()), "delivery", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0));
+        Order order1 = new Order(1L, client, responsible, pizzas, List.of(), Instant.now().minus(Duration.ofHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        Order order2 = new Order(2L, client, responsible, pizzas, drinks, Instant.now(), "delivery", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0));
+        OrderResponseDto responseDto1 = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        OrderResponseDto responseDto2 = new OrderResponseDto(2L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0));
 
         when(repository.findAll()).thenReturn(List.of(order1, order2));
         when(mapperEntityToResponse.map(order1)).thenReturn(responseDto1);
@@ -265,10 +266,10 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao buscar todos os pedidos filtrados")
     void testGetAllOrdersFiltered_Sucess() {
-        Order order1 = new Order(1L, client, responsible, pizzas, List.of(), Timestamp.valueOf(LocalDateTime.now().minusHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        Order order2 = new Order(2L, client, responsible, pizzas, drinks, Timestamp.valueOf(LocalDateTime.now()), "saloon", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0));
-        OrderResponseDto responseDto1 = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Timestamp.valueOf(LocalDateTime.now()), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        OrderResponseDto responseDto2 = new OrderResponseDto(2L, clientDto, responsibleDto, pizzasDto, drinksDto, Timestamp.valueOf(LocalDateTime.now()), "saloon", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0));
+        Order order1 = new Order(1L, client, responsible, pizzas, List.of(), Instant.now().minus(Duration.ofHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        Order order2 = new Order(2L, client, responsible, pizzas, drinks, Instant.now(), "saloon", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0));
+        OrderResponseDto responseDto1 = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        OrderResponseDto responseDto2 = new OrderResponseDto(2L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "saloon", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0));
 
         when(repository.findAll()).thenReturn(List.of(order1, order2));
         when(mapperEntityToResponse.map(order1)).thenReturn(responseDto1);

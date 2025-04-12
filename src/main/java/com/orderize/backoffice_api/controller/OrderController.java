@@ -4,13 +4,18 @@ import com.orderize.backoffice_api.dto.order.OrderRequestDto;
 import com.orderize.backoffice_api.dto.order.OrderResponseDto;
 import com.orderize.backoffice_api.dto.order.OrderTotalPriceResponseDto;
 import com.orderize.backoffice_api.service.OrderService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 // TODO: Refatorar
@@ -55,6 +60,24 @@ public class OrderController {
         } else {
             return ResponseEntity.status(200).body(orders);
         }
+    }
+
+    @GetMapping("/last")
+    @Operation(
+        summary = "Busca todos os últimos pedidos",
+        method = "GET",
+        description = "Pode receber o request param opcional [date]" +
+        "filtrando os dados de forma descrescente ou com base no parâmetro,"+
+        "pelo atributo .datetime"
+    )
+    public ResponseEntity<List<OrderResponseDto>> getLastOrders(
+        @RequestParam(required = false) Instant datetime
+    )  {
+        List<OrderResponseDto> orders = service.getLastOrders(datetime);
+        if (orders.isEmpty()) {
+            return ResponseEntity.status(204).build();
+        }
+        return ResponseEntity.status(200).body(orders);
     }
 
     @PostMapping

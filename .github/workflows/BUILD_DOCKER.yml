@@ -32,3 +32,4 @@ jobs:
           tags: santthiago/orderize-backend:latest
           build-args: |
             TOKEN_SECRET=${{ secrets.TOKEN_SECRET }}
+

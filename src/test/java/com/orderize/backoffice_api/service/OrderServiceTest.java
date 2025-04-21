@@ -123,7 +123,7 @@ public class OrderServiceTest {
             .price(BigDecimal.valueOf(45.0))
             .status("PENDENTE")
         .build();
-        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE");
+        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE", Instant.now());
 
         when(userRepository.findById(requestDto.client())).thenReturn(Optional.of(client));
         when(userRepository.findById(requestDto.responsible())).thenReturn(Optional.of(responsible));
@@ -182,7 +182,7 @@ public class OrderServiceTest {
             .price(BigDecimal.valueOf(45.0))
             .status("PENDENTE")
         .build();
-        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE");
+        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE", Instant.now());
 
 
         when(repository.existsById(1L)).thenReturn(true);
@@ -280,7 +280,7 @@ public class OrderServiceTest {
             .price(BigDecimal.valueOf(45.0))
             .status("PENDENTE")
         .build();
-        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE");
+        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE", Instant.now());
 
         when(repository.findById(1L)).thenReturn(Optional.of(order));
         when(mapperEntityToResponse.map(order)).thenReturn(responseDto);
@@ -341,8 +341,8 @@ public class OrderServiceTest {
             .status("PENDENTE")
         .build();
         
-        OrderResponseDto responseDto1 = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE");
-        OrderResponseDto responseDto2 = new OrderResponseDto(2L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0), null, "PENDENTE");
+        OrderResponseDto responseDto1 = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE", Instant.now());
+        OrderResponseDto responseDto2 = new OrderResponseDto(2L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0), null, "PENDENTE", Instant.now());
 
         when(repository.findAll()).thenReturn(List.of(order1, order2));
         when(mapperEntityToResponse.map(order1)).thenReturn(responseDto1);
@@ -387,8 +387,8 @@ public class OrderServiceTest {
             .table(1)
         .build();
         
-        OrderResponseDto responseDto1 = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE");
-        OrderResponseDto responseDto2 = new OrderResponseDto(2L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "saloon", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0), 1, "PENDENTE");
+        OrderResponseDto responseDto1 = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE", Instant.now());
+        OrderResponseDto responseDto2 = new OrderResponseDto(2L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "saloon", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0), 1, "PENDENTE", Instant.now());
 
         when(repository.findAll()).thenReturn(List.of(order1, order2));
         when(mapperEntityToResponse.map(order1)).thenReturn(responseDto1);
@@ -459,7 +459,7 @@ public class OrderServiceTest {
             .price(BigDecimal.valueOf(45.0))
             .status("PENDENTE")
         .build();
-        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE");
+        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE", Instant.now());
         Instant datetime = Instant.now();
 
 

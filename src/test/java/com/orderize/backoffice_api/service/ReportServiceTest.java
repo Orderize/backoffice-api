@@ -1,6 +1,7 @@
 package com.orderize.backoffice_api.service;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -127,42 +128,45 @@ public class ReportServiceTest {
         );
 
         orders = List.of(
-                new Order(
-                        1L,
-                        users.get(0),
-                        users.get(1),
-                        pizzas,
-                        drinks,
-                        Instant.now(),
-                        "delivery",
-                        BigDecimal.valueOf(10.0),
-                        10,
-                        BigDecimal.valueOf(100.0)
-                ),
-                new Order(
-                        2L,
-                        users.get(0),
-                        users.get(1),
-                        List.of(pizzas.get(0)),
-                        List.of(drinks.get(0)),
-                        Instant.now(),
-                        "delivery",
-                        BigDecimal.valueOf(10.0),
-                        10,
-                        BigDecimal.valueOf(80.0)
-                ),
-                new Order(
-                        3L,
-                        users.get(0),
-                        users.get(1),
-                        List.of(pizzas.get(0), pizzas.get(1)),
-                        List.of(drinks.get(0)),
-                        Instant.now(),
-                        "delivery",
-                        BigDecimal.valueOf(10.0),
-                        10,
-                        BigDecimal.valueOf(150.0)
-                )
+                Order.builder()
+                        .id(1L)
+                        .client(users.get(0))
+                        .responsible(users.get(1))
+                        .pizzas(pizzas)
+                        .drinks(drinks)
+                        .datetime(Instant.now())
+                        .type("delivery")
+                        .freight(BigDecimal.valueOf(10.0))
+                        .estimatedTime(10)
+                        .price(BigDecimal.valueOf(100.0))
+                        .status("PENDENTE")
+                        .build(),
+                Order.builder()
+                        .id(2L)
+                        .client(users.get(0))
+                        .responsible(users.get(1))
+                        .pizzas(List.of(pizzas.get(0)))
+                        .drinks(List.of(drinks.get(0)))
+                        .datetime(Instant.now())
+                        .type("delivery")
+                        .freight(BigDecimal.valueOf(10.0))
+                        .estimatedTime(10)
+                        .price(BigDecimal.valueOf(100.0))
+                        .status("PENDENTE")
+                        .build(),
+                Order.builder()
+                        .id(3L)
+                        .client(users.get(0))
+                        .responsible(users.get(1))
+                        .pizzas(List.of(pizzas.get(0), pizzas.get(1)))
+                        .drinks(List.of(drinks.get(0)))
+                        .datetime(Instant.now())
+                        .type("delivery")
+                        .freight(BigDecimal.valueOf(10.0))
+                        .estimatedTime(10)
+                        .price(BigDecimal.valueOf(100.0))
+                        .status("PENDENTE")
+                        .build()
         );
 
         attestations = List.of(
@@ -289,7 +293,7 @@ public class ReportServiceTest {
         BigDecimal result = service.getAverageDailyRevenue(List.of(attestations.get(0), attestations.get(1)), 10);
 
         assertNotNull(result);
-        assertEquals(18.0, result.doubleValue());
+        assertEquals(20.0, result.doubleValue());
     }
 
     @Test
@@ -298,7 +302,7 @@ public class ReportServiceTest {
         BigDecimal result = service.getTotalRevenue(List.of(attestations.get(0), attestations.get(1)));
 
         assertNotNull(result);
-        assertEquals(180.0, result.doubleValue());
+        assertEquals(200.0, result.doubleValue());
     }
 
     @Test

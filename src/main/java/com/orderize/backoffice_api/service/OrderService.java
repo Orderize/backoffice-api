@@ -29,9 +29,6 @@ import com.orderize.backoffice_api.repository.UserRepository;
 import com.orderize.backoffice_api.util.observer.order_attestation.OrderObserver;
 import com.orderize.backoffice_api.util.observer.order_attestation.OrderObserverSubject;
 
-import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
-
 @Service
 public class OrderService implements OrderObserverSubject {
 
@@ -47,9 +44,6 @@ public class OrderService implements OrderObserverSubject {
     private PizzaRepository pizzaRepository;
     @Autowired
     private DrinkRepository drinkRepository;
-
-    @Autowired
-    EntityManager entityManager;
 
     private final List<OrderObserver> observers = new ArrayList<>();
 
@@ -146,7 +140,6 @@ public class OrderService implements OrderObserverSubject {
         return repository.findByLastModifiedBetween(startOfDay, endOfDay);
     }
 
-    @Transactional
     public OrderResponseDto saveOrder(OrderRequestDto orderRequestDto){
         User client = userRepository.findById(orderRequestDto.client())
             .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
@@ -171,7 +164,6 @@ public class OrderService implements OrderObserverSubject {
         notifyObservers(savedOrder);
 
         savedOrder = repository.save(savedOrder);
-        entityManager.refresh(savedOrder);
 
         return mapperOrderToOrderResponse.map(savedOrder);
     }

@@ -31,7 +31,7 @@ public class DrinkService {
     public List<DrinkResponseDto> getAllDrinks(String name, Integer milimeters) {
         List<Drink> allDrinks = repository.findAll();
 
-        if (!allDrinks.isEmpty() && !name.isBlank()) {
+        if (!allDrinks.isEmpty() && name != null) {
             allDrinks = allDrinks.stream().filter(it -> it.getName().equalsIgnoreCase(name)).toList();
         }
 

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_role")
-@IdClass(UserRole.UserRoleId.class)
+@IdClass(UserRoleId.class)
 public class UserRole {
 
     @Id

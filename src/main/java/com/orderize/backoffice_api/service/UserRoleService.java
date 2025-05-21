@@ -11,6 +11,7 @@ import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.UserRoleRequestoToUserRole;
 import com.orderize.backoffice_api.mapper.user.UserToUserResponseDto;
 import com.orderize.backoffice_api.model.UserRole;
+import com.orderize.backoffice_api.model.UserRoleId;
 import com.orderize.backoffice_api.repository.RoleRepository;
 import com.orderize.backoffice_api.repository.UserRepository;
 import com.orderize.backoffice_api.repository.UserRoleRepository;
@@ -37,7 +38,7 @@ public class UserRoleService {
             throw new ResourceNotFoundException("Usuário ou Role inválidos");
         }
 
-        UserRole.UserRoleId id = new UserRole.UserRoleId(request.userId(), request.roleId());
+        UserRoleId id = new UserRoleId(request.userId(), request.roleId());
         Optional<UserRole> possibleUserRole = repository.findById(id);
         if (possibleUserRole.isPresent()) {
             throw new AlreadyExistsException("O Usuário já possui a Role");
@@ -49,7 +50,7 @@ public class UserRoleService {
     }
 
     public void deleteUserRole(Long userId, Long roleId) {
-        UserRole.UserRoleId request = new UserRole.UserRoleId(userId, roleId);
+        UserRoleId request = new UserRoleId(userId, roleId);
         Optional<UserRole> possibleUserRole = repository.findById(request);
         if (!possibleUserRole.isPresent()) {
             throw new AlreadyExistsException("O Usuário não possui a Role");

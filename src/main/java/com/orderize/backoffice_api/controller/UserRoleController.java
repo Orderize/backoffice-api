@@ -2,6 +2,7 @@ package com.orderize.backoffice_api.controller;
 
 import com.orderize.backoffice_api.dto.UserRoleRequestDto;
 import com.orderize.backoffice_api.dto.user.UserResponseDto;
+import com.orderize.backoffice_api.model.UserRole;
 import com.orderize.backoffice_api.service.UserRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,5 +39,7 @@ public class UserRoleController {
         service.deleteUserRole(userId, roleId);
         return ResponseEntity.status(204).build();
     }
+
+    
 
 }

@@ -179,36 +179,6 @@ public class UserService implements UserDetailsService {
 
         return allUsers.stream().map(it -> mapperUserToUserResponse.map(it)).toList();
     }
-
-    public User saveRoleToUser(UserRoleRequestDto requestDto) {
-        User user = repository.findById(requestDto.userId())
-            .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
-        
-        Role role = roleRepository.findById(requestDto.roleId())
-            .orElseThrow(() -> new ResourceNotFoundException("Role não encontrado"));
-
-        if (user.getRoles().contains(role)) {
-            throw new AlreadyExistsException("Usuário já possui essa role");
-        }
-
-        user.getRoles().add(role);
-        return repository.save(user);
-    } 
-
-    public void deleteRoleFromUser(Long userId, Long roleId) {
-        User user = repository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
-
-        Role role = roleRepository.findById(roleId)
-            .orElseThrow(() -> new ResourceNotFoundException("Role não encontrado"));
-        
-        if (!user.getRoles().contains(role)) {
-            throw new ResourceNotFoundException("Usuário não possui essa role");
-        }
-    
-        user.getRoles().remove(role);
-        repository.save(user);
-    }
     
     @Transactional
     public void resetPassword(String email) {
@@ -243,5 +213,35 @@ public class UserService implements UserDetailsService {
             password.append(PASSWORD_CHARS.charAt(random.nextInt(PASSWORD_CHARS.length())));
         }
         return password.toString();
+    }
+    
+    public User saveRoleToUser(UserRoleRequestDto requestDto) {
+        User user = repository.findById(requestDto.userId())
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+        
+        Role role = roleRepository.findById(requestDto.roleId())
+            .orElseThrow(() -> new ResourceNotFoundException("Role não encontrado"));
+
+        if (user.getRoles().contains(role)) {
+            throw new AlreadyExistsException("Usuário já possui essa role");
+        }
+
+        user.getRoles().add(role);
+        return repository.save(user);
+    } 
+
+    public void deleteRoleFromUser(Long userId, Long roleId) {
+        User user = repository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        Role role = roleRepository.findById(roleId)
+            .orElseThrow(() -> new ResourceNotFoundException("Role não encontrado"));
+        
+        if (!user.getRoles().contains(role)) {
+            throw new ResourceNotFoundException("Usuário não possui essa role");
+        }
+    
+        user.getRoles().remove(role);
+        repository.save(user);
     }
 }

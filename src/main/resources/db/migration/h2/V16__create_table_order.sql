@@ -12,8 +12,8 @@ CREATE TABLE orders(
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT ck_status_orders CHECK (`status` IN ('PENDENTE', 'EM PREPARO', 'DISPONIVEL') ),
     primary key(id),
-    foreign key(fk_client) references `user`(id),
-    foreign key (fk_responsible) references `user`(id)
+    foreign key(fk_client) references users(id),
+    foreign key (fk_responsible) references users(id)
 );
 
 -- just for tests (MOCK) - bad practice

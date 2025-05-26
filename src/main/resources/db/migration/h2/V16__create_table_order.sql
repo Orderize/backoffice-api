@@ -10,7 +10,7 @@ CREATE TABLE orders(
     `status` VARCHAR(30) NOT NULL DEFAULT 'PENDENTE', 
     `table` INT,
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT ck_status_orders CHECK `status`( IN ('PENDENTE', 'EM PREPARO', 'DISPONIVEL') )
+    CONSTRAINT ck_status_orders CHECK (`status` IN ('PENDENTE', 'EM PREPARO', 'DISPONIVEL') )
     primary key(id),
     foreign key(fk_client) references `user`(id),
     foreign key (fk_responsible) references `user`(id)

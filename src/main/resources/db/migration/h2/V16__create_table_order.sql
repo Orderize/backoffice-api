@@ -7,17 +7,17 @@ CREATE TABLE orders(
     freight decimal(5,2),
     estimated_time INT,
     price decimal(20, 2) not null,
-    status VARCHAR(30) NOT NULL DEFAULT 'PENDENTE', 
+    `status` VARCHAR(30) NOT NULL DEFAULT 'PENDENTE', 
     `table` INT,
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT ck_status_orders CHECK status( IN ('PENDENTE', 'EM PREPARO', 'DISPONIVEL') )
+    CONSTRAINT ck_status_orders CHECK `status`( IN ('PENDENTE', 'EM PREPARO', 'DISPONIVEL') )
     primary key(id),
     foreign key(fk_client) references `user`(id),
     foreign key (fk_responsible) references `user`(id)
 );
 
 -- just for tests (MOCK) - bad practice
-INSERT INTO orders (fk_client, fk_responsible, type, freight, estimated_time, price, datetime, status, `table`)
+INSERT INTO orders (fk_client, fk_responsible, type, freight, estimated_time, price, datetime, `status`, `table`)
 VALUES
     (1, 2, 'delivery', 5.00, 30, 85.00, CURRENT_TIMESTAMP, NULL, NULL),
     (1, 2, 'delivery', 5.00, 50, 85.00, CURRENT_DATE - 7, NULL, NULL),

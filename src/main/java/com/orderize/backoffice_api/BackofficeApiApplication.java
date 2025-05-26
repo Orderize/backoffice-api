@@ -14,10 +14,6 @@ public class BackofficeApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BackofficeApiApplication.class, args);
-
-
-		// Alguma mudança
-
 	}
 
 }

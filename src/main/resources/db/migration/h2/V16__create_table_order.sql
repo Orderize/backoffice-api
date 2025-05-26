@@ -19,14 +19,14 @@ CREATE TABLE orders(
 -- just for tests (MOCK) - bad practice
 INSERT INTO orders (fk_client, fk_responsible, type, freight, estimated_time, price, datetime, `status`, `table`)
 VALUES
-    (1, 2, 'delivery', 5.00, 30, 85.00, CURRENT_TIMESTAMP, NULL, NULL),
-    (1, 2, 'delivery', 5.00, 50, 85.00, CURRENT_DATE - 7, NULL, NULL),
+    (1, 2, 'delivery', 5.00, 30, 85.00, CURRENT_TIMESTAMP, 'DISPONIVEL', NULL),
+    (1, 2, 'delivery', 5.00, 50, 85.00, CURRENT_DATE - 7, 'EM PREPARO', NULL),
     (1, 2, 'saloon', 6.00, 30, 95.00, CURRENT_DATE - 7, 'DISPONIVEL', 1),
-    (2, 1, 'delivery', 4.50, 55, 90.00, CURRENT_DATE - 7, NULL, NULL),
-    (2, 1, 'saloon', 8.00, 40, 120.00, CURRENT_DATE - 30, NULL, 1),
-    (1, 2, 'delivery', 4.50, 45, 55.00, CURRENT_DATE - 30, NULL, NULL),
+    (2, 1, 'delivery', 4.50, 55, 90.00, CURRENT_DATE - 7, 'PENDENTE', NULL),
+    (2, 1, 'saloon', 8.00, 40, 120.00, CURRENT_DATE - 30, 'DISPONIVEL', 1),
+    (1, 2, 'delivery', 4.50, 45, 55.00, CURRENT_DATE - 30, 'PENDENTE', NULL),
     (1, 2, 'saloon', 6.50, 35, 90.00, CURRENT_DATE - 30, 'EM PREPARO', 2),
-    (2, 1, 'delivery', 5.00, 60, 110.00, CURRENT_DATE - 30, NULL, NULL),
+    (2, 1, 'delivery', 5.00, 60, 110.00, CURRENT_DATE - 30, 'EM PREPARO', NULL),
     (1, 2, 'saloon', 5.75, 50, 95.00, CURRENT_DATE - 30, 'PENDENTE', 3),
-    (2, 1, 'delivery', 7.50, 45, 60.00, CURRENT_DATE - 30, NULL, NULL),
-    (2, 1, 'saloon', 4.00, 40, 80.00, CURRENT_DATE - 30, NULL, 4);
+    (2, 1, 'delivery', 7.50, 45, 60.00, CURRENT_DATE - 30, 'PENDENTE', NULL),
+    (2, 1, 'saloon', 4.00, 40, 80.00, CURRENT_DATE - 30, 'PENDENTE', 4);

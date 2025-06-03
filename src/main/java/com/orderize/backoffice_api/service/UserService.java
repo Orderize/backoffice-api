@@ -1,15 +1,24 @@
 package com.orderize.backoffice_api.service;
 
+import java.util.*;
+
+import com.orderize.backoffice_api.model.PasswordResetToken;
+import com.orderize.backoffice_api.repository.PasswordResetTokenRepository;
+
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.orderize.backoffice_api.dto.user.UserRequestDto;
 import com.orderize.backoffice_api.dto.user.UserResponseDto;
@@ -22,6 +31,9 @@ import com.orderize.backoffice_api.model.User;
 import com.orderize.backoffice_api.repository.AddressRepository;
 import com.orderize.backoffice_api.repository.EnterpriseRepository;
 import com.orderize.backoffice_api.repository.UserRepository;
+import com.orderize.backoffice_api.model.PasswordResetToken;
+import com.orderize.backoffice_api.repository.PasswordResetTokenRepository;
+
 
 @Service
 public class UserService implements UserDetailsService {
@@ -31,24 +43,29 @@ public class UserService implements UserDetailsService {
     private final EnterpriseRepository enterpriseRepository;
     private final UserToUserResponseDto mapperUserToUserResponse;
     private final UserRequestToUser mapperUserRequestToUser;
+    private final EmailService emailService;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
     public UserService(
             UserRepository repository,
             AddressRepository addressRepository,
             EnterpriseRepository enterpriseRepository,
             UserToUserResponseDto mapperUserToUserResponse,
-            UserRequestToUser mapperUserRequestToUser
-    ) {
+            UserRequestToUser mapperUserRequestToUser,
+            EmailService emailService,
+            PasswordResetTokenRepository passwordResetTokenRepository) {
         this.repository = repository;
         this.addressRepository = addressRepository;
         this.enterpriseRepository = enterpriseRepository;
         this.mapperUserToUserResponse = mapperUserToUserResponse;
         this.mapperUserRequestToUser = mapperUserRequestToUser;
+        this.emailService = emailService;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = repository.findByEmail(email);
+        User user = repository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o email: " + email));
         return user;
     }
 
@@ -111,8 +128,13 @@ public class UserService implements UserDetailsService {
         if (user.isPresent()) {
             User savingUser = mapperUserRequestToUser.map(userToUpdate, address, enterprise);
             savingUser.setId(user.get().getId());
-            String encryptedPassword = new BCryptPasswordEncoder().encode(savingUser.getPassword());
-            savingUser.setPassword(encryptedPassword);
+
+            if (userToUpdate.password() != null && !userToUpdate.password().isBlank()) {
+                String encryptedPassword = new BCryptPasswordEncoder().encode(savingUser.getPassword());
+                savingUser.setPassword(encryptedPassword);
+            } else {
+                savingUser.setPassword(user.get().getPassword());
+            }
             return mapperUserToUserResponse.map(repository.save(savingUser));
         } else {
             return null;
@@ -156,5 +178,70 @@ public class UserService implements UserDetailsService {
         }
 
         return allUsers.stream().map(it -> mapperUserToUserResponse.map(it)).toList();
+    }
+
+    @Transactional
+    public void createPasswordResetTokenForUser(String email) {
+        Optional<User> userOptional = repository.findByEmail(email);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            passwordResetTokenRepository.deleteByUser(user);
+
+            String token = UUID.randomUUID().toString();
+            PasswordResetToken passwordResetToken = new PasswordResetToken(token, user);
+            passwordResetTokenRepository.save(passwordResetToken);
+
+            emailService.sendGeneratedPasswordEmail(user.getEmail(), token);
+        } else {
+            throw new RuntimeException("Usuário com o e-mail " + email + " não encontrado.");
+            //Mostrar essa mensagem no front
+        }
+    }
+
+    @Transactional
+    public String resetPassword(String token) {
+        Optional<PasswordResetToken> tokenOptional = passwordResetTokenRepository.findByToken(token);
+
+        if (tokenOptional.isPresent()){
+            PasswordResetToken resetToken = tokenOptional.get();
+
+            if (resetToken.isExpired()) {
+                passwordResetTokenRepository.delete(resetToken);
+                throw new RuntimeException("Código de redefinição de senha expirado. Por favor, solicite um novo.");
+                //Mostrar essa mensagem no front
+            }
+
+            User user = resetToken.getUser();
+            String newGeneratedPassword = generateRandomPassword();
+
+            user.setPassword(new BCryptPasswordEncoder().encode(newGeneratedPassword));
+            repository.save(user);
+
+            passwordResetTokenRepository.delete(resetToken);
+
+            emailService.sendGeneratedPasswordEmail(user.getEmail(), newGeneratedPassword);
+
+            return newGeneratedPassword;
+        }
+
+        throw new RuntimeException("Código de redefinição de senha inválido.");
+    }
+
+    private String generateRandomPassword() {
+        String CHAR_LOWER = "abcdefghijklmnopqrstuvwxyz";
+        String CHAR_UPPER = CHAR_LOWER.toUpperCase();
+        String NUMBER = "0123456789";
+        String OTHER_CHARS = "!@#$%&*()_-+=";
+
+        String PASSWORD_CHARS = CHAR_LOWER + CHAR_UPPER + NUMBER + OTHER_CHARS;
+        SecureRandom random = new SecureRandom();
+        StringBuilder password = new StringBuilder("#OR");
+
+        for (int i = 0; i < 6; i++) {
+            password.append(PASSWORD_CHARS.charAt(random.nextInt(PASSWORD_CHARS.length())));
+        }
+        return password.toString();
     }
 }

@@ -9,11 +9,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
+    private final String fromEmail;
 
-    @Value("${spring.mail.username}")
-    private String fromEmail;
+    public EmailService(JavaMailSender mailSender, @Value("${spring.mail.username}") String fromEmail) {
+        this.mailSender = mailSender;
+        this.fromEmail = fromEmail;
+    }
 
     public void sendGeneratedPasswordEmail(String to, String newPassword) {
         if (mailSender == null) {

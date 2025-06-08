@@ -1,17 +1,10 @@
 package com.orderize.backoffice_api.service;
 
-import java.util.*;
-
-import com.orderize.backoffice_api.model.PasswordResetToken;
-import com.orderize.backoffice_api.repository.PasswordResetTokenRepository;
-
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,8 +24,6 @@ import com.orderize.backoffice_api.model.User;
 import com.orderize.backoffice_api.repository.AddressRepository;
 import com.orderize.backoffice_api.repository.EnterpriseRepository;
 import com.orderize.backoffice_api.repository.UserRepository;
-import com.orderize.backoffice_api.model.PasswordResetToken;
-import com.orderize.backoffice_api.repository.PasswordResetTokenRepository;
 
 
 @Service
@@ -44,7 +35,6 @@ public class UserService implements UserDetailsService {
     private final UserToUserResponseDto mapperUserToUserResponse;
     private final UserRequestToUser mapperUserRequestToUser;
     private final EmailService emailService;
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
     public UserService(
             UserRepository repository,
@@ -52,15 +42,13 @@ public class UserService implements UserDetailsService {
             EnterpriseRepository enterpriseRepository,
             UserToUserResponseDto mapperUserToUserResponse,
             UserRequestToUser mapperUserRequestToUser,
-            EmailService emailService,
-            PasswordResetTokenRepository passwordResetTokenRepository) {
+            EmailService emailService) {
         this.repository = repository;
         this.addressRepository = addressRepository;
         this.enterpriseRepository = enterpriseRepository;
         this.mapperUserToUserResponse = mapperUserToUserResponse;
         this.mapperUserRequestToUser = mapperUserRequestToUser;
         this.emailService = emailService;
-        this.passwordResetTokenRepository = passwordResetTokenRepository;
     }
 
     @Override
@@ -181,52 +169,22 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void createPasswordResetTokenForUser(String email) {
+    public void resetPassword(String email) {
         Optional<User> userOptional = repository.findByEmail(email);
 
-        if (userOptional.isPresent()) {
+        if (userOptional.isPresent()){
             User user = userOptional.get();
 
-            passwordResetTokenRepository.deleteByUser(user);
-
-            String token = UUID.randomUUID().toString();
-            PasswordResetToken passwordResetToken = new PasswordResetToken(token, user);
-            passwordResetTokenRepository.save(passwordResetToken);
-
-            emailService.sendGeneratedPasswordEmail(user.getEmail(), token);
-        } else {
-            throw new RuntimeException("Usuário com o e-mail " + email + " não encontrado.");
-            //Mostrar essa mensagem no front
-        }
-    }
-
-    @Transactional
-    public String resetPassword(String token) {
-        Optional<PasswordResetToken> tokenOptional = passwordResetTokenRepository.findByToken(token);
-
-        if (tokenOptional.isPresent()){
-            PasswordResetToken resetToken = tokenOptional.get();
-
-            if (resetToken.isExpired()) {
-                passwordResetTokenRepository.delete(resetToken);
-                throw new RuntimeException("Código de redefinição de senha expirado. Por favor, solicite um novo.");
-                //Mostrar essa mensagem no front
-            }
-
-            User user = resetToken.getUser();
             String newGeneratedPassword = generateRandomPassword();
 
             user.setPassword(new BCryptPasswordEncoder().encode(newGeneratedPassword));
             repository.save(user);
 
-            passwordResetTokenRepository.delete(resetToken);
-
             emailService.sendGeneratedPasswordEmail(user.getEmail(), newGeneratedPassword);
 
-            return newGeneratedPassword;
+        }else{
+            throw new RuntimeException("Usuário com o e-mail " + email + " não encontrado.");
         }
-
-        throw new RuntimeException("Código de redefinição de senha inválido.");
     }
 
     private String generateRandomPassword() {

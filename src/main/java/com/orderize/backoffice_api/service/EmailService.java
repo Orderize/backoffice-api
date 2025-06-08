@@ -26,7 +26,6 @@ public class EmailService {
             message.setFrom(fromEmail);
             message.setTo(to);
             message.setSubject("Sua Nova Senha - Seu Aplicativo");
-//            message.setText("Seu token de redefinição de senha é: "+ newPassword);
 
             String emailContent = "Olá,\n\n"
                     + "Sua senha foi redefinida com sucesso.\n"

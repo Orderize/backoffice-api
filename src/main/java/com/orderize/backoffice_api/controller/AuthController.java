@@ -2,7 +2,6 @@ package com.orderize.backoffice_api.controller;
 
 import com.orderize.backoffice_api.dto.auth.AuthenticationDto;
 import com.orderize.backoffice_api.dto.auth.LoginResponseDto;
-import com.orderize.backoffice_api.dto.password_reset.ForgotPasswordRequestDto;
 import com.orderize.backoffice_api.dto.password_reset.ResetPasswordRequestDto;
 import com.orderize.backoffice_api.dto.user.UserInfoResponseDto;
 import com.orderize.backoffice_api.service.AuthService;
@@ -48,25 +47,13 @@ public class AuthController {
         return ResponseEntity.status(200).body(authService.getUserInfo(authorization));
     }
 
-    @PostMapping("/forgot-password")
-    @Operation(summary = "Inicia o processo de recuperação de senha", method = "POST",
-            description = "Envia um código de recuperação para o e-mail do usuário, se ele estiver cadastrado.")
-    public ResponseEntity<String> forgotPassword(@RequestBody @Valid ForgotPasswordRequestDto request) {
-        try {
-            userService.createPasswordResetTokenForUser(request.getEmail());
-            return ResponseEntity.ok("Se o e-mail estiver cadastrado, um código de redefinição foi enviado.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.ok("Se o e-mail estiver cadastrado, um código de redefinição foi enviado.");
-        }
-    }
-
     @PostMapping("/reset-password")
-    @Operation(summary = "Redefine a senha utilizando um código de recuperação", method = "POST",
-            description = "Com o código de recuperação, a senha do usuário será gerada automaticamente e enviada por e-mail.")
+    @Operation(summary = "Inicia o processo de redefinição de senha", method = "POST",
+            description = "Envia a senha do usuário gerada automaticamente e enviada por e-mail, se ele estiver cadastrado.")
     public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordRequestDto request) {
         try {
-            userService.resetPassword(request.getToken());
-            return ResponseEntity.ok("Sua senha foi redefinida com sucesso e enviada para o seu e-mail. ");
+            userService.resetPassword(request.getEmail());
+            return ResponseEntity.ok("Se o e-mail estiver cadastrado, sua senha foi redefinida com sucesso e enviada para o seu e-mail. ");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

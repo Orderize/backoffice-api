@@ -2,6 +2,10 @@ package com.orderize.backoffice_api.service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.orderize.backoffice_api.dto.order.OrderRequestDto;
 import com.orderize.backoffice_api.dto.order.OrderResponseDto;
+import com.orderize.backoffice_api.enumeration.OrderStatusEnumeration;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.order.OrderRequestToOrder;
 import com.orderize.backoffice_api.mapper.order.OrderToOrderResponse;
@@ -83,6 +88,56 @@ public class OrderService implements OrderObserverSubject {
         }
 
         return orders.stream().map(it -> mapperOrderToOrderResponse.map(it)).toList();
+    }
+
+    public List<Order> getPendingStatusOrders() {
+        return repository.findByStatus(OrderStatusEnumeration.PENDENTE.getValue());
+    }
+
+    public List<Order> getPreparationStatusOrders() {
+        return repository.findByStatus(OrderStatusEnumeration.EM_PREPARO.getValue());
+    }
+
+    public List<Order> getAvailableStatusOrders() {
+        return repository.findByStatus(OrderStatusEnumeration.DISPONIVEL.getValue());
+    }
+
+    public Order updateStatusToPendingOrders(Long id) {
+        Order orderToUpdate = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Order não encontrado"));
+        
+        orderToUpdate.setStatus(OrderStatusEnumeration.PENDENTE.getValue());
+        
+        return repository.save(orderToUpdate);
+    }
+
+    public Order updateStatusToPreparationOrders(Long id) {
+        Order orderToUpdate = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Order não encontrado"));
+        
+        orderToUpdate.setStatus(OrderStatusEnumeration.EM_PREPARO.getValue());
+        
+        return repository.save(orderToUpdate);
+    }
+
+    public Order updateStatusToAvailableOrders(Long id) {
+        Order orderToUpdate = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Order não encontrado"));
+        
+        orderToUpdate.setStatus(OrderStatusEnumeration.DISPONIVEL.getValue());
+        
+        return repository.save(orderToUpdate);
+    }
+
+    public List<Order> getOrdersFromToday() {
+        ZoneId zoneId = ZoneId.systemDefault(); 
+
+        LocalDate today = LocalDate.now(zoneId);
+        Instant startOfDay = today.atStartOfDay(zoneId).toInstant();
+        Instant endOfDay = today.atTime(LocalTime.MAX).atZone(zoneId).toInstant();
+
+
+        return repository.findByDatetimeBetween(startOfDay, endOfDay);
     }
 
     public OrderResponseDto saveOrder(OrderRequestDto orderRequestDto){

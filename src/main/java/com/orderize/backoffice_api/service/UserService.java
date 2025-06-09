@@ -42,7 +42,8 @@ public class UserService implements UserDetailsService {
             EnterpriseRepository enterpriseRepository,
             UserToUserResponseDto mapperUserToUserResponse,
             UserRequestToUser mapperUserRequestToUser,
-            EmailService emailService) {
+            EmailService emailService
+            ) {
         this.repository = repository;
         this.addressRepository = addressRepository;
         this.enterpriseRepository = enterpriseRepository;

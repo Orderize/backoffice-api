@@ -1,5 +1,6 @@
 package com.orderize.backoffice_api.service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.orderize.backoffice_api.dto.UserRoleRequestDto;
 import com.orderize.backoffice_api.dto.user.UserRequestDto;
@@ -27,6 +29,7 @@ import com.orderize.backoffice_api.repository.EnterpriseRepository;
 import com.orderize.backoffice_api.repository.RoleRepository;
 import com.orderize.backoffice_api.repository.UserRepository;
 
+
 @Service
 public class UserService implements UserDetailsService {
 
@@ -36,6 +39,7 @@ public class UserService implements UserDetailsService {
     private final UserToUserResponseDto mapperUserToUserResponse;
     private final UserRequestToUser mapperUserRequestToUser;
     private final RoleRepository roleRepository;
+    private final EmailService emailService;
 
     public UserService(
             UserRepository repository,
@@ -43,19 +47,21 @@ public class UserService implements UserDetailsService {
             EnterpriseRepository enterpriseRepository,
             UserToUserResponseDto mapperUserToUserResponse,
             UserRequestToUser mapperUserRequestToUser,
-            RoleRepository roleRepository
-    ) {
+            RoleRepository roleRepository,
+            EmailService emailService
+            ) {
         this.repository = repository;
         this.addressRepository = addressRepository;
         this.enterpriseRepository = enterpriseRepository;
         this.mapperUserToUserResponse = mapperUserToUserResponse;
         this.mapperUserRequestToUser = mapperUserRequestToUser;
         this.roleRepository = roleRepository;
+        this.emailService = emailService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = repository.findByEmail(email);
+        User user = repository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o email: " + email));
         return user;
     }
 
@@ -118,8 +124,13 @@ public class UserService implements UserDetailsService {
         if (user.isPresent()) {
             User savingUser = mapperUserRequestToUser.map(userToUpdate, address, enterprise);
             savingUser.setId(user.get().getId());
-            String encryptedPassword = new BCryptPasswordEncoder().encode(savingUser.getPassword());
-            savingUser.setPassword(encryptedPassword);
+
+            if (userToUpdate.password() != null && !userToUpdate.password().isBlank()) {
+                String encryptedPassword = new BCryptPasswordEncoder().encode(savingUser.getPassword());
+                savingUser.setPassword(encryptedPassword);
+            } else {
+                savingUser.setPassword(user.get().getPassword());
+            }
             return mapperUserToUserResponse.map(repository.save(savingUser));
         } else {
             return null;
@@ -193,5 +204,40 @@ public class UserService implements UserDetailsService {
     
         user.getRoles().remove(role);
         repository.save(user);
+    }
+    
+    @Transactional
+    public void resetPassword(String email) {
+        Optional<User> userOptional = repository.findByEmail(email);
+
+        if (userOptional.isPresent()){
+            User user = userOptional.get();
+
+            String newGeneratedPassword = generateRandomPassword();
+
+            user.setPassword(new BCryptPasswordEncoder().encode(newGeneratedPassword));
+            repository.save(user);
+
+            emailService.sendGeneratedPasswordEmail(user.getEmail(), newGeneratedPassword);
+
+        }else{
+            throw new RuntimeException("Usuário com o e-mail " + email + " não encontrado.");
+        }
+    }
+
+    private String generateRandomPassword() {
+        String CHAR_LOWER = "abcdefghijklmnopqrstuvwxyz";
+        String CHAR_UPPER = CHAR_LOWER.toUpperCase();
+        String NUMBER = "0123456789";
+        String OTHER_CHARS = "!@#$%&*()_-+=";
+
+        String PASSWORD_CHARS = CHAR_LOWER + CHAR_UPPER + NUMBER + OTHER_CHARS;
+        SecureRandom random = new SecureRandom();
+        StringBuilder password = new StringBuilder("#OR");
+
+        for (int i = 0; i < 6; i++) {
+            password.append(PASSWORD_CHARS.charAt(random.nextInt(PASSWORD_CHARS.length())));
+        }
+        return password.toString();
     }
 }

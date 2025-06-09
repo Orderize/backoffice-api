@@ -31,6 +31,8 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(it -> it
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll() //
+                        .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()  //
                         .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )

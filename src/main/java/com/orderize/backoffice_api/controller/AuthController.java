@@ -2,10 +2,13 @@ package com.orderize.backoffice_api.controller;
 
 import com.orderize.backoffice_api.dto.auth.AuthenticationDto;
 import com.orderize.backoffice_api.dto.auth.LoginResponseDto;
+import com.orderize.backoffice_api.dto.password_reset.ResetPasswordRequestDto;
 import com.orderize.backoffice_api.dto.user.UserInfoResponseDto;
 import com.orderize.backoffice_api.service.AuthService;
+import com.orderize.backoffice_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,9 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserService userService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, UserService userService) {
         this.authService = authService;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -40,5 +45,17 @@ public class AuthController {
             @RequestHeader("Authorization") String authorization
     ) {
         return ResponseEntity.status(200).body(authService.getUserInfo(authorization));
-    } 
+    }
+
+    @PostMapping("/reset-password")
+    @Operation(summary = "Inicia o processo de redefinição de senha", method = "POST",
+            description = "Envia a senha do usuário gerada automaticamente e enviada por e-mail, se ele estiver cadastrado.")
+    public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordRequestDto request) {
+        try {
+            userService.resetPassword(request.getEmail());
+            return ResponseEntity.ok("Se o e-mail estiver cadastrado, sua senha foi redefinida com sucesso e enviada para o seu e-mail. ");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

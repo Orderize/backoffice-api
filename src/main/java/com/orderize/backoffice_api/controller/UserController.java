@@ -26,7 +26,7 @@ public class UserController {
     @Operation(
             summary = "Busca todos os usuários",
             method = "GET",
-            description = "Pode receber os request param opcionais: [phone, email, idEnterprise, idRole]" +
+            description = "Pode receber os request param opcionais: [phone, email, idEnterprise, idRole, name]" +
                     " e filtra o resultado com base nos request param " +
                     "passados, caso nenhum seja passado retorna uma list com todos os usuários."
     )
@@ -34,9 +34,10 @@ public class UserController {
             @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "email", required = false) String email,
             @RequestParam(value = "idEnterprise", required = false) Long idEnterprise,
-            @RequestParam(value = "idRole", required = false) Long idRole
+            @RequestParam(value = "idRole", required = false) Long idRole,
+            @RequestParam(value = "name", required = false) String name
     ) {
-        List<UserResponseDto> users = service.getAllUsers(phone, email, idEnterprise, idRole);
+        List<UserResponseDto> users = service.getAllUsers(phone, email, idEnterprise, idRole, name);
 
         if (users.isEmpty()) {
             return ResponseEntity.status(204).build();

@@ -148,11 +148,11 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public List<UserResponseDto> getAllUsers(String phone, String email, Long enterprise, Long role) {
+    public List<UserResponseDto> getAllUsers(String phone, String email, Long enterprise, Long role, String name) {
         List<User> allUsers = repository.findAll();
 
         if (phone != null && !phone.isBlank()) {
-            allUsers = allUsers.stream().filter(it -> it.getPhone().equals(phone)).toList();
+            allUsers = allUsers.stream().filter(it -> it.getPhone() != null && it.getPhone().equals(phone)).toList();
         }
 
         if (email != null && !email.isBlank()) {
@@ -171,6 +171,10 @@ public class UserService implements UserDetailsService {
                 }
             });
             allUsers = filteredUsers;
+        }
+
+        if(name != null){
+            allUsers = allUsers.stream().filter(it -> it.getName().equals(name)).toList();
         }
 
         return allUsers.stream().map(it -> mapperUserToUserResponse.map(it)).toList();

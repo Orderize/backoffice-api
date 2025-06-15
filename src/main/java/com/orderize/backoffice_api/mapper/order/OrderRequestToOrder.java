@@ -18,7 +18,7 @@ public class OrderRequestToOrder implements Mapper<OrderRequestDto, Order>{
             .freight(orderRequestDto.freight())
             .estimatedTime(orderRequestDto.estimatedTime())
             .price(BigDecimal.valueOf(0.0))
-            .status(orderRequestDto.status())
+            .status(orderRequestDto.status() != null ? orderRequestDto.status() : "PENDENTE")
             .table(orderRequestDto.table())
             .build();
         }

@@ -7,7 +7,7 @@ CREATE TABLE orders(
     freight decimal(5,2),
     estimated_time INT,
     price decimal(20, 2) not null,
-    `status` VARCHAR(30) NOT NULL DEFAULT 'PENDENTE', 
+    `status` VARCHAR(30) DEFAULT 'PENDENTE', 
     `table` INT,
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT ck_status_orders CHECK (`status` IN ('PENDENTE', 'EM PREPARO', 'DISPONIVEL') ),

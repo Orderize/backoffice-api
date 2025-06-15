@@ -86,7 +86,7 @@ public class Order {
     @Column(name = "`table`")
     private Integer table;
      
-    @LastModifiedDate
+    @CurrentTimestamp
     @Column(name = "last_modified", nullable = false)
     private Instant lastModified;
 

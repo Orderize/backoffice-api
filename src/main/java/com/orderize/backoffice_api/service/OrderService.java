@@ -143,7 +143,7 @@ public class OrderService implements OrderObserverSubject {
         Instant endOfDay = today.atTime(LocalTime.MAX).atZone(zoneId).toInstant();
 
 
-        return repository.findByDatetimeBetween(startOfDay, endOfDay);
+        return repository.findByLastModifiedBetween(startOfDay, endOfDay);
     }
 
     @Transactional

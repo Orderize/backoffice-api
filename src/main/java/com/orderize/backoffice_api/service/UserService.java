@@ -13,16 +13,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.orderize.backoffice_api.dto.UserRoleRequestDto;
 import com.orderize.backoffice_api.dto.user.UserRequestDto;
 import com.orderize.backoffice_api.dto.user.UserResponseDto;
 import com.orderize.backoffice_api.exception.AlreadyExistsException;
+import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.user.UserRequestToUser;
 import com.orderize.backoffice_api.mapper.user.UserToUserResponseDto;
 import com.orderize.backoffice_api.model.Address;
 import com.orderize.backoffice_api.model.Enterprise;
+import com.orderize.backoffice_api.model.Role;
 import com.orderize.backoffice_api.model.User;
 import com.orderize.backoffice_api.repository.AddressRepository;
 import com.orderize.backoffice_api.repository.EnterpriseRepository;
+import com.orderize.backoffice_api.repository.RoleRepository;
 import com.orderize.backoffice_api.repository.UserRepository;
 
 
@@ -34,6 +38,7 @@ public class UserService implements UserDetailsService {
     private final EnterpriseRepository enterpriseRepository;
     private final UserToUserResponseDto mapperUserToUserResponse;
     private final UserRequestToUser mapperUserRequestToUser;
+    private final RoleRepository roleRepository;
     private final EmailService emailService;
 
     public UserService(
@@ -42,6 +47,7 @@ public class UserService implements UserDetailsService {
             EnterpriseRepository enterpriseRepository,
             UserToUserResponseDto mapperUserToUserResponse,
             UserRequestToUser mapperUserRequestToUser,
+            RoleRepository roleRepository,
             EmailService emailService
             ) {
         this.repository = repository;
@@ -49,6 +55,7 @@ public class UserService implements UserDetailsService {
         this.enterpriseRepository = enterpriseRepository;
         this.mapperUserToUserResponse = mapperUserToUserResponse;
         this.mapperUserRequestToUser = mapperUserRequestToUser;
+        this.roleRepository = roleRepository;
         this.emailService = emailService;
     }
 
@@ -172,7 +179,7 @@ public class UserService implements UserDetailsService {
 
         return allUsers.stream().map(it -> mapperUserToUserResponse.map(it)).toList();
     }
-
+  
     @Transactional
     public void resetPassword(String email) {
         Optional<User> userOptional = repository.findByEmail(email);
@@ -206,5 +213,35 @@ public class UserService implements UserDetailsService {
             password.append(PASSWORD_CHARS.charAt(random.nextInt(PASSWORD_CHARS.length())));
         }
         return password.toString();
+    }
+    
+    public User saveRoleToUser(UserRoleRequestDto requestDto) {
+        User user = repository.findById(requestDto.userId())
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+        
+        Role role = roleRepository.findById(requestDto.roleId())
+            .orElseThrow(() -> new ResourceNotFoundException("Role não encontrado"));
+
+        if (user.getRoles().contains(role)) {
+            throw new AlreadyExistsException("Usuário já possui essa role");
+        }
+
+        user.getRoles().add(role);
+        return repository.save(user);
+    } 
+
+    public void deleteRoleFromUser(Long userId, Long roleId) {
+        User user = repository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        Role role = roleRepository.findById(roleId)
+            .orElseThrow(() -> new ResourceNotFoundException("Role não encontrado"));
+        
+        if (!user.getRoles().contains(role)) {
+            throw new ResourceNotFoundException("Usuário não possui essa role");
+        }
+    
+        user.getRoles().remove(role);
+        repository.save(user);
     }
 }

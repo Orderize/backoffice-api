@@ -12,6 +12,8 @@ public record OrderRequestDto(
         List<Long> drinks,
         String type,
         @NotNull BigDecimal freight,
-        @NotNull Integer estimatedTime
+        @NotNull Integer estimatedTime,
+        Integer table,
+        String status
 ) {
 }

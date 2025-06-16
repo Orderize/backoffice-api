@@ -18,6 +18,9 @@ public record OrderResponseDto (
         String type,
         BigDecimal freight,
         Integer estimatedTime,
-        BigDecimal price
+        BigDecimal price,
+        Integer table,
+        String status,
+        Instant lastModified
 ) {
 }

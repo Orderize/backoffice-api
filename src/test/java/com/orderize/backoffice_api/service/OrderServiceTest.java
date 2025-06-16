@@ -3,11 +3,15 @@ package com.orderize.backoffice_api.service;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +23,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.orderize.backoffice_api.dto.drink.DrinkResponseDto;
 import com.orderize.backoffice_api.dto.order.OrderRequestDto;
@@ -36,6 +41,7 @@ import com.orderize.backoffice_api.repository.DrinkRepository;
 import com.orderize.backoffice_api.repository.OrderRepository;
 import com.orderize.backoffice_api.repository.PizzaRepository;
 import com.orderize.backoffice_api.repository.UserRepository;
+import com.orderize.backoffice_api.util.observer.order_attestation.OrderObserver;
 
 public class OrderServiceTest {
     @Mock
@@ -80,26 +86,50 @@ public class OrderServiceTest {
     @Mock
     private List<DrinkResponseDto> drinksDto;
 
+    private List<OrderObserver> observers;
+
+    @Mock
+    private OrderObserver observer1;
+
+    @Mock
+    private OrderObserver observer2;
+
+
     @InjectMocks
     private OrderService orderService;
 
     @BeforeEach
     void setup(){
         MockitoAnnotations.openMocks(this);
+
+        observers = new ArrayList<>();
+        ReflectionTestUtils.setField(orderService, "observers", observers);
     }
 
     @Test
     @DisplayName("Ao salvar um pedido válido")
     void testSaveOrder(){
-        OrderRequestDto requestDto = new OrderRequestDto(2L, 1L, List.of(1L, 2L, 3L), List.of(1L, 2L, 3L), "delivery", BigDecimal.valueOf(45.0), 50);
-        Order order = new Order(1L, client, responsible, pizzas, drinks, Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        OrderRequestDto requestDto = new OrderRequestDto(2L, 1L, List.of(1L, 2L, 3L), List.of(1L, 2L, 3L), "delivery", BigDecimal.valueOf(45.0), 50, null, "PENDENTE");
+        Order order = Order.builder()
+            .id(1L)
+            .client(client)
+            .responsible(responsible)
+            .pizzas(pizzas)
+            .drinks(drinks)
+            .datetime(Instant.now())
+            .type("delivery")
+            .freight(BigDecimal.valueOf(45.0))
+            .estimatedTime(50)
+            .price(BigDecimal.valueOf(45.0))
+            .status("PENDENTE")
+        .build();
+        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE", Instant.now());
 
         when(userRepository.findById(requestDto.client())).thenReturn(Optional.of(client));
         when(userRepository.findById(requestDto.responsible())).thenReturn(Optional.of(responsible));
         when(pizzaRepository.findAllById(requestDto.pizzas())).thenReturn(pizzas);
         when(drinkRepository.findAllById(requestDto.drinks())).thenReturn(drinks);
-        when(mapperRequestToEntity.map(requestDto, client, responsible, pizzas, drinks)).thenReturn(order);
+        when(mapperRequestToEntity.map(requestDto)).thenReturn(order);
         when(repository.save(order)).thenReturn(order);
         when(mapperEntityToResponse.map(order)).thenReturn(responseDto);
 
@@ -118,7 +148,7 @@ public class OrderServiceTest {
         verify(userRepository).findById(requestDto.responsible());
         verify(pizzaRepository).findAllById(requestDto.pizzas());
         verify(drinkRepository).findAllById(requestDto.drinks());
-        verify(mapperRequestToEntity).map(requestDto, client, responsible, pizzas, drinks);
+        verify(mapperRequestToEntity).map(requestDto);
         verify(repository, times(2)).save(order);
         verify(mapperEntityToResponse).map(order);
     }
@@ -126,7 +156,7 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao salvar um pedido inválido")
     void testSaveOrder_Invalid(){
-        OrderRequestDto invalidRequestDto = new OrderRequestDto(null, null, null, null, null, null, null);
+        OrderRequestDto invalidRequestDto = new OrderRequestDto(null, null, null, null, null, null, null, null, null);
         
         assertThrows(ResourceNotFoundException.class, () -> { 
             orderService.saveOrder(invalidRequestDto);
@@ -138,15 +168,28 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao atualizar um pedido válido")
     void testUpdateOrder_Sucess(){
-        OrderRequestDto requestDto = new OrderRequestDto(2L, 1L, List.of(1L, 2L, 3L), null, "delivery", BigDecimal.valueOf(45.0), 50);
-        Order updatedOrder = new Order(1L, client, responsible, pizzas, List.of(), Instant.now().minus(Duration.ofHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        OrderRequestDto requestDto = new OrderRequestDto(2L, 1L, List.of(1L, 2L, 3L), List.of(1L, 2L, 3L), "delivery", BigDecimal.valueOf(45.0), 50, null, "PENDENTE");
+        Order updatedOrder = Order.builder()
+            .id(1L)
+            .client(client)
+            .responsible(responsible)
+            .pizzas(pizzas)
+            .drinks(List.of())
+            .datetime(Instant.now().minus(Duration.ofHours(3)))
+            .type("delivery")
+            .freight(BigDecimal.valueOf(45.0))
+            .estimatedTime(50)
+            .price(BigDecimal.valueOf(45.0))
+            .status("PENDENTE")
+        .build();
+        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE", Instant.now());
+
 
         when(repository.existsById(1L)).thenReturn(true);
         when(userRepository.findById(requestDto.client())).thenReturn(Optional.of(client));
         when(userRepository.findById(requestDto.responsible())).thenReturn(Optional.of(responsible));
         when(pizzaRepository.findAllById(requestDto.pizzas())).thenReturn(pizzas);
-        when(mapperRequestToEntity.map(requestDto, client, responsible, pizzas, List.of())).thenReturn(updatedOrder);
+        when(mapperRequestToEntity.map(requestDto)).thenReturn(updatedOrder);
         when(repository.save(updatedOrder)).thenReturn(updatedOrder);
         when(mapperEntityToResponse.map(updatedOrder)).thenReturn(responseDto);
 
@@ -162,7 +205,7 @@ public class OrderServiceTest {
         verify(userRepository).findById(requestDto.client());
         verify(userRepository).findById(requestDto.responsible());
         verify(pizzaRepository).findAllById(requestDto.pizzas());
-        verify(mapperRequestToEntity).map(requestDto, client, responsible, pizzas, List.of());
+        verify(mapperRequestToEntity).map(requestDto);
         verify(repository).save(updatedOrder);
         verify(mapperEntityToResponse).map(updatedOrder);
     }
@@ -170,7 +213,8 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao atualizar um pedido que não existe")
     void testUpdateOrder_NotFound(){
-        OrderRequestDto requestDto = new OrderRequestDto(2L, 1L, List.of(1L, 2L, 3L), null, "delivery", BigDecimal.valueOf(45.0), 50);
+        OrderRequestDto requestDto = new OrderRequestDto(2L, 1L, List.of(1L, 2L, 3L), null, "delivery", BigDecimal.valueOf(45.0), 50, null, "PENDENTE");
+
         when(repository.existsById(1L)).thenReturn(false);
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
@@ -185,7 +229,19 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao deletar um pedido válido")
     void testDeleteOrder_Sucess(){
-        Order order = new Order(1L, client, responsible, pizzas, List.of(), Instant.now().minus(Duration.ofHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        Order order = Order.builder()
+            .id(1L)
+            .client(client)
+            .responsible(responsible)
+            .pizzas(pizzas)
+            .drinks(List.of())
+            .datetime(Instant.now().minus(Duration.ofHours(3)))
+            .type("delivery")
+            .freight(BigDecimal.valueOf(45.0))
+            .estimatedTime(50)
+            .price(BigDecimal.valueOf(45.0))
+            .status("PENDENTE")
+        .build();
 
         when(repository.findById(1L)).thenReturn(Optional.of(order));
         orderService.deleteOrder(order.getId());
@@ -211,8 +267,20 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao buscar um pedido pelo ID com sucesso")
     void testGetOrderById_Success(){
-        Order order = new Order(1L, client, responsible, pizzas, List.of(), Instant.now().minus(Duration.ofHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
+        Order order = Order.builder()
+            .id(1L)
+            .client(client)
+            .responsible(responsible)
+            .pizzas(pizzas)
+            .drinks(List.of())
+            .datetime(Instant.now().minus(Duration.ofHours(3)))
+            .type("delivery")
+            .freight(BigDecimal.valueOf(45.0))
+            .estimatedTime(50)
+            .price(BigDecimal.valueOf(45.0))
+            .status("PENDENTE")
+        .build();
+        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE", Instant.now());
 
         when(repository.findById(1L)).thenReturn(Optional.of(order));
         when(mapperEntityToResponse.map(order)).thenReturn(responseDto);
@@ -246,10 +314,35 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao buscar todos os pedidos")
     void testGetAllOrders_Sucess() {
-        Order order1 = new Order(1L, client, responsible, pizzas, List.of(), Instant.now().minus(Duration.ofHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        Order order2 = new Order(2L, client, responsible, pizzas, drinks, Instant.now(), "delivery", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0));
-        OrderResponseDto responseDto1 = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        OrderResponseDto responseDto2 = new OrderResponseDto(2L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0));
+        Order order1 = Order.builder()
+            .id(1L)
+            .client(client)
+            .responsible(responsible)
+            .pizzas(pizzas)
+            .drinks(List.of())
+            .datetime(Instant.now().minus(Duration.ofHours(3)))
+            .type("delivery")
+            .freight(BigDecimal.valueOf(45.0))
+            .estimatedTime(50)
+            .price(BigDecimal.valueOf(45.0))
+            .status("PENDENTE")
+        .build();
+        Order order2 = Order.builder()
+            .id(2L)
+            .client(client)
+            .responsible(responsible)
+            .pizzas(pizzas)
+            .drinks(List.of())
+            .datetime(Instant.now())
+            .type("delivery")
+            .freight(BigDecimal.valueOf(43.0))
+            .estimatedTime(63)
+            .price(BigDecimal.valueOf(56.0))
+            .status("PENDENTE")
+        .build();
+        
+        OrderResponseDto responseDto1 = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE", Instant.now());
+        OrderResponseDto responseDto2 = new OrderResponseDto(2L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "delivery", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0), null, "PENDENTE", Instant.now());
 
         when(repository.findAll()).thenReturn(List.of(order1, order2));
         when(mapperEntityToResponse.map(order1)).thenReturn(responseDto1);
@@ -266,10 +359,36 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Ao buscar todos os pedidos filtrados")
     void testGetAllOrdersFiltered_Sucess() {
-        Order order1 = new Order(1L, client, responsible, pizzas, List.of(), Instant.now().minus(Duration.ofHours(3)), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        Order order2 = new Order(2L, client, responsible, pizzas, drinks, Instant.now(), "saloon", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0));
-        OrderResponseDto responseDto1 = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0));
-        OrderResponseDto responseDto2 = new OrderResponseDto(2L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "saloon", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0));
+        Order order1 = Order.builder()
+            .id(1L)
+            .client(client)
+            .responsible(responsible)
+            .pizzas(pizzas)
+            .drinks(List.of())
+            .datetime(Instant.now().minus(Duration.ofHours(3)))
+            .type("delivery")
+            .freight(BigDecimal.valueOf(45.0))
+            .estimatedTime(50)
+            .price(BigDecimal.valueOf(45.0))
+            .status("PENDENTE")
+        .build();
+        Order order2 = Order.builder()
+            .id(2L)
+            .client(client)
+            .responsible(responsible)
+            .pizzas(pizzas)
+            .drinks(List.of())
+            .datetime(Instant.now())
+            .type("saloon")
+            .freight(BigDecimal.valueOf(43.0))
+            .estimatedTime(63)
+            .price(BigDecimal.valueOf(56.0))
+            .status("PENDENTE")
+            .table(1)
+        .build();
+        
+        OrderResponseDto responseDto1 = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE", Instant.now());
+        OrderResponseDto responseDto2 = new OrderResponseDto(2L, clientDto, responsibleDto, pizzasDto, drinksDto, Instant.now(), "saloon", BigDecimal.valueOf(43.0), 63, BigDecimal.valueOf(56.0), 1, "PENDENTE", Instant.now());
 
         when(repository.findAll()).thenReturn(List.of(order1, order2));
         when(mapperEntityToResponse.map(order1)).thenReturn(responseDto1);
@@ -281,4 +400,105 @@ public class OrderServiceTest {
         assertEquals("saloon", orders.get(0).type());
         verify(repository).findAll();
     }
+
+    @Test
+    @DisplayName("Adicionar observer")
+    void addObserver() {
+        orderService.addObserver(observer1);
+        assertTrue(observers.contains(observer1));
+    }
+
+    @Test
+    @DisplayName("Remover observer")
+    void testRemoveObserver() {
+        observers.add(observer1);
+        observers.add(observer2);
+
+        orderService.removeObserver(observer1);
+        
+        assertFalse(observers.contains(observer1));
+        assertTrue(observers.contains(observer2));
+    }
+
+    @Test
+    @DisplayName("Notificar observers")
+    void testNotifyObservers() {
+        observers.add(observer1);
+        Order order = Order.builder()
+            .id(1L)
+            .client(client)
+            .responsible(responsible)
+            .pizzas(pizzas)
+            .drinks(drinks)
+            .datetime(Instant.now())
+            .type("delivery")
+            .freight(BigDecimal.valueOf(45.0))
+            .estimatedTime(50)
+            .price(BigDecimal.valueOf(45.0))
+            .status("PENDENTE")
+        .build();
+
+        orderService.notifyObservers(order);
+        
+        verify(observer1).onOrderCreated(order);        
+    }
+
+    @Test
+    @DisplayName("Pegar os últimos pedidos em ordem")
+    void testGetLastOrders() {
+        Order order = Order.builder()
+            .id(1L)
+            .client(client)
+            .responsible(responsible)
+            .pizzas(pizzas)
+            .drinks(List.of())
+            .datetime(Instant.now().minus(Duration.ofHours(3)))
+            .type("delivery")
+            .freight(BigDecimal.valueOf(45.0))
+            .estimatedTime(50)
+            .price(BigDecimal.valueOf(45.0))
+            .status("PENDENTE")
+        .build();
+        OrderResponseDto responseDto = new OrderResponseDto(1L, clientDto, responsibleDto, pizzasDto, List.of(), Instant.now(), "delivery", BigDecimal.valueOf(45.0), 50, BigDecimal.valueOf(45.0), null, "PENDENTE", Instant.now());
+        Instant datetime = Instant.now();
+
+
+        when(repository.findByDatetimeBeforeOrderByDatetimeAsc(datetime)).thenReturn(List.of(order));
+        when(mapperEntityToResponse.map(order)).thenReturn(responseDto);
+
+        List<OrderResponseDto> result = orderService.getLastOrders(datetime);
+
+        assertEquals(responseDto.id(), result.get(0).id());
+        assertEquals(responseDto.client(), result.get(0).client());
+        assertEquals(responseDto.responsible(), result.get(0).responsible());
+        assertEquals(responseDto.pizzas(), result.get(0).pizzas());
+        assertEquals(responseDto.drinks(), result.get(0).drinks());
+        assertEquals("delivery", result.get(0).type());
+
+        verify(repository).findByDatetimeBeforeOrderByDatetimeAsc(datetime);
+        verify(mapperEntityToResponse).map(order);
+    }
+
+    @Test
+    @DisplayName("Calcula o preço do pedido")
+    void calculateOrderPrices(){
+        Order order = Order.builder()
+            .id(1L)
+            .client(client)
+            .responsible(responsible)
+            .pizzas(pizzas)
+            .drinks(List.of())
+            .datetime(Instant.now().minus(Duration.ofHours(3)))
+            .type("delivery")
+            .freight(BigDecimal.valueOf(45.0))
+            .estimatedTime(50)
+            .price(BigDecimal.valueOf(45.0))
+            .status("PENDENTE")
+        .build();
+        
+        orderService.calculateOrderPrices(order);
+        
+        assertEquals(order.getPrice(), BigDecimal.valueOf(45.0));
+    }
 }
+

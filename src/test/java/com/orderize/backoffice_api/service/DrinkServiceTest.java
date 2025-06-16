@@ -91,7 +91,7 @@ class DrinkServiceTest {
         when(mapperEntityToResponse.map(drink1)).thenReturn(responseDto1);
         when(mapperEntityToResponse.map(drink2)).thenReturn(responseDto2);
 
-        List<DrinkResponseDto> drinks = drinkService.getAllDrinks("", null);
+        List<DrinkResponseDto> drinks = drinkService.getAllDrinks(null, null);
 
         assertEquals(2, drinks.size());
         assertEquals("Coca Cola", drinks.get(0).name());

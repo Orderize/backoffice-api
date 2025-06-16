@@ -33,7 +33,10 @@ public class OrderToOrderResponse {
             order.getType(),
             order.getFreight(),
             order.getEstimatedTime(),
-            order.getPrice()
+            order.getPrice(),
+            order.getTable(),
+            order.getStatus(),
+            order.getLastModified()
         );
     }
 }

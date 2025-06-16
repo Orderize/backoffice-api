@@ -25,7 +25,6 @@ public class BackofficeApiApplication {
 		}
 
 		SpringApplication.run(BackofficeApiApplication.class, args);
-
 	}
 
 }

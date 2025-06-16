@@ -2,13 +2,19 @@ package com.orderize.backoffice_api.service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.orderize.backoffice_api.dto.order.OrderRequestDto;
 import com.orderize.backoffice_api.dto.order.OrderResponseDto;
+import com.orderize.backoffice_api.enumeration.OrderStatusEnumeration;
 import com.orderize.backoffice_api.exception.ResourceNotFoundException;
 import com.orderize.backoffice_api.mapper.order.OrderRequestToOrder;
 import com.orderize.backoffice_api.mapper.order.OrderToOrderResponse;
@@ -23,34 +29,23 @@ import com.orderize.backoffice_api.repository.UserRepository;
 import com.orderize.backoffice_api.util.observer.order_attestation.OrderObserver;
 import com.orderize.backoffice_api.util.observer.order_attestation.OrderObserverSubject;
 
-// TODO: Refatorar
 @Service
 public class OrderService implements OrderObserverSubject {
-    private final OrderRepository repository;
-    private final OrderToOrderResponse mapperOrderToOrderResponse;
-    private final OrderRequestToOrder mapperOrderRequestToOrder;
 
-    private final UserRepository userRepository;
-    private final PizzaRepository pizzaRepository;
-    private final DrinkRepository drinkRepository;
-    private final List<OrderObserver> observers;
+    @Autowired
+    private OrderRepository repository;
+    @Autowired
+    private OrderToOrderResponse mapperOrderToOrderResponse;
+    @Autowired
+    private OrderRequestToOrder mapperOrderRequestToOrder;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PizzaRepository pizzaRepository;
+    @Autowired
+    private DrinkRepository drinkRepository;
 
-    public OrderService(
-            OrderRepository repository,
-            OrderToOrderResponse mapperOrderToOrderResponse,
-            OrderRequestToOrder mapperOrderRequestToOrder,
-            UserRepository userRepository,
-            PizzaRepository pizzaRepository,
-            DrinkRepository drinkRepository
-    ){
-        this.repository = repository;
-        this.mapperOrderToOrderResponse = mapperOrderToOrderResponse;
-        this.mapperOrderRequestToOrder = mapperOrderRequestToOrder;
-        this.userRepository = userRepository;
-        this.pizzaRepository = pizzaRepository;
-        this.drinkRepository = drinkRepository;
-        this.observers = new ArrayList<>();
-    }
+    private final List<OrderObserver> observers = new ArrayList<>();
 
     @Override
     public void addObserver(OrderObserver observer) {
@@ -95,6 +90,56 @@ public class OrderService implements OrderObserverSubject {
         return orders.stream().map(it -> mapperOrderToOrderResponse.map(it)).toList();
     }
 
+    public List<Order> getPendingStatusOrders() {
+        return repository.findByStatus(OrderStatusEnumeration.PENDENTE.getValue());
+    }
+
+    public List<Order> getPreparationStatusOrders() {
+        return repository.findByStatus(OrderStatusEnumeration.EM_PREPARO.getValue());
+    }
+
+    public List<Order> getAvailableStatusOrders() {
+        return repository.findByStatus(OrderStatusEnumeration.DISPONIVEL.getValue());
+    }
+
+    public Order updateStatusToPendingOrders(Long id) {
+        Order orderToUpdate = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Order não encontrado"));
+        
+        orderToUpdate.setStatus(OrderStatusEnumeration.PENDENTE.getValue());
+        
+        return repository.save(orderToUpdate);
+    }
+
+    public Order updateStatusToPreparationOrders(Long id) {
+        Order orderToUpdate = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Order não encontrado"));
+        
+        orderToUpdate.setStatus(OrderStatusEnumeration.EM_PREPARO.getValue());
+        
+        return repository.save(orderToUpdate);
+    }
+
+    public Order updateStatusToAvailableOrders(Long id) {
+        Order orderToUpdate = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Order não encontrado"));
+        
+        orderToUpdate.setStatus(OrderStatusEnumeration.DISPONIVEL.getValue());
+
+        return repository.save(orderToUpdate);
+    }
+
+    public List<Order> getOrdersFromToday() {
+        ZoneId zoneId = ZoneId.systemDefault(); 
+
+        LocalDate today = LocalDate.now(zoneId);
+        Instant startOfDay = today.atStartOfDay(zoneId).toInstant();
+        Instant endOfDay = today.atTime(LocalTime.MAX).atZone(zoneId).toInstant();
+
+
+        return repository.findByLastModifiedBetween(startOfDay, endOfDay);
+    }
+
     public OrderResponseDto saveOrder(OrderRequestDto orderRequestDto){
         User client = userRepository.findById(orderRequestDto.client())
             .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
@@ -103,31 +148,26 @@ public class OrderService implements OrderObserverSubject {
             .orElseThrow(() -> new ResourceNotFoundException("Resposável não encontrado"));
 
 
-        // List<Pizza> pizzas = repository.findPizzasById(orderRequestDto);
-        List<Pizza> pizzas = new ArrayList<>();
-        if(orderRequestDto.pizzas() != null) pizzas = pizzaRepository.findAllById(orderRequestDto.pizzas());
-        List<Drink> drinks = new ArrayList<>();
-        if (orderRequestDto.drinks() != null) drinks = drinkRepository.findAllById(orderRequestDto.drinks()); 
+        List<Pizza> pizzas = orderRequestDto.pizzas() != null ? pizzaRepository.findAllById(orderRequestDto.pizzas()) : new ArrayList<>();
+        List<Drink> drinks = orderRequestDto.drinks() != null ? drinkRepository.findAllById(orderRequestDto.drinks()) : new ArrayList<>(); 
 
-        /// REFATORAR PARA QUE AS SERVICES RETORNEM OBJETO ENTITY AO INVÉS DE DTO, PARA SEREM
+        Order orderToSave = mapperOrderRequestToOrder.map(orderRequestDto);
+        orderToSave.setClient(client);
+        orderToSave.setResponsible(responsible);
+        orderToSave.setPizzas(pizzas);
+        orderToSave.setDrinks(drinks);
 
-        Order orderToSave = mapperOrderRequestToOrder.map(orderRequestDto, client, responsible, pizzas, drinks);
-        
         calculateOrderPrices(orderToSave);
 
         Order savedOrder = repository.save(orderToSave);
 
         notifyObservers(savedOrder);
 
-        /*
-        Estou salvando a order duas vezes porque ela precisa ser salva antes de notificar os observers para ter o id
-        gerado (caso do Attestation), mas ela também pode ser alterada por algum observer como será o de promoções
-        então ela é salva e atualizada dps
-         */
-        return mapperOrderToOrderResponse.map(repository.save(savedOrder));
+        savedOrder = repository.save(savedOrder);
+
+        return mapperOrderToOrderResponse.map(savedOrder);
     }
 
-    // Tem outra forma de fazer isso que é fazendo um select nas tabelas de relacionamento atraves do id do usuario
     void calculateOrderPrices(Order order){
         BigDecimal orderValue = BigDecimal.ZERO;
 
@@ -163,7 +203,11 @@ public class OrderService implements OrderObserverSubject {
         List<Drink> drinks = new ArrayList<>();
         if (orderRequestDto.drinks() != null) drinks = drinkRepository.findAllById(orderRequestDto.drinks()); 
     
-        Order orderToUpdate = mapperOrderRequestToOrder.map(orderRequestDto, client, responsible, pizzas, drinks);
+        Order orderToUpdate = mapperOrderRequestToOrder.map(orderRequestDto);
+        orderToUpdate.setClient(client);
+        orderToUpdate.setResponsible(responsible);
+        orderToUpdate.setPizzas(pizzas);
+        orderToUpdate.setDrinks(drinks);
 
         calculateOrderPrices(orderToUpdate);
         orderToUpdate.setId(id);
@@ -178,8 +222,6 @@ public class OrderService implements OrderObserverSubject {
         repository.deleteById(order.getId());
     }
 
-    // TODO: horrível porém peguei da saveOrder porque a necessidade era urgente, refatorar
-    // TODO: Criar testes unitários, não criei ainda pq a service será refatorada
     public BigDecimal getTotalPrice(OrderRequestDto orderRequestDto) {
         User client = userRepository.findById(orderRequestDto.client())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
@@ -192,7 +234,11 @@ public class OrderService implements OrderObserverSubject {
         List<Drink> drinks = new ArrayList<>();
         if (orderRequestDto.drinks() != null) drinks = drinkRepository.findAllById(orderRequestDto.drinks());
 
-        Order orderToSave = mapperOrderRequestToOrder.map(orderRequestDto, client, responsible, pizzas, drinks);
+        Order orderToSave = mapperOrderRequestToOrder.map(orderRequestDto);
+        orderToSave.setClient(client); 
+        orderToSave.setResponsible(responsible); 
+        orderToSave.setPizzas(pizzas); 
+        orderToSave.setDrinks(drinks);
 
         calculateOrderPrices(orderToSave);
         return orderToSave.getPrice();

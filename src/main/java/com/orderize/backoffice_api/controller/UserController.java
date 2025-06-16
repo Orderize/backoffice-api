@@ -1,7 +1,10 @@
 package com.orderize.backoffice_api.controller;
 
+import com.orderize.backoffice_api.dto.UserRoleRequestDto;
 import com.orderize.backoffice_api.dto.user.UserRequestDto;
 import com.orderize.backoffice_api.dto.user.UserResponseDto;
+import com.orderize.backoffice_api.mapper.user.UserToUserResponseDto;
+import com.orderize.backoffice_api.model.User;
 import com.orderize.backoffice_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,9 +20,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService service;
+    private final UserToUserResponseDto mapperUserToUserResponse;
 
-    public UserController(UserService service) {
+    public UserController(UserService service, UserToUserResponseDto mapperUserToUserResponse) {
         this.service = service;
+        this.mapperUserToUserResponse = mapperUserToUserResponse;
     }
 
     @GetMapping
@@ -94,6 +99,25 @@ public class UserController {
         } else {
             return ResponseEntity.status(404).build();
         }
+    }
+
+    @PostMapping("/roles")
+    @Operation(summary = "Salva uma nova role em um usuário", method = "POST")
+    public ResponseEntity<UserResponseDto> saveRoleToUser(
+        @RequestBody @Valid UserRoleRequestDto requestDto
+    ) {
+        User updatedUser = service.saveRoleToUser(requestDto);
+        return ResponseEntity.status(201).body(mapperUserToUserResponse.map(updatedUser));
+    }
+
+    @DeleteMapping("/roles/{userId}/{roleId}")
+    @Operation(summary = "Deleta uma role de um usuário", method = "DELETE")
+        public ResponseEntity<Void> deleteRoleFromUser(
+        @PathVariable Long userId,
+        @PathVariable Long roleId
+    ) {
+        service.deleteRoleFromUser(userId, roleId);
+        return ResponseEntity.status(204).build();
     }
 
 }

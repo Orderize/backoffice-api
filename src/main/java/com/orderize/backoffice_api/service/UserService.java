@@ -179,7 +179,7 @@ public class UserService implements UserDetailsService {
 
         return allUsers.stream().map(it -> mapperUserToUserResponse.map(it)).toList();
     }
-    
+  
     @Transactional
     public void resetPassword(String email) {
         Optional<User> userOptional = repository.findByEmail(email);
